@@ -1,6 +1,3 @@
 import { Module } from '@nestjs/common';
-
-@Module({
-  imports: [],
-})
+@Module({ imports: [] })
 export class AppModule {}
