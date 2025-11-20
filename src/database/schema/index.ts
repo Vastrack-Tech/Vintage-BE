@@ -5,3 +5,4 @@ export * from './products.schema';
 export * from './orders.schema';
 export * from './reviews.schema';
 export * from './payment.schema';
+export * from './banners-collection';
