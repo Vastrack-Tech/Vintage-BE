@@ -1,3 +1,4 @@
+import { CurrentUser } from './../auth/decorators/current-user-decorator';
 import {
   Body,
   Controller,
@@ -9,8 +10,7 @@ import {
   Headers,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from './../auth/guards/jwt-auth-guard';
 
 @Controller('payment')
 export class PaymentController {
