@@ -2,9 +2,9 @@ import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
-import { DATABASE_CONNECTION } from '../../database/database.provider';
+import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as schema from '../../database/schema';
+import * as schema from '../database/schema';
 import { eq } from 'drizzle-orm';
 import * as crypto from 'crypto';
 
