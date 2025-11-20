@@ -1,28 +1,22 @@
-import { CurrentUser } from './../auth/decorators/current-user-decorator';
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Req,
-  UseGuards,
-  Headers,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Headers } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { JwtAuthGuard } from './../auth/guards/jwt-auth-guard';
 
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   // Start Payment
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('initialize')
   async initialize(
-    @CurrentUser() user,
-    @Body() body: { amount: number; orderId?: string },
+    @Body()
+    body: { amount: number; orderId?: string; email: string; userId: string },
   ) {
+    const user = {
+      email: body.email,
+      userId: body.userId,
+    };
+
     return this.paymentService.initializePayment(
       user,
       body.amount,
