@@ -15,7 +15,7 @@ export const users = pgTable('users', {
   password: text('password').notNull(),
   phone: text('phone'),
   address: text('address'),
-  role: roleEnum('role').default('customer'),
+  role: roleEnum('role').default('customer').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

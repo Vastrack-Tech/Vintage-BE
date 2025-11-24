@@ -6,6 +6,6 @@ import { databaseProvider } from './database.provider';
 @Global()
 @Module({
   providers: [databaseProvider],
-  exports: [databaseProvider], // Essential: Exports the provider so other modules can use it
+  exports: [databaseProvider],
 })
 export class DatabaseModule {}
