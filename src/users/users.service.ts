@@ -1,9 +1,10 @@
-import { Inject, Injectable, ConflictException } from '@nestjs/common';
+import { Inject, Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
 import { eq } from 'drizzle-orm';
 import { CreateProfileDto } from './dto/create-profile.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +14,6 @@ export class UsersService {
   ) {}
 
   async createProfile(userId: string, dto: CreateProfileDto) {
-    // 1. Check if profile already exists to prevent duplicates
     const existing = await this.db.query.users.findFirst({
       where: eq(schema.users.id, userId), // Check by UUID
     });
@@ -22,8 +22,6 @@ export class UsersService {
       throw new ConflictException('Profile already exists');
     }
 
-    // 2. Create the user in YOUR local database
-    // We use the 'userId' from Supabase as our Primary Key
     const [newUser] = await this.db
       .insert(schema.users)
       .values({
@@ -36,5 +34,22 @@ export class UsersService {
       .returning();
 
     return newUser;
+  }
+
+  async updateUser(userId: string, dto: UpdateUserDto) {
+    const [updatedUser] = await this.db
+      .update(schema.users)
+      .set({
+        ...dto,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.users.id, userId))
+      .returning();
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return updatedUser;
   }
 }
