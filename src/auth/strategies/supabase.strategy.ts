@@ -15,7 +15,6 @@ export class SupabaseStrategy extends PassportStrategy(Strategy, 'supabase') {
     private readonly db: NodePgDatabase<typeof schema>,
   ) {
     const secret = config.getOrThrow<string>('SUPABASE_JWT_SECRET');
-    console.log(`[DEBUG] Supabase Strategy Loaded. Using Secret starting with: ${secret.substring(0, 5)}...`);
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,

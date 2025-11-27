@@ -5,6 +5,7 @@ import {
   decimal,
   jsonb,
   timestamp,
+  boolean,
   integer,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
@@ -30,13 +31,21 @@ export const products = pgTable('products', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINPROD')),
+
   categoryId: varchar('category_id', { length: 20 }).references(
     () => categories.id,
   ),
+
   title: text('title').notNull(),
   description: text('description').notNull(),
   basePrice: decimal('base_price', { precision: 10, scale: 2 }).notNull(),
+  compareAtPrice: decimal('compare_at_price', { precision: 10, scale: 2 }),
   gallery: jsonb('gallery').default([]),
+  tags: jsonb('tags').$type<string[]>().default([]),
+  isHot: boolean('is_hot').default(false),
+  isActive: boolean('is_active').default(true),
+  averageRating: decimal('avg_rating', { precision: 3, scale: 2 }).default('0'),
+  totalReviews: integer('total_reviews').default(0),
   features: text('features'),
   shippingPolicy: text('shipping_policy'),
   createdAt: timestamp('created_at').defaultNow(),

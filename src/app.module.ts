@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { PaymentModule } from './payment/payment.module';
 import { AuthController } from './auth/auth.controller';
 import { UsersModule } from './users/users.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { UsersModule } from './users/users.module';
     PaymentModule,
     UsersModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ProductsModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],
