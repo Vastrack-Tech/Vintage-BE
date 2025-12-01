@@ -1,4 +1,9 @@
-import { Inject, Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
@@ -37,10 +42,14 @@ export class UsersService {
   }
 
   async updateUser(userId: string, dto: UpdateUserDto) {
+    // Separate birthday from the rest to handle date conversion
+    const { birthday, ...rest } = dto;
+
     const [updatedUser] = await this.db
       .update(schema.users)
       .set({
-        ...dto,
+        ...rest,
+        ...(birthday ? { birthday: new Date(birthday) } : {}),
         updatedAt: new Date(),
       })
       .where(eq(schema.users.id, userId))
