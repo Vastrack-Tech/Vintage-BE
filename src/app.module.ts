@@ -6,6 +6,7 @@ import { PaymentModule } from './payment/payment.module';
 import { AuthController } from './auth/auth.controller';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ProductsModule } from './products/products.module';
     UsersModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ProductsModule,
+    OrdersModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],

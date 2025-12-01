@@ -23,7 +23,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",
-    "db:seed": "ts-node src/database/seed.ts"
+    "db:seed": "ts-node src/database/seed.ts",
+    "db:seed:orders": "ts-node src/database/seed-orders.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
