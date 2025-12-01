@@ -1,16 +1,17 @@
-import { Body, Controller, Post, UseGuards, Patch, } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Patch, Get } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { SupabaseAuthGuard } from '../auth/guard/auth.guard';
 import { CurrentUser } from '../auth/decorator/user.decorator';
 import { UsersService } from './users.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateAddressDto } from './dto/address.dto';
 import type { AuthUser } from '../auth/types/auth-user.type';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post('create-profile')
   @UseGuards(SupabaseAuthGuard)
@@ -35,5 +36,18 @@ export class UsersController {
     @CurrentUser() user: AuthUser, // We get the ID from the token, NOT the body
   ) {
     return this.usersService.updateUser(user.userId, body);
+  }
+
+
+  @Post('address')
+  @UseGuards(SupabaseAuthGuard)
+  async addAddress(@CurrentUser() user: AuthUser, @Body() body: CreateAddressDto) {
+    return this.usersService.addAddress(user.userId, body);
+  }
+
+  @Get('address')
+  @UseGuards(SupabaseAuthGuard)
+  async getAddresses(@CurrentUser() user: AuthUser) {
+    return this.usersService.getAddresses(user.userId);
   }
 }
