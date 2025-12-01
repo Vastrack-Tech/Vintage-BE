@@ -13,6 +13,7 @@ export const users = pgTable('users', {
   password: text('password'),
   phone: text('phone'),
   address: text('address'),
+  birthday: timestamp('birthday'),
   role: roleEnum('role').default('customer').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
