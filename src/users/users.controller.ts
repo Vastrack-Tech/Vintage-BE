@@ -6,6 +6,7 @@ import { UsersService } from './users.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateAddressDto } from './dto/address.dto';
+import { ChangePasswordDto, UpdateNotificationDto } from './dto/settings.dto';
 import type { AuthUser } from '../auth/types/auth-user.type';
 
 @ApiTags('Users')
@@ -13,16 +14,16 @@ import type { AuthUser } from '../auth/types/auth-user.type';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
+  // --- PROFILE ---
+
   @Post('create-profile')
   @UseGuards(SupabaseAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Create user profile after Supabase Signup' })
   async createProfile(
     @Body() body: CreateProfileDto,
-    @CurrentUser() user: any,
+    @CurrentUser() user: AuthUser,
   ) {
-    // 'user.userId' comes from the JWT (Supabase UUID)
-    // 'body' comes from the Frontend form
     return this.usersService.createProfile(user.userId, body);
   }
 
@@ -33,21 +34,48 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   async updateProfile(
     @Body() body: UpdateUserDto,
-    @CurrentUser() user: AuthUser, // We get the ID from the token, NOT the body
+    @CurrentUser() user: AuthUser,
   ) {
     return this.usersService.updateUser(user.userId, body);
   }
 
+  // --- ADDRESSES ---
 
   @Post('address')
   @UseGuards(SupabaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   async addAddress(@CurrentUser() user: AuthUser, @Body() body: CreateAddressDto) {
     return this.usersService.addAddress(user.userId, body);
   }
 
   @Get('address')
   @UseGuards(SupabaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   async getAddresses(@CurrentUser() user: AuthUser) {
     return this.usersService.getAddresses(user.userId);
+  }
+
+  // --- NEW SETTINGS ROUTES ---
+
+  @Patch('notifications')
+  @UseGuards(SupabaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update notification preferences' })
+  async updateNotifications(
+    @Body() body: UpdateNotificationDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.usersService.updateNotifications(user.userId, body);
+  }
+
+  @Post('change-password')
+  @UseGuards(SupabaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Change password (verifies old password first)' })
+  async changePassword(
+    @Body() body: ChangePasswordDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.usersService.changePassword(user.userId, user.email, body);
   }
 }

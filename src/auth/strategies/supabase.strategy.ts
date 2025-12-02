@@ -35,6 +35,11 @@ export class SupabaseStrategy extends PassportStrategy(Strategy, 'supabase') {
       role: user?.role || 'user',
       firstName: user?.firstName,
       lastName: user?.lastName,
+      phone: user?.phone,
+      address: user?.address,
+      birthday: user?.birthday,
+      notifyEmail: user?.notifyEmail,
+      notifyPhone: user?.notifyPhone,
     };
   }
 }
