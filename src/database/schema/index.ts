@@ -7,3 +7,4 @@ export * from './reviews.schema';
 export * from './payment.schema';
 export * from './banners-collection';
 export * from './addresses.schema';
+export * from './wishlist.schema';

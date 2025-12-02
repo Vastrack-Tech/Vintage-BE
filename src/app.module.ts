@@ -7,6 +7,7 @@ import { AuthController } from './auth/auth.controller';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { OrdersModule } from './orders/orders.module';
     ConfigModule.forRoot({ isGlobal: true }),
     ProductsModule,
     OrdersModule,
+    WishlistModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],
