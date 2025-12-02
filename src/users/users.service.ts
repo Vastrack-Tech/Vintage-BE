@@ -1,9 +1,6 @@
-import {
-  Inject,
-  Injectable,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { createClient } from '@supabase/supabase-js';
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
@@ -11,17 +8,30 @@ import { eq, sql } from 'drizzle-orm';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateAddressDto } from './dto/address.dto';
+import { ChangePasswordDto, UpdateNotificationDto } from './dto/settings.dto';
 
 @Injectable()
 export class UsersService {
+  private supabaseAdmin;
+
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
-  ) { }
+    private config: ConfigService,
+  ) {
+    // Initialize Supabase Admin for privileged actions (Password Updates)
+    this.supabaseAdmin = createClient(
+      config.getOrThrow('SUPABASE_URL'),
+      config.getOrThrow('SUPABASE_KEY'),
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+  }
+
+  // --- EXISTING PROFILE METHODS ---
 
   async createProfile(userId: string, dto: CreateProfileDto) {
     const existing = await this.db.query.users.findFirst({
-      where: eq(schema.users.id, userId), // Check by UUID
+      where: eq(schema.users.id, userId),
     });
 
     if (existing) {
@@ -43,7 +53,6 @@ export class UsersService {
   }
 
   async updateUser(userId: string, dto: UpdateUserDto) {
-    // Separate birthday from the rest to handle date conversion
     const { birthday, ...rest } = dto;
 
     const [updatedUser] = await this.db
@@ -63,23 +72,22 @@ export class UsersService {
     return updatedUser;
   }
 
+  // --- EXISTING ADDRESS METHODS ---
+
   async addAddress(userId: string, dto: CreateAddressDto) {
     return await this.db.transaction(async (tx) => {
-      // 1. If this is the first address, make it default automatically
       const existingCount = await tx.select({ count: sql<number>`count(*)` })
         .from(schema.addresses)
         .where(eq(schema.addresses.userId, userId));
 
       let isDefault = dto.isDefault || Number(existingCount[0].count) === 0;
 
-      // 2. If setting as default, unset others
       if (isDefault) {
         await tx.update(schema.addresses)
           .set({ isDefault: false })
           .where(eq(schema.addresses.userId, userId));
       }
 
-      // 3. Create
       const [newAddress] = await tx.insert(schema.addresses).values({
         userId,
         ...dto,
@@ -95,5 +103,46 @@ export class UsersService {
       where: eq(schema.addresses.userId, userId),
       orderBy: (addresses, { desc }) => [desc(addresses.isDefault), desc(addresses.createdAt)],
     });
+  }
+
+  // --- NEW SETTINGS METHODS ---
+
+  async updateNotifications(userId: string, dto: UpdateNotificationDto) {
+    const [updated] = await this.db
+      .update(schema.users)
+      .set(dto)
+      .where(eq(schema.users.id, userId))
+      .returning();
+
+    return updated;
+  }
+
+  async changePassword(userId: string, email: string, dto: ChangePasswordDto) {
+    // A. Verify Old Password
+    const publicSupabase = createClient(
+      this.config.getOrThrow('SUPABASE_URL'),
+      this.config.getOrThrow('SUPABASE_KEY')
+    );
+
+    const { error: signInError } = await publicSupabase.auth.signInWithPassword({
+      email,
+      password: dto.currentPassword,
+    });
+
+    if (signInError) {
+      throw new ConflictException('Current password is incorrect');
+    }
+
+    // B. Update to New Password (using Admin)
+    const { error: updateError } = await this.supabaseAdmin.auth.admin.updateUserById(
+      userId,
+      { password: dto.newPassword }
+    );
+
+    if (updateError) {
+      throw new BadRequestException('Failed to update password');
+    }
+
+    return { message: 'Password updated successfully' };
   }
 }

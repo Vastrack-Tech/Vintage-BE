@@ -1,4 +1,4 @@
-import { pgTable, text, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { roleEnum } from './enums';
 // import { generateId } from './utils';
@@ -14,6 +14,8 @@ export const users = pgTable('users', {
   phone: text('phone'),
   address: text('address'),
   birthday: timestamp('birthday'),
+  notifyEmail: boolean('notify_email').default(true),
+  notifyPhone: boolean('notify_phone').default(true),
   role: roleEnum('role').default('customer').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
