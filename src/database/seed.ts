@@ -27,6 +27,15 @@ const RATE = 1500;
 async function seed() {
   console.log('🌱 Seeding database...');
 
+  // 0. CLEANUP (Optional: Uncomment if you want to wipe data before seeding)
+  // console.log('⚠️  Cleaning old data...');
+  // await db.delete(schema.reviews);
+  // await db.delete(schema.orderItems);
+  // await db.delete(schema.orders);
+  // await db.delete(schema.variants);
+  // await db.delete(schema.products);
+  // await db.delete(schema.categories);
+
   // 1. Create Categories
   console.log('Creating Categories...');
   const categoriesData = [
@@ -49,13 +58,17 @@ async function seed() {
       .onConflictDoNothing()
       .returning();
 
-    // If it already existed, we need to find it to get the ID (omitted for brevity in seed, assume fresh DB)
+    // If inserted new, use that ID. If exists, we'd need to query it (omitted for simple seed)
     if (newCat) categoryMap.set(cat.slug, newCat.id);
   }
 
-  // 2. Create Products
-  console.log('Creating Products...');
+  // If categories existed before, fetch them to populate map
+  if (categoryMap.size === 0) {
+    const existing = await db.query.categories.findMany();
+    existing.forEach(c => categoryMap.set(c.slug, c.id));
+  }
 
+  // 2. Define Product Data
   const productSamples = [
     // --- WIGS ---
     {
@@ -110,12 +123,12 @@ async function seed() {
     },
   ];
 
-  // Helper to generate random variations
+  // Generate Randoms
   const hairTypes = ['Brazilian', 'Peruvian', 'Vietnamese', 'Synthetic'];
   const styles = ['Curly', 'Straight', 'Wavy', 'Kinky'];
   const lengths = ['Short', 'Medium', 'Long'];
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 15; i++) {
     const type = hairTypes[Math.floor(Math.random() * hairTypes.length)];
     const style = styles[Math.floor(Math.random() * styles.length)];
     const length = lengths[Math.floor(Math.random() * lengths.length)];
@@ -135,45 +148,50 @@ async function seed() {
     });
   }
 
-  // Insert all products with Dual Currency logic
+  console.log(`Inserting ${productSamples.length} products...`);
+
+  // 3. Insert Products AND Variants
   for (const p of productSamples) {
-    // Fallback if categoryMap is empty (e.g. categories existed already)
-    // In a real seed script, you'd fetch categories first. 
-    // Here we assume fresh DB or manual ID.
-    // For robust seeding, let's just grab the first category ID available if map is empty
-    let catId = categoryMap.get(p.cat);
+    const catId = categoryMap.get(p.cat) || categoryMap.get('wigs'); // Fallback
 
-    if (!catId) {
-      // Fallback: Fetch a category ID from DB to avoid FK error
-      const existingCat = await db.query.categories.findFirst();
-      catId = existingCat?.id;
-    }
-
-    // Calculate USD values
+    // Calculate USD
     const priceUsd = (p.priceNgn / RATE).toFixed(2);
-    const compareUsd = p.compareNgn ? (p.compareNgn / RATE).toFixed(2) : null;
+    // Safe compare handling
+    const compareAtNgnStr = p.compareNgn ? p.compareNgn.toString() : null;
+    const compareAtUsdStr = p.compareNgn ? (p.compareNgn / RATE).toFixed(2) : null;
 
-    await db.insert(schema.products).values({
+    // A. Create Product
+    const [newProduct] = await db.insert(schema.products).values({
       id: generateId('VINPROD'),
       categoryId: catId,
       title: p.title,
       description: p.desc,
-
-      // NEW PRICING FIELDS
       priceNgn: p.priceNgn.toString(),
       priceUsd: priceUsd,
-      compareAtPriceNgn: p.compareNgn?.toString(),
-      compareAtPriceUsd: compareUsd,
-
+      compareAtPriceNgn: compareAtNgnStr,
+      compareAtPriceUsd: compareAtUsdStr,
       tags: p.tags,
       isHot: p.isHot,
-      averageRating: p.rating,
+      averageRating: p.rating.toString(),
       totalReviews: Math.floor(Math.random() * 50),
       isActive: true,
       gallery: [
-        'https://placehold.co/600x400/png?text=Hair+Image',
-        'https://placehold.co/600x400/png?text=Side+View'
+        'https://placehold.co/600x400/png?text=Hair+Front',
+        'https://placehold.co/600x400/png?text=Hair+Side',
       ]
+    }).returning();
+
+    // B. Create Default Variant (CRITICAL FOR CART/ORDERS)
+    await db.insert(schema.variants).values({
+      id: generateId('VINVAR'),
+      productId: newProduct.id,
+      name: 'Standard', // Default variant name
+      attributes: { color: 'Natural', length: 'Standard' },
+      stockQuantity: 100,
+      sku: `SKU-${newProduct.id.split('-')[1]}`,
+      // We don't override price here, we use product price
+      priceOverrideNgn: null,
+      priceOverrideUsd: null
     });
   }
 

@@ -1,5 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateProfileDto {
   @ApiProperty({ example: 'John' })
@@ -17,4 +17,9 @@ export class CreateProfileDto {
   @ApiProperty({ example: 'john@example.com' })
   @IsEmail()
   email: string;
+
+  @ApiPropertyOptional({ example: 'VIN-12345' })
+  @IsOptional()
+  @IsString()
+  referralCode?: string;
 }

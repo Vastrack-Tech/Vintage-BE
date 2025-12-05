@@ -9,6 +9,7 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateAddressDto } from './dto/address.dto';
 import { ChangePasswordDto, UpdateNotificationDto } from './dto/settings.dto';
+import { generateId } from '../database/schema';
 
 @Injectable()
 export class UsersService {
@@ -30,26 +31,49 @@ export class UsersService {
   // --- EXISTING PROFILE METHODS ---
 
   async createProfile(userId: string, dto: CreateProfileDto) {
-    const existing = await this.db.query.users.findFirst({
-      where: eq(schema.users.id, userId),
+    return await this.db.transaction(async (tx) => {
+      // 1. Check if profile exists
+      const existing = await tx.query.users.findFirst({
+        where: eq(schema.users.id, userId),
+      });
+
+      if (existing) {
+        throw new ConflictException('Profile already exists');
+      }
+
+      const [newUser] = await tx
+        .insert(schema.users)
+        .values({
+          id: userId,
+          email: dto.email,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          role: 'customer',
+        })
+        .returning();
+
+      // 3. Handle Referral Logic
+      if (dto.referralCode) {
+        // Find the referrer using 'tx'
+        const referrerRef = await tx.query.referrals.findFirst({
+          where: eq(schema.referrals.code, dto.referralCode),
+        });
+
+        if (referrerRef) {
+          // Create the referral record
+          await tx.insert(schema.referrals).values({
+            id: generateId('VINREF'),
+            referrerId: referrerRef.referrerId,
+            refereeId: userId,
+            code: dto.referralCode, // Store the code used
+            status: 'completed',
+            rewardAmount: 0,
+          });
+        }
+      }
+
+      return newUser;
     });
-
-    if (existing) {
-      throw new ConflictException('Profile already exists');
-    }
-
-    const [newUser] = await this.db
-      .insert(schema.users)
-      .values({
-        id: userId,
-        email: dto.email,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        role: 'customer',
-      })
-      .returning();
-
-    return newUser;
   }
 
   async updateUser(userId: string, dto: UpdateUserDto) {
@@ -65,8 +89,8 @@ export class UsersService {
       .where(eq(schema.users.id, userId))
       .returning();
 
-      console.log(updatedUser);
-      
+    console.log(updatedUser);
+
 
     if (!updatedUser) {
       throw new NotFoundException('User not found');

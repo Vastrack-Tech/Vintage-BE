@@ -17,7 +17,7 @@ export class OrdersService {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
-  ) {}
+  ) { }
 
   async getUserOrders(userId: string, dto: GetOrdersDto) {
     const { status = OrderFilterStatus.ALL, page = 1, limit = 10 } = dto;
@@ -58,70 +58,73 @@ export class OrdersService {
   }
 
   async createOrder(userId: string, dto: CreateOrderDto) {
+    const RATE = 1500; // In real app, inject a CurrencyService here
+
     return await this.db.transaction(async (tx) => {
-      // A. Fetch all variants AND their parent products to get prices
       const variantIds = dto.items.map((i) => i.variantId);
 
       const dbVariants = await tx.query.variants.findMany({
         where: inArray(schema.variants.id, variantIds),
-        with: {
-          product: true, // <--- IMPORTANT: Fetch product to get basePrice fallback
-        },
+        with: { product: true }
       });
 
       if (dbVariants.length !== variantIds.length) {
         throw new NotFoundException('One or more products not found');
       }
 
-      // B. Calculate Total & Prepare Items
-      let totalAmount = 0;
+      let totalNgn = 0;
+      let totalUsd = 0;
 
-      // FIX 1: Explicitly type the array so it's not 'never[]'
+      // Explicitly type the array to fix the 'never[]' error
       const orderItemsData: {
         variantId: string;
         quantity: number;
-        priceAtPurchase: string;
+        priceAtPurchaseNgn: string;
+        priceAtPurchaseUsd: string;
       }[] = [];
 
       for (const item of dto.items) {
         const variant = dbVariants.find((v) => v.id === item.variantId);
+        if (!variant) throw new NotFoundException('Variant not found');
 
-        // FIX 2: explicit check ensures 'variant' is not undefined
-        if (!variant) {
-          throw new NotFoundException(`Variant ${item.variantId} not found`);
-        }
+        // 1. Resolve NGN Price
+        const priceNgn = variant.priceOverrideNgn
+          ? Number(variant.priceOverrideNgn)
+          : Number(variant.product.priceNgn); // Changed from basePrice
 
-        // Logic: Use Variant price override if it exists, otherwise use Product base price
-        const finalPrice = variant.priceOverride
-          ? Number(variant.priceOverride)
-          : Number(variant.product.basePrice);
+        // 2. Resolve USD Price
+        const priceUsd = variant.priceOverrideUsd
+          ? Number(variant.priceOverrideUsd)
+          : Number(variant.product.priceUsd); // Changed from basePrice
 
-        totalAmount += finalPrice * item.quantity;
+        totalNgn += priceNgn * item.quantity;
+        totalUsd += priceUsd * item.quantity;
 
         orderItemsData.push({
           variantId: item.variantId,
           quantity: item.quantity,
-          priceAtPurchase: finalPrice.toString(),
+          priceAtPurchaseNgn: priceNgn.toString(),
+          priceAtPurchaseUsd: priceUsd.toFixed(2),
         });
       }
 
-      // C. Create Order Record
       const [newOrder] = await tx
         .insert(schema.orders)
         .values({
           userId,
-          totalAmount: totalAmount.toString(),
+          totalAmountNgn: totalNgn.toString(),
+          totalAmountUsd: totalUsd.toFixed(2),
+          currencyPaid: 'NGN', // Default or pass from DTO
           status: 'pending',
         })
         .returning();
 
-      // D. Create Order Items
       if (orderItemsData.length > 0) {
         await tx.insert(schema.orderItems).values(
           orderItemsData.map((item) => ({
             orderId: newOrder.id,
             ...item,
-          })),
+          }))
         );
       }
 
