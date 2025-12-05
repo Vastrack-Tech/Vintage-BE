@@ -20,8 +20,10 @@ export const orders = pgTable('orders', {
   userId: varchar('user_id', { length: 20 })
     .references(() => users.id)
     .notNull(),
-  totalAmount: decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
+  totalAmountNgn: decimal('total_amount_ngn', { precision: 12, scale: 2 }).notNull(),
+  totalAmountUsd: decimal('total_amount_usd', { precision: 12, scale: 2 }).notNull(),
   status: orderStatusEnum('status').default('pending'),
+  currencyPaid: text('currency_paid').default('NGN'),
   paymentReference: text('payment_reference'),
   createdAt: timestamp('created_at').defaultNow(),
 });
@@ -46,10 +48,8 @@ export const orderItems = pgTable('order_items', {
     .references(() => variants.id)
     .notNull(),
   quantity: integer('quantity').default(1),
-  priceAtPurchase: decimal('price_at_purchase', {
-    precision: 10,
-    scale: 2,
-  }).notNull(),
+  priceAtPurchaseNgn: decimal('price_at_purchase_ngn', { precision: 10, scale: 2 }).notNull(),
+  priceAtPurchaseUsd: decimal('price_at_purchase_usd', { precision: 10, scale: 2 }).notNull(),
 });
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({

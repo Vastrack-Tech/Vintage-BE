@@ -54,7 +54,7 @@ export class UsersService {
 
   async updateUser(userId: string, dto: UpdateUserDto) {
     const { birthday, ...rest } = dto;
-
+    console.log(rest);
     const [updatedUser] = await this.db
       .update(schema.users)
       .set({
@@ -64,6 +64,9 @@ export class UsersService {
       })
       .where(eq(schema.users.id, userId))
       .returning();
+
+      console.log(updatedUser);
+      
 
     if (!updatedUser) {
       throw new NotFoundException('User not found');
