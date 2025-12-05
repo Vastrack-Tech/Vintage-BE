@@ -4,6 +4,7 @@ import * as schema from './schema';
 import * as dotenv from 'dotenv';
 import { customAlphabet } from 'nanoid';
 
+// Load environment variables
 dotenv.config();
 
 const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -13,8 +14,15 @@ const generateId = (prefix: string) => `${prefix}-${nanoid()}`;
 const dbUrl = process.env.DATABASE_URL;
 if (!dbUrl) throw new Error('DATABASE_URL is missing');
 
-const pool = new Pool({ connectionString: dbUrl });
+// Ensure SSL for production connection
+const pool = new Pool({
+  connectionString: dbUrl,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+});
 const db = drizzle(pool, { schema });
+
+// Mock Exchange Rate: 1 USD = 1500 NGN
+const RATE = 1500;
 
 async function seed() {
   console.log('🌱 Seeding database...');
@@ -23,19 +31,11 @@ async function seed() {
   console.log('Creating Categories...');
   const categoriesData = [
     { name: 'Wigs', slug: 'wigs', description: 'Premium human hair wigs' },
-    {
-      name: 'Extensions',
-      slug: 'extensions',
-      description: 'Luxury hair extensions',
-    },
-    {
-      name: 'Care Products',
-      slug: 'care',
-      description: 'Shampoos and conditioners',
-    },
+    { name: 'Extensions', slug: 'extensions', description: 'Luxury hair extensions' },
+    { name: 'Care Products', slug: 'care', description: 'Shampoos and conditioners' },
   ];
 
-  const categoryMap = new Map(); // To store ID for product linking
+  const categoryMap = new Map();
 
   for (const cat of categoriesData) {
     const [newCat] = await db
@@ -46,13 +46,14 @@ async function seed() {
         slug: cat.slug,
         description: cat.description,
       })
-      .onConflictDoNothing() // Skip if exists (optional)
+      .onConflictDoNothing()
       .returning();
 
+    // If it already existed, we need to find it to get the ID (omitted for brevity in seed, assume fresh DB)
     if (newCat) categoryMap.set(cat.slug, newCat.id);
   }
 
-  // 2. Create Products (25 Items mirroring filters)
+  // 2. Create Products
   console.log('Creating Products...');
 
   const productSamples = [
@@ -60,8 +61,8 @@ async function seed() {
     {
       title: 'Brazilian Kinky Human Hair Twist',
       desc: 'Salt & Pepper style, perfect for a natural look.',
-      price: '1324151',
-      compare: '1524151', // Has discount
+      priceNgn: 1324151,
+      compareNgn: 1524151,
       tags: ['Brazilian', 'Kinky', 'Short', 'Wigs'],
       cat: 'wigs',
       isHot: true,
@@ -70,8 +71,8 @@ async function seed() {
     {
       title: 'Bone Straight Vietnamese Wig',
       desc: 'Ultra smooth, tangle free luxury hair.',
-      price: '850000',
-      compare: null,
+      priceNgn: 850000,
+      compareNgn: null,
       tags: ['Vietnamese', 'Straight', 'Long', 'Wigs'],
       cat: 'wigs',
       isHot: true,
@@ -80,8 +81,8 @@ async function seed() {
     {
       title: 'Short Pixie Curl Wig',
       desc: 'Fun and flirty short curls.',
-      price: '45000',
-      compare: '50000',
+      priceNgn: 45000,
+      compareNgn: 50000,
       tags: ['Curly', 'Short', 'Wigs'],
       cat: 'wigs',
       isHot: false,
@@ -90,8 +91,8 @@ async function seed() {
     {
       title: 'Afro Kinky Bulk Hair',
       desc: 'For creating natural looking locs.',
-      price: '25000',
-      compare: null,
+      priceNgn: 25000,
+      compareNgn: null,
       tags: ['Kinky', 'Bulk', 'Wigs'],
       cat: 'wigs',
       isHot: false,
@@ -100,18 +101,16 @@ async function seed() {
     {
       title: 'Blonde 613 Bob Wig',
       desc: 'Striking blonde bob cut.',
-      price: '120000',
-      compare: '150000',
+      priceNgn: 120000,
+      compareNgn: 150000,
       tags: ['Blonde', 'Short', 'Straight', 'Wigs'],
       cat: 'wigs',
       isHot: true,
       rating: '4.9',
     },
-
-    // ... Generating 20 more varied items programmatically below
   ];
 
-  // Helper to generate random variations for bulk data
+  // Helper to generate random variations
   const hairTypes = ['Brazilian', 'Peruvian', 'Vietnamese', 'Synthetic'];
   const styles = ['Curly', 'Straight', 'Wavy', 'Kinky'];
   const lengths = ['Short', 'Medium', 'Long'];
@@ -120,41 +119,61 @@ async function seed() {
     const type = hairTypes[Math.floor(Math.random() * hairTypes.length)];
     const style = styles[Math.floor(Math.random() * styles.length)];
     const length = lengths[Math.floor(Math.random() * lengths.length)];
-    const price = Math.random() * 500000 + 20000;
+
+    const price = Math.floor(Math.random() * 500000) + 20000;
     const hasDiscount = Math.random() > 0.5;
 
     productSamples.push({
       title: `${type} ${style} ${length} Hair`,
       desc: `High quality ${type} hair in ${style} style.`,
-      price: price.toFixed(2),
-      compare: hasDiscount ? (price * 1.2).toFixed(2) : null,
+      priceNgn: price,
+      compareNgn: hasDiscount ? Math.floor(price * 1.2) : null,
       tags: [type, style, length, 'Generated'],
-      cat: i % 2 === 0 ? 'extensions' : 'care', // Split between remaining cats
+      cat: i % 2 === 0 ? 'extensions' : 'care',
       isHot: Math.random() > 0.8,
-      rating: (Math.random() * 2 + 3).toFixed(1), // Random rating 3.0 - 5.0
+      rating: (Math.random() * 2 + 3).toFixed(1),
     });
   }
 
-  // Insert all products
+  // Insert all products with Dual Currency logic
   for (const p of productSamples) {
-    const catId = categoryMap.get(p.cat) || categoryMap.get('wigs');
+    // Fallback if categoryMap is empty (e.g. categories existed already)
+    // In a real seed script, you'd fetch categories first. 
+    // Here we assume fresh DB or manual ID.
+    // For robust seeding, let's just grab the first category ID available if map is empty
+    let catId = categoryMap.get(p.cat);
+
+    if (!catId) {
+      // Fallback: Fetch a category ID from DB to avoid FK error
+      const existingCat = await db.query.categories.findFirst();
+      catId = existingCat?.id;
+    }
+
+    // Calculate USD values
+    const priceUsd = (p.priceNgn / RATE).toFixed(2);
+    const compareUsd = p.compareNgn ? (p.compareNgn / RATE).toFixed(2) : null;
 
     await db.insert(schema.products).values({
       id: generateId('VINPROD'),
       categoryId: catId,
       title: p.title,
       description: p.desc,
-      basePrice: p.price,
-      compareAtPrice: p.compare,
+
+      // NEW PRICING FIELDS
+      priceNgn: p.priceNgn.toString(),
+      priceUsd: priceUsd,
+      compareAtPriceNgn: p.compareNgn?.toString(),
+      compareAtPriceUsd: compareUsd,
+
       tags: p.tags,
       isHot: p.isHot,
       averageRating: p.rating,
       totalReviews: Math.floor(Math.random() * 50),
       isActive: true,
       gallery: [
-        'https://placehold.co/600x400/png?text=Hair+Image', // Placeholder image
-        'https://placehold.co/600x400/png?text=Side+View',
-      ],
+        'https://placehold.co/600x400/png?text=Hair+Image',
+        'https://placehold.co/600x400/png?text=Side+View'
+      ]
     });
   }
 

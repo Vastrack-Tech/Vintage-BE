@@ -38,8 +38,11 @@ export const products = pgTable('products', {
 
   title: text('title').notNull(),
   description: text('description').notNull(),
-  basePrice: decimal('base_price', { precision: 10, scale: 2 }).notNull(),
-  compareAtPrice: decimal('compare_at_price', { precision: 10, scale: 2 }),
+  priceNgn: decimal('price_ngn', { precision: 10, scale: 2 }).notNull(),
+  priceUsd: decimal('price_usd', { precision: 10, scale: 2 }).notNull(),
+
+  compareAtPriceNgn: decimal('compare_at_price_ngn', { precision: 10, scale: 2 }),
+  compareAtPriceUsd: decimal('compare_at_price_usd', { precision: 10, scale: 2 }),
   gallery: jsonb('gallery').default([]),
   tags: jsonb('tags').$type<string[]>().default([]),
   isHot: boolean('is_hot').default(false),
@@ -71,7 +74,8 @@ export const variants = pgTable('variants', {
     .notNull(),
   name: text('name').notNull(),
   attributes: jsonb('attributes').notNull(),
-  priceOverride: decimal('price_override', { precision: 10, scale: 2 }),
+  priceOverrideNgn: decimal('price_override_ngn', { precision: 10, scale: 2 }),
+  priceOverrideUsd: decimal('price_override_usd', { precision: 10, scale: 2 }),
   stockQuantity: integer('stock_quantity').default(0),
   sku: text('sku').unique(),
 });

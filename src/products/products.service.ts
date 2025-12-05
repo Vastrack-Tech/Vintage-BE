@@ -21,7 +21,7 @@ export class ProductsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
-  ) {}
+  ) { }
 
   // --- 1. GET LIST (Filters, Search, Pagination) ---
   async findAll(dto: GetProductsDto) {
@@ -54,11 +54,11 @@ export class ProductsService {
     }
 
     if (minPrice) {
-      filters.push(gte(schema.products.basePrice, minPrice.toString()));
+      filters.push(gte(schema.products.priceNgn, minPrice.toString()));
     }
 
     if (maxPrice) {
-      filters.push(lte(schema.products.basePrice, maxPrice.toString()));
+      filters.push(lte(schema.products.priceNgn, maxPrice.toString()));
     }
 
     if (tags && tags.length > 0) {
@@ -70,10 +70,10 @@ export class ProductsService {
     let orderBy;
     switch (sort) {
       case 'price_asc':
-        orderBy = asc(schema.products.basePrice);
+        orderBy = asc(schema.products.priceNgn);
         break;
       case 'price_desc':
-        orderBy = desc(schema.products.basePrice);
+        orderBy = desc(schema.products.priceNgn);
         break;
       case 'rating_desc':
         orderBy = desc(schema.products.averageRating);
