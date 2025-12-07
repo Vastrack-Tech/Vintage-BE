@@ -17,7 +17,7 @@ export const orders = pgTable('orders', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINORD')),
-  userId: varchar('user_id', { length: 20 })
+  userId: text('user_id')
     .references(() => users.id)
     .notNull(),
   totalAmountNgn: decimal('total_amount_ngn', { precision: 12, scale: 2 }).notNull(),

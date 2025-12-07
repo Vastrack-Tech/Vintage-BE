@@ -9,6 +9,7 @@ import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { SupportModule } from './support/support.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     ProductsModule,
     OrdersModule,
     WishlistModule,
+    SupportModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],
