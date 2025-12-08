@@ -32,7 +32,6 @@ export class UsersService {
 
   async createProfile(userId: string, dto: CreateProfileDto) {
     return await this.db.transaction(async (tx) => {
-      // 1. Check if profile exists
       const existing = await tx.query.users.findFirst({
         where: eq(schema.users.id, userId),
       });
@@ -52,9 +51,9 @@ export class UsersService {
         })
         .returning();
 
-      // 3. Handle Referral Logic
+      // 3. Handle Referral Logic (using tx)
       if (dto.referralCode) {
-        // Find the referrer using 'tx'
+        // Find the referrer
         const referrerRef = await tx.query.referrals.findFirst({
           where: eq(schema.referrals.code, dto.referralCode),
         });
@@ -65,7 +64,7 @@ export class UsersService {
             id: generateId('VINREF'),
             referrerId: referrerRef.referrerId,
             refereeId: userId,
-            code: dto.referralCode, // Store the code used
+            code: dto.referralCode,
             status: 'completed',
             rewardAmount: 0,
           });

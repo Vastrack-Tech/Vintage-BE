@@ -14,8 +14,6 @@ import type { AuthUser } from '../auth/types/auth-user.type';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  // --- PROFILE ---
-
   @Post('create-profile')
   @UseGuards(SupabaseAuthGuard)
   @ApiBearerAuth('JWT-auth')

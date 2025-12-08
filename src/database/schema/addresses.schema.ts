@@ -5,8 +5,7 @@ import { users } from './users.schema';
 
 export const addresses = pgTable('addresses', {
   id: varchar('id', { length: 20 }).primaryKey().$defaultFn(() => generateId('VINADDR')),
-  userId: varchar('user_id', { length: 20 }).references(() => users.id).notNull(),
-  
+  userId: text('user_id').references(() => users.id).notNull(),
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
   phone: text('phone').notNull(),
@@ -14,9 +13,9 @@ export const addresses = pgTable('addresses', {
   city: text('city').notNull(),
   state: text('state').notNull(),
   postalCode: text('postal_code'),
-  
+
   isDefault: boolean('is_default').default(false),
-  
+
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
