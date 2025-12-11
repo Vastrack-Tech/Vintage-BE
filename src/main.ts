@@ -20,7 +20,7 @@ async function bootstrap() {
     .setTitle('Vintage E-Commerce API')
     .setDescription('The official API documentation for the Vintage backend.')
     .setVersion('1.0')
-    .addServer('https://vintagefrontend-i6mpc.ondigitalocean.app/')
+    .addServer('https://vintagebackend-5plrf.ondigitalocean.app/')
     .addServer('http://localhost:3333')
     .addBearerAuth(
       {
