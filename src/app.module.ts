@@ -10,6 +10,7 @@ import { OrdersModule } from './orders/orders.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SupportModule } from './support/support.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SupportModule } from './support/support.module';
     OrdersModule,
     WishlistModule,
     SupportModule,
+    AdminModule
   ],
   controllers: [AppController, AuthController],
   providers: [],

@@ -47,6 +47,7 @@ export const products = pgTable('products', {
   tags: jsonb('tags').$type<string[]>().default([]),
   isHot: boolean('is_hot').default(false),
   isActive: boolean('is_active').default(true),
+  stockQuantity: integer('stock_quantity').default(0),
   averageRating: decimal('avg_rating', { precision: 3, scale: 2 }).default('0'),
   totalReviews: integer('total_reviews').default(0),
   features: text('features'),
