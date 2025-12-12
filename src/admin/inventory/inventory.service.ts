@@ -6,7 +6,7 @@ import { generateId } from '../../database/schema/utils';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetInventoryDto } from './dto/get-inventory.dto';
-import { eq, desc, and, ilike, sql, SQL } from 'drizzle-orm'; // Added SQL type import
+import { eq, desc, and, ilike, sql, SQL, gt, lte } from 'drizzle-orm'; // Added SQL type import
 
 @Injectable()
 export class InventoryService {
@@ -16,6 +16,38 @@ export class InventoryService {
 
     // Mock Rate for auto-conversion if USD is missing
     private readonly EXCHANGE_RATE = 1500;
+
+    async getStats() {
+        // 1. Total Products
+        const totalProductsQuery = await this.db.select({ count: sql<number>`count(*)` }).from(schema.products);
+        const totalProducts = Number(totalProductsQuery[0]?.count || 0);
+
+        // 2. New Products (Last 7 Days)
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const newProductsQuery = await this.db.select({ count: sql<number>`count(*)` })
+            .from(schema.products)
+            .where(gt(schema.products.createdAt, sevenDaysAgo));
+        const newProducts = Number(newProductsQuery[0]?.count || 0);
+
+        // 3. Empty Products (Out of Stock)
+        const emptyProductsQuery = await this.db.select({ count: sql<number>`count(*)` })
+            .from(schema.products)
+            .where(lte(schema.products.stockQuantity, 0));
+        const emptyProducts = Number(emptyProductsQuery[0]?.count || 0);
+
+        // 4. Products Sold (Requires Orders Module - Mock for now)
+        // TODO: Join with 'order_items' table when Orders module is ready
+        const productsSold = 0;
+
+        return {
+            totalProducts: { value: totalProducts, trend: 12, trendDirection: 'up' }, // Trends can be calculated by comparing vs previous week
+            newProducts: { value: newProducts, trend: 5, trendDirection: 'up' },
+            productsSold: { value: productsSold, trend: 0, trendDirection: 'down' },
+            emptyProducts: { value: emptyProducts, trend: 2, trendDirection: 'down' },
+        };
+    }
 
     // --- CATEGORIES ---
     async getCategories() {
