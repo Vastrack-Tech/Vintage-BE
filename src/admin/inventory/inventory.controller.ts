@@ -15,6 +15,14 @@ import { GetInventoryDto } from './dto/get-inventory.dto';
 export class InventoryController {
     constructor(private readonly inventoryService: InventoryService) { }
 
+
+    @Get('inventory/stats')
+    @Roles('admin')
+    @ApiOperation({ summary: 'Get inventory statistics' })
+    async getStats() {
+        return this.inventoryService.getStats();
+    }
+
     @Get('inventory/categories')
     @Roles('admin')
     @ApiOperation({ summary: 'Get all categories for dropdown' })
