@@ -58,11 +58,12 @@ export class OrdersService {
   }
 
   async createOrder(userId: string, dto: CreateOrderDto) {
-    const RATE = 1500; // In real app, inject a CurrencyService here
+    const RATE = 1500;
 
     return await this.db.transaction(async (tx) => {
       const variantIds = dto.items.map((i) => i.variantId);
 
+      // We are already fetching the product here, so we have access to the ID!
       const dbVariants = await tx.query.variants.findMany({
         where: inArray(schema.variants.id, variantIds),
         with: { product: true }
@@ -75,9 +76,10 @@ export class OrdersService {
       let totalNgn = 0;
       let totalUsd = 0;
 
-      // Explicitly type the array to fix the 'never[]' error
+      // FIX 1: Add 'productId' to the type definition here
       const orderItemsData: {
         variantId: string;
+        productId: string; // 👈 Added this
         quantity: number;
         priceAtPurchaseNgn: string;
         priceAtPurchaseUsd: string;
@@ -87,21 +89,20 @@ export class OrdersService {
         const variant = dbVariants.find((v) => v.id === item.variantId);
         if (!variant) throw new NotFoundException('Variant not found');
 
-        // 1. Resolve NGN Price
         const priceNgn = variant.priceOverrideNgn
           ? Number(variant.priceOverrideNgn)
-          : Number(variant.product.priceNgn); // Changed from basePrice
+          : Number(variant.product.priceNgn);
 
-        // 2. Resolve USD Price
         const priceUsd = variant.priceOverrideUsd
           ? Number(variant.priceOverrideUsd)
-          : Number(variant.product.priceUsd); // Changed from basePrice
+          : Number(variant.product.priceUsd);
 
         totalNgn += priceNgn * item.quantity;
         totalUsd += priceUsd * item.quantity;
 
         orderItemsData.push({
           variantId: item.variantId,
+          productId: variant.productId, // 👈 FIX 2: Pass the product ID from the variant
           quantity: item.quantity,
           priceAtPurchaseNgn: priceNgn.toString(),
           priceAtPurchaseUsd: priceUsd.toFixed(2),
@@ -114,7 +115,7 @@ export class OrdersService {
           userId,
           totalAmountNgn: totalNgn.toString(),
           totalAmountUsd: totalUsd.toFixed(2),
-          currencyPaid: 'NGN', // Default or pass from DTO
+          currencyPaid: 'NGN',
           status: 'pending',
         })
         .returning();
@@ -123,7 +124,7 @@ export class OrdersService {
         await tx.insert(schema.orderItems).values(
           orderItemsData.map((item) => ({
             orderId: newOrder.id,
-            ...item,
+            ...item, // This now includes productId, so the error will vanish
           }))
         );
       }
@@ -131,6 +132,7 @@ export class OrdersService {
       return newOrder;
     });
   }
+  
   // 2. CANCEL ORDER
   async cancelOrder(userId: string, orderId: string) {
     // A. Find Order

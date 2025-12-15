@@ -30,13 +30,11 @@ async function seedOrders() {
     const priceNgn = 1324151;
     const priceUsd = (priceNgn / RATE).toFixed(2);
 
-    // Create Order
     const [order] = await db
       .insert(schema.orders)
       .values({
         id: generateId('VINORD'),
         userId: user.id,
-        // FIX: Use new currency fields
         totalAmountNgn: priceNgn.toString(),
         totalAmountUsd: priceUsd,
         currencyPaid: 'NGN',
@@ -45,13 +43,12 @@ async function seedOrders() {
       })
       .returning();
 
-    // Add Item to Order
     await db.insert(schema.orderItems).values({
       id: generateId('VINITM'),
       orderId: order.id,
       variantId: variant.id,
+      productId: variant.productId, // 👈 ADD THIS LINE (Required now)
       quantity: 1,
-      // FIX: Use new currency fields
       priceAtPurchaseNgn: priceNgn.toString(),
       priceAtPurchaseUsd: priceUsd,
     });

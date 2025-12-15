@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../../database/schema';
-import { eq, desc, and, ilike, sql, or, SQL } from 'drizzle-orm'; // 👈 Added SQL import
+import { eq, desc, and, ilike, sql, or, SQL, gte, lte } from 'drizzle-orm';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
@@ -13,34 +13,44 @@ export class AdminOrdersService {
     ) { }
 
     async findAll(query: GetOrdersDto) {
-        const { page = 1, limit = 10, search, status } = query;
+        const { page = 1, limit = 10, search, status, minPrice, maxPrice, startDate, endDate } = query;
         const offset = (page - 1) * limit;
 
-        // FIX 1: Explicitly type the array as SQL[] so we can push to it
         const filters: SQL[] = [];
 
+        // 1. Status Filter
         if (status) {
-            // Cast status to any to satisfy Drizzle's enum type check
             filters.push(eq(schema.orders.status, status as any));
         }
 
+        // 2. Search Filter
         if (search) {
-            // Search by Order ID OR User First Name
-            // FIX 2: 'or' returns SQL | undefined, but since we have valid args, 
-            // we can assert it exists or simply push it as is because filters expects SQL items.
             const searchFilter = or(
                 ilike(schema.orders.id, `%${search}%`),
                 ilike(schema.users.firstName, `%${search}%`)
             );
+            if (searchFilter) filters.push(searchFilter);
+        }
 
-            if (searchFilter) {
-                filters.push(searchFilter);
-            }
+        // 3. Price Range Filter
+        if (minPrice) {
+            filters.push(gte(sql`cast(${schema.orders.totalAmountNgn} as numeric)`, minPrice));
+        }
+        if (maxPrice) {
+            filters.push(lte(sql`cast(${schema.orders.totalAmountNgn} as numeric)`, maxPrice));
+        }
+
+        // 4. Date Range Filter
+        if (startDate) {
+            filters.push(gte(schema.orders.createdAt, new Date(startDate)));
+        }
+        if (endDate) {
+            filters.push(lte(schema.orders.createdAt, new Date(endDate)));
         }
 
         const whereClause = filters.length > 0 ? and(...filters) : undefined;
 
-        // Execute Query with Joins
+        // Execute Query (Keep existing selection logic)
         const [data, totalCount] = await Promise.all([
             this.db.select({
                 id: schema.orders.id,
@@ -63,7 +73,6 @@ export class AdminOrdersService {
                 .offset(offset)
                 .orderBy(desc(schema.orders.createdAt)),
 
-            // Get Total Count
             this.db
                 .select({ count: sql<number>`count(*)` })
                 .from(schema.orders)

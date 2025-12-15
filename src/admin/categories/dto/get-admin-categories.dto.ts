@@ -2,7 +2,7 @@ import { IsOptional, IsString, IsNumber, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class GetOrdersDto {
+export class GetAdminCategoriesDto {
     @ApiPropertyOptional()
     @IsOptional()
     @Type(() => Number)
@@ -21,31 +21,44 @@ export class GetOrdersDto {
     @IsString()
     search?: string;
 
-    @ApiPropertyOptional()
-    @IsOptional()
-    @IsString()
-    status?: string;
+    // --- FILTERS from Image ---
 
-    // --- NEW FILTERS ---
+    // Quantity Range
     @ApiPropertyOptional()
     @IsOptional()
     @Type(() => Number)
     @IsNumber()
-    minPrice?: number;
+    minQuantity?: number;
 
     @ApiPropertyOptional()
     @IsOptional()
     @Type(() => Number)
     @IsNumber()
-    maxPrice?: number;
+    maxQuantity?: number;
+
+    // Category Value (Inventory Worth)
+    @ApiPropertyOptional()
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    minValue?: number;
 
     @ApiPropertyOptional()
     @IsOptional()
-    @IsString()
-    startDate?: string;
+    @Type(() => Number)
+    @IsNumber()
+    maxValue?: number;
+
+    // Category Sale (Revenue)
+    @ApiPropertyOptional()
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    minSales?: number;
 
     @ApiPropertyOptional()
     @IsOptional()
-    @IsString()
-    endDate?: string;
+    @Type(() => Number)
+    @IsNumber()
+    maxSales?: number;
 }

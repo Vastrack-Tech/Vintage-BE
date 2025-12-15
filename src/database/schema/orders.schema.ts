@@ -10,7 +10,7 @@ import { relations } from 'drizzle-orm';
 import { orderStatusEnum } from './enums';
 import { generateId } from './utils';
 import { users } from './users.schema';
-import { variants } from './products.schema';
+import { variants, products } from './products.schema'; // 👈 Import products
 
 // --- ORDERS ---
 export const orders = pgTable('orders', {
@@ -44,9 +44,15 @@ export const orderItems = pgTable('order_items', {
   orderId: varchar('order_id', { length: 20 })
     .references(() => orders.id)
     .notNull(),
+
+  productId: varchar('product_id', { length: 20 })
+    .references(() => products.id)
+    .notNull(),
+
   variantId: varchar('variant_id', { length: 20 })
     .references(() => variants.id)
     .notNull(),
+
   quantity: integer('quantity').default(1),
   priceAtPurchaseNgn: decimal('price_at_purchase_ngn', { precision: 10, scale: 2 }).notNull(),
   priceAtPurchaseUsd: decimal('price_at_purchase_usd', { precision: 10, scale: 2 }).notNull(),
@@ -56,6 +62,10 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   order: one(orders, {
     fields: [orderItems.orderId],
     references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
   }),
   variant: one(variants, {
     fields: [orderItems.variantId],
