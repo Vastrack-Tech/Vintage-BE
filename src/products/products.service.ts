@@ -23,6 +23,14 @@ export class ProductsService {
     private readonly db: NodePgDatabase<typeof schema>,
   ) { }
 
+
+  async getCategories() {
+    // Fetches all categories sorted alphabetically
+    return await this.db.query.categories.findMany({
+      orderBy: (categories, { asc }) => [asc(categories.name)],
+    });
+  }
+
   // --- 1. GET LIST (Filters, Search, Pagination) ---
   async findAll(dto: GetProductsDto) {
     const {

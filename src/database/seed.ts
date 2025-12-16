@@ -27,15 +27,6 @@ const RATE = 1500;
 async function seed() {
   console.log('🌱 Seeding database...');
 
-  // 0. CLEANUP (Optional: Uncomment if you want to wipe data before seeding)
-  // console.log('⚠️  Cleaning old data...');
-  // await db.delete(schema.reviews);
-  // await db.delete(schema.orderItems);
-  // await db.delete(schema.orders);
-  // await db.delete(schema.variants);
-  // await db.delete(schema.products);
-  // await db.delete(schema.categories);
-
   // 1. Create Categories
   console.log('Creating Categories...');
   const categoriesData = [
@@ -58,7 +49,6 @@ async function seed() {
       .onConflictDoNothing()
       .returning();
 
-    // If inserted new, use that ID. If exists, we'd need to query it (omitted for simple seed)
     if (newCat) categoryMap.set(cat.slug, newCat.id);
   }
 
@@ -154,11 +144,12 @@ async function seed() {
   for (const p of productSamples) {
     const catId = categoryMap.get(p.cat) || categoryMap.get('wigs'); // Fallback
 
-    // Calculate USD
     const priceUsd = (p.priceNgn / RATE).toFixed(2);
-    // Safe compare handling
     const compareAtNgnStr = p.compareNgn ? p.compareNgn.toString() : null;
     const compareAtUsdStr = p.compareNgn ? (p.compareNgn / RATE).toFixed(2) : null;
+
+    // Default stock for seed
+    const INITIAL_STOCK = 100;
 
     // A. Create Product
     const [newProduct] = await db.insert(schema.products).values({
@@ -175,21 +166,21 @@ async function seed() {
       averageRating: p.rating.toString(),
       totalReviews: Math.floor(Math.random() * 50),
       isActive: true,
+      stockQuantity: INITIAL_STOCK, // 👈 KEY FIX: Set stock on the product itself
       gallery: [
         'https://placehold.co/600x400/png?text=Hair+Front',
         'https://placehold.co/600x400/png?text=Hair+Side',
       ]
     }).returning();
 
-    // B. Create Default Variant (CRITICAL FOR CART/ORDERS)
+    // B. Create Default Variant
     await db.insert(schema.variants).values({
       id: generateId('VINVAR'),
       productId: newProduct.id,
-      name: 'Standard', // Default variant name
+      name: 'Standard',
       attributes: { color: 'Natural', length: 'Standard' },
-      stockQuantity: 100,
+      stockQuantity: INITIAL_STOCK, // Matches product stock
       sku: `SKU-${newProduct.id.split('-')[1]}`,
-      // We don't override price here, we use product price
       priceOverrideNgn: null,
       priceOverrideUsd: null
     });

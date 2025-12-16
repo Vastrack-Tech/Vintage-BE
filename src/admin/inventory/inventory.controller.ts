@@ -24,7 +24,6 @@ export class InventoryController {
     }
 
     @Get('inventory/categories')
-    @Roles('admin')
     @ApiOperation({ summary: 'Get all categories for dropdown' })
     async getCategories() {
         return this.inventoryService.getCategories();

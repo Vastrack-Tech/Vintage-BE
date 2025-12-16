@@ -20,6 +20,8 @@ export const categories = pgTable('categories', {
   name: text('name').notNull(),
   description: text('description'),
   slug: text('slug').unique(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 export const categoriesRelations = relations(categories, ({ many }) => ({

@@ -13,7 +13,14 @@ import { GetProductsDto } from './dto/get-products.dto';
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
+
+  @Get('categories')
+  @ApiOperation({ summary: 'Get all product categories' })
+  @ApiResponse({ status: 200, description: 'Returns list of categories' })
+  async getCategories() {
+    return this.productsService.getCategories();
+  }
 
   @Get()
   @ApiOperation({
