@@ -1,9 +1,9 @@
 import { pgTable, text, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { roleEnum } from './enums';
-// import { generateId } from './utils';
 import { orders } from './orders.schema';
 import { reviews } from './reviews.schema';
+import { referrals } from './referrals.schema';
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -14,6 +14,7 @@ export const users = pgTable('users', {
   phone: text('phone'),
   address: text('address'),
   birthday: timestamp('birthday'),
+  referralCode: text('referral_code').unique(),
   notifyEmail: boolean('notify_email').default(true),
   notifyPhone: boolean('notify_phone').default(true),
   role: roleEnum('role').default('customer').notNull(),
@@ -24,4 +25,5 @@ export const users = pgTable('users', {
 export const usersRelations = relations(users, ({ many }) => ({
   orders: many(orders),
   reviews: many(reviews),
+  referrals: many(referrals, { relationName: 'referrer_referrals' }),
 }));

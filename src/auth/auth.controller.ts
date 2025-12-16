@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { SupabaseAuthGuard } from './guard/auth.guard';
-import { CurrentUser } from './decorator/user.decorator'; // Use the decorator we made
+import { CurrentUser } from './decorator/user.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')

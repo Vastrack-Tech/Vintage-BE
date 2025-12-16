@@ -27,6 +27,24 @@ const RATE = 1500;
 async function seed() {
   console.log('🌱 Seeding database...');
 
+  // 0. CLEANUP (Delete in this specific order to avoid Foreign Key errors)
+  console.log('⚠️  Cleaning old data...');
+  
+  // 1. Delete items that depend on others first
+  await db.delete(schema.reviews);      // Depends on Products/Users
+  await db.delete(schema.orderItems);   // Depends on Orders/Variants
+  await db.delete(schema.orders);       // Depends on Users
+  await db.delete(schema.variants);     // Depends on Products
+  
+  // 2. Delete parent items
+  await db.delete(schema.products);     // Depends on Categories
+  await db.delete(schema.categories);   
+  
+  // Optional: Delete users if you are re-seeding them too
+  // await db.delete(schema.users); 
+
+  console.log('✨ Data cleared!');
+
   // 1. Create Categories
   console.log('Creating Categories...');
   const categoriesData = [
