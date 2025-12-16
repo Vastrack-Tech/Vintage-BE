@@ -4,12 +4,13 @@ import { createClient } from '@supabase/supabase-js';
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, inArray, count, and } from 'drizzle-orm';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateAddressDto } from './dto/address.dto';
 import { ChangePasswordDto, UpdateNotificationDto } from './dto/settings.dto';
 import { generateId } from '../database/schema';
+import { generate } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -30,8 +31,49 @@ export class UsersService {
 
   // --- EXISTING PROFILE METHODS ---
 
+  async getUserStats(userId: string) {
+    // Run queries in parallel for performance
+    const [activeOrders, completedOrders, wishlistItems] = await Promise.all([
+      // 1. Active Orders (Pending, Processing, Shipped)
+      this.db
+        .select({ count: count() })
+        .from(schema.orders)
+        .where(
+          and(
+            eq(schema.orders.userId, userId),
+            inArray(schema.orders.status, ['pending', 'paid', 'shipped'])
+          )
+        ),
+
+      // 2. Completed Orders (Delivered)
+      this.db
+        .select({ count: count() })
+        .from(schema.orders)
+        .where(
+          and(
+            eq(schema.orders.userId, userId),
+            eq(schema.orders.status, 'delivered')
+          )
+        ),
+
+      // 3. Wishlist Count
+      this.db
+        .select({ count: count() })
+        .from(schema.wishlists)
+        .where(eq(schema.wishlists.userId, userId)),
+    ]);
+
+    return {
+      activeOrders: activeOrders[0].count,
+      completedOrders: completedOrders[0].count,
+      wishlist: wishlistItems[0].count,
+      giftCards: 0, // Placeholder until Gift Card schema exists
+    };
+  }
+
   async createProfile(userId: string, dto: CreateProfileDto) {
     return await this.db.transaction(async (tx) => {
+      // 1. Check for existing profile
       const existing = await tx.query.users.findFirst({
         where: eq(schema.users.id, userId),
       });
@@ -40,29 +82,34 @@ export class UsersService {
         throw new ConflictException('Profile already exists');
       }
 
+      // 2. Generate THIS user's unique referral code
+      const newReferralCode = generateId(dto.firstName);
+
+      // 3. Insert User
       const [newUser] = await tx
         .insert(schema.users)
         .values({
-          id: userId,
+          id: userId, // Ensure this matches the ID column type (string/text)
           email: dto.email,
           firstName: dto.firstName,
           lastName: dto.lastName,
           role: 'customer',
+          referralCode: newReferralCode, // Store their personal code
         })
         .returning();
 
-      // 3. Handle Referral Logic (using tx)
+      // 4. Handle Incoming Referral (If they used someone else's code)
       if (dto.referralCode) {
-        // Find the referrer
-        const referrerRef = await tx.query.referrals.findFirst({
-          where: eq(schema.referrals.code, dto.referralCode),
+        // Find the user who OWNS this code
+        const referrerUser = await tx.query.users.findFirst({
+          where: eq(schema.users.referralCode, dto.referralCode),
         });
 
-        if (referrerRef) {
-          // Create the referral record
+        if (referrerUser) {
+          // Record the referral event
           await tx.insert(schema.referrals).values({
             id: generateId('VINREF'),
-            referrerId: referrerRef.referrerId,
+            referrerId: referrerUser.id,
             refereeId: userId,
             code: dto.referralCode,
             status: 'completed',

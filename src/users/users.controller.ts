@@ -14,6 +14,14 @@ import type { AuthUser } from '../auth/types/auth-user.type';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
+  @Get('stats')
+  @UseGuards(SupabaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get user dashboard stats (Orders, Wishlist)' })
+  async getUserStats(@CurrentUser() user: AuthUser) {
+    return this.usersService.getUserStats(user.userId);
+  }
+
   @Post('create-profile')
   @UseGuards(SupabaseAuthGuard)
   @ApiBearerAuth('JWT-auth')

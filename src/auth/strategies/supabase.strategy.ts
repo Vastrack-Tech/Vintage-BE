@@ -40,6 +40,7 @@ export class SupabaseStrategy extends PassportStrategy(Strategy, 'supabase') {
       birthday: user?.birthday,
       notifyEmail: user?.notifyEmail,
       notifyPhone: user?.notifyPhone,
+      referralCode: user?.referralCode,
     };
   }
 }
