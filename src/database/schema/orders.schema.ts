@@ -50,8 +50,7 @@ export const orderItems = pgTable('order_items', {
     .notNull(),
 
   variantId: varchar('variant_id', { length: 20 })
-    .references(() => variants.id)
-    .notNull(),
+    .references(() => variants.id),
 
   quantity: integer('quantity').default(1),
   priceAtPurchaseNgn: decimal('price_at_purchase_ngn', { precision: 10, scale: 2 }).notNull(),

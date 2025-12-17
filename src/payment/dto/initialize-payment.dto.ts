@@ -1,28 +1,33 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class InitializePaymentDto {
-  @ApiProperty({
-    example: 5000,
-    description: 'Amount in Naira (will be converted to Kobo internally)',
-  })
+  @ApiProperty()
   amount: number;
 
-  @ApiProperty({
-    example: 'user@example.com',
-    description: 'Customer email address',
-  })
+  @ApiProperty({ required: false })
+  amountUsd?: number;
+
+  @ApiProperty()
   email: string;
 
-  @ApiProperty({
-    example: 'VINUSR-849201',
-    description: 'The internal User ID',
-  })
+  @ApiProperty()
   userId: string;
 
   @ApiProperty({
-    example: 'VINORD-123456',
-    description: 'The internal Order ID (Optional)',
-    required: false,
+    example: 'NGN',
+    description: 'Currency to charge (NGN or USD)',
+    enum: ['NGN', 'USD']
   })
-  orderId?: string;
+  currency: 'NGN' | 'USD';
+
+  @ApiProperty({
+    example: [{ productId: '1', variantId: '2', quantity: 1, priceNgn: 5000, priceUsd: 5 }]
+  })
+  items: {
+    productId: string;
+    variantId: string;
+    quantity: number;
+    priceNgn: number;
+    priceUsd: number;
+  }[];
 }
