@@ -15,7 +15,7 @@ export const payments = pgTable('payments', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINPAY')),
-  userId: varchar('user_id', { length: 20 })
+  userId: text('user_id')
     .references(() => users.id)
     .notNull(),
   orderId: varchar('order_id', { length: 20 }).references(() => orders.id), // Optional if funding wallet

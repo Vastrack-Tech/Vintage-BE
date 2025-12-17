@@ -8,7 +8,7 @@ import {
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
-import { eq, and, desc, inArray, sql } from 'drizzle-orm';
+import { eq, and, desc, inArray } from 'drizzle-orm';
 import { GetOrdersDto, OrderFilterStatus } from './dto/get-oders.dto';
 import { CreateOrderDto } from './dto/create-orders';
 
@@ -23,16 +23,14 @@ export class OrdersService {
     const { status = OrderFilterStatus.ALL, page = 1, limit = 10 } = dto;
     const offset = (page - 1) * limit;
 
-    // 1. Build Filters
     const filters: any[] = [eq(schema.orders.userId, userId)];
 
     if (status === OrderFilterStatus.COMPLETED) {
-      filters.push(inArray(schema.orders.status, ['delivered', 'shipped']));
+      filters.push(inArray(schema.orders.status, ['delivered', 'shipped', 'cancelled']));
     } else if (status === OrderFilterStatus.ACTIVE) {
-      filters.push(inArray(schema.orders.status, ['pending', 'paid']));
+      filters.push(inArray(schema.orders.status, ['pending', 'paid', 'processing']));
     }
 
-    // 2. Execute Query
     const data = await this.db.query.orders.findMany({
       where: and(...filters),
       limit: limit,
@@ -43,7 +41,7 @@ export class OrdersService {
           with: {
             variant: {
               with: {
-                product: true, // To get the Image and Title
+                product: true,
               },
             },
           },
@@ -51,22 +49,16 @@ export class OrdersService {
       },
     });
 
-    // 3. Get Count (Simplified for brevity)
-    // In production, use a separate count query for pagination metadata
-
     return { data, meta: { page, limit } };
   }
 
   async createOrder(userId: string, dto: CreateOrderDto) {
-    const RATE = 1500;
-
     return await this.db.transaction(async (tx) => {
       const variantIds = dto.items.map((i) => i.variantId);
 
-      // We are already fetching the product here, so we have access to the ID!
       const dbVariants = await tx.query.variants.findMany({
         where: inArray(schema.variants.id, variantIds),
-        with: { product: true }
+        with: { product: true },
       });
 
       if (dbVariants.length !== variantIds.length) {
@@ -76,10 +68,9 @@ export class OrdersService {
       let totalNgn = 0;
       let totalUsd = 0;
 
-      // FIX 1: Add 'productId' to the type definition here
       const orderItemsData: {
         variantId: string;
-        productId: string; // 👈 Added this
+        productId: string;
         quantity: number;
         priceAtPurchaseNgn: string;
         priceAtPurchaseUsd: string;
@@ -102,7 +93,7 @@ export class OrdersService {
 
         orderItemsData.push({
           variantId: item.variantId,
-          productId: variant.productId, // 👈 FIX 2: Pass the product ID from the variant
+          productId: variant.productId,
           quantity: item.quantity,
           priceAtPurchaseNgn: priceNgn.toString(),
           priceAtPurchaseUsd: priceUsd.toFixed(2),
@@ -124,40 +115,35 @@ export class OrdersService {
         await tx.insert(schema.orderItems).values(
           orderItemsData.map((item) => ({
             orderId: newOrder.id,
-            ...item, // This now includes productId, so the error will vanish
-          }))
+            ...item,
+          })),
         );
       }
 
       return newOrder;
     });
   }
-  
-  // 2. CANCEL ORDER
+
   async cancelOrder(userId: string, orderId: string) {
-    // A. Find Order
     const order = await this.db.query.orders.findFirst({
       where: eq(schema.orders.id, orderId),
     });
 
     if (!order) throw new NotFoundException('Order not found');
 
-    // B. Security Check: Does it belong to user?
     if (order.userId !== userId) {
       throw new ForbiddenException('You can only cancel your own orders');
     }
 
-    // C. Logic Check: Is it too late?
     if (order.status !== 'pending') {
       throw new BadRequestException(
         'Cannot cancel an order that is already paid or shipped',
       );
     }
 
-    // D. Update Status
     const [updatedOrder] = await this.db
       .update(schema.orders)
-      .set({ status: 'cancelled' }) // Ensure 'cancelled' is in your Enum!
+      .set({ status: 'cancelled' })
       .where(eq(schema.orders.id, orderId))
       .returning();
 

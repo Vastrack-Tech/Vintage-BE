@@ -17,7 +17,7 @@ export class CustomersService {
 
         const filters: SQL[] = [eq(schema.users.role, 'customer')];
 
-        // 1. Search Filter (FIXED)
+        // 1. Search Filter
         if (search) {
             const searchFilter = or(
                 ilike(schema.users.firstName, `%${search}%`),
@@ -26,7 +26,6 @@ export class CustomersService {
                 ilike(schema.users.phone, `%${search}%`)
             );
 
-            // Only push if searchFilter is not undefined
             if (searchFilter) {
                 filters.push(searchFilter);
             }
@@ -58,13 +57,40 @@ export class CustomersService {
                 lastName: schema.users.lastName,
                 email: schema.users.email,
                 phone: schema.users.phone,
-                address: schema.users.address,
                 birthday: schema.users.birthday,
                 createdAt: schema.users.createdAt,
+
+                // ---------------------------------------------------------
+                // SMART ADDRESS PARSING
+                // ---------------------------------------------------------
+                // Logic: 
+                // 1. Try to combine address parts from 'addresses' table using ", " separator
+                // 2. If that is empty/null, fall back to the legacy 'users.address' column
+                address: sql<string>`
+                    COALESCE(
+                        NULLIF(
+                            CONCAT_WS(', ', 
+                                ${schema.addresses.addressLine}, 
+                                ${schema.addresses.city}, 
+                                ${schema.addresses.state}, 
+                                ${schema.addresses.postalCode}
+                            ), 
+                            ''
+                        ),
+                        ${schema.users.address}
+                    )
+                `,
+
+                // Aggregated Data
                 totalOrderValue: sql<number>`coalesce(${totalOrderValueSq.totalValue}, 0)`,
             })
             .from(schema.users)
             .leftJoin(totalOrderValueSq, eq(schema.users.id, totalOrderValueSq.userId))
+            // Join Default Address Only
+            .leftJoin(schema.addresses, and(
+                eq(schema.addresses.userId, schema.users.id),
+                eq(schema.addresses.isDefault, true)
+            ))
             .where(and(...filters))
             .limit(limit)
             .offset(offset)
