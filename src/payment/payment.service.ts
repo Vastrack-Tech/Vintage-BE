@@ -30,7 +30,7 @@ export class PaymentService {
 
   async initializePayment(user: { email: string; userId: string }, payload: CheckoutPayload) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
-    const callbackUrl = `${this.configService.get('FRONTEND_URL') || 'http://localhost:3000'}/payment/callback`;
+    const callbackUrl = `${this.configService.get('FRONTEND_URL') || 'https://vintagefrontend-i6mpc.ondigitalocean.app'}/payment/callback`;
 
     const chargeAmount = payload.currency === 'USD'
       ? payload.amountUsd

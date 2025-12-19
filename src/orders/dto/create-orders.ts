@@ -5,15 +5,21 @@ import {
   IsString,
   Min,
   ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 class CreateOrderItemDto {
-  @ApiProperty({ example: 'VINVAR-123' })
+  @ApiProperty({ example: 'VINPROD-123' })
   @IsString()
   @IsNotEmpty()
-  variantId: string;
+  productId: string; // 👈 Added this (Required now)
+
+  @ApiPropertyOptional({ example: 'VINVAR-123' })
+  @IsString()
+  @IsOptional()
+  variantId?: string; // 👈 Made Optional
 
   @ApiProperty({ example: 1 })
   @IsNumber()

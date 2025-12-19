@@ -6,7 +6,7 @@ import { generateId } from '../../database/schema/utils';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetInventoryDto } from './dto/get-inventory.dto';
-import { eq, desc, and, ilike, sql, SQL, gt, lte } from 'drizzle-orm'; // Added SQL type import
+import { eq, desc, and, ilike, sql, SQL, gt, lte } from 'drizzle-orm';
 
 @Injectable()
 export class InventoryService {
