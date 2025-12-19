@@ -102,6 +102,7 @@ export class PaymentService {
       return newOrder;
     });
 
+    // C. Initialize Paystack
     try {
       const response = await axios.post(
         'https://api.paystack.co/transaction/initialize',
@@ -163,6 +164,7 @@ export class PaymentService {
     }
   }
 
+  // 3. WEBHOOK (Backend Notification)
   async handleWebhook(signature: string, payload: any) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 
