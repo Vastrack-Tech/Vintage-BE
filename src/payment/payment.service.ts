@@ -3,11 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 import * as crypto from 'crypto';
 import axios from 'axios';
 
-// Interface for the checkout payload
 interface CheckoutPayload {
   amountNgn: number;
   amountUsd: number;
@@ -29,19 +28,54 @@ export class PaymentService {
     private readonly configService: ConfigService,
   ) { }
 
-  // 1. INITIALIZE PAYMENT (AND CREATE ORDER)
   async initializePayment(user: { email: string; userId: string }, payload: CheckoutPayload) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
-    const callbackUrl = `${this.configService.get('FRONTEND_URL') || 'http://localhost:3000'}/payment/callback`;
+    const callbackUrl = `${this.configService.get('FRONTEND_URL') || 'https://vintagefrontend-i6mpc.ondigitalocean.app'}/payment/callback`;
 
-    // A. Determine Charge Amount based on Currency
     const chargeAmount = payload.currency === 'USD'
       ? payload.amountUsd
       : payload.amountNgn;
 
-    // B. Start Transaction: Create Order & Items
     const order = await this.db.transaction(async (tx) => {
-      // 1. Create Order Record
+      const productIds = payload.items.map((i) => i.productId);
+      const variantIds = payload.items
+        .filter((i) => i.variantId)
+        .map((i) => i.variantId);
+
+      const dbProducts = await tx.query.products.findMany({
+        where: inArray(schema.products.id, productIds),
+      });
+
+      const dbVariants = variantIds.length > 0
+        ? await tx.query.variants.findMany({
+          where: inArray(schema.variants.id, variantIds),
+        })
+        : [];
+
+      for (const item of payload.items) {
+        if (item.variantId) {
+          const variant = dbVariants.find((v) => v.id === item.variantId);
+
+          if (!variant) {
+            throw new BadRequestException(`Variant for product ${item.productId} not found`);
+          }
+
+          if ((variant.stockQuantity || 0) < item.quantity) {
+            throw new BadRequestException(`Insufficient stock for ${variant.name}`);
+          }
+        } else {
+          const product = dbProducts.find((p) => p.id === item.productId);
+
+          if (!product) {
+            throw new BadRequestException(`Product not found`);
+          }
+
+          if ((product.stockQuantity || 0) < item.quantity) {
+            throw new BadRequestException(`Insufficient stock for ${product.title}`);
+          }
+        }
+      }
+
       const [newOrder] = await tx
         .insert(schema.orders)
         .values({
@@ -53,7 +87,6 @@ export class PaymentService {
         })
         .returning();
 
-      // 2. Create Order Items
       if (payload.items.length > 0) {
         await tx.insert(schema.orderItems).values(
           payload.items.map((item) => ({
@@ -75,11 +108,11 @@ export class PaymentService {
         'https://api.paystack.co/transaction/initialize',
         {
           email: user.email,
-          amount: Math.round(chargeAmount * 100), // Convert to Kobo/Cents
-          currency: payload.currency,             // Pass Currency
+          amount: Math.round(chargeAmount * 100),
+          currency: payload.currency,
           metadata: {
             userId: user.userId,
-            orderId: order.id,                    // Link Paystack ref to this Order
+            orderId: order.id,
           },
           callback_url: callbackUrl,
         },
@@ -93,7 +126,6 @@ export class PaymentService {
 
       const data = response.data.data;
 
-      // D. Create Payment Record (Linked to Order)
       await this.db.insert(schema.payments).values({
         userId: user.userId,
         orderId: order.id,
@@ -103,14 +135,13 @@ export class PaymentService {
         status: 'pending',
       });
 
-      return data; // Returns { authorization_url, access_code, reference }
+      return data;
     } catch (error: any) {
       console.error('Paystack Init Error:', error.response?.data || error.message);
       throw new BadRequestException('Payment initialization failed');
     }
   }
 
-  // 2. VERIFY PAYMENT (Frontend Callback)
   async verifyPayment(reference: string) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 
@@ -137,7 +168,6 @@ export class PaymentService {
   async handleWebhook(signature: string, payload: any) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 
-    // Validate Signature
     const hash = crypto
       .createHmac('sha512', secretKey)
       .update(JSON.stringify(payload))
@@ -157,40 +187,31 @@ export class PaymentService {
     return { status: 'ok' };
   }
 
-  // --- PRIVATE HELPER: Updates Payment, Order AND Inventory ---
   private async fulfillOrder(reference: string, metadata: any) {
     await this.db.transaction(async (tx) => {
-      // 1. Find the payment
       const payment = await tx.query.payments.findFirst({
         where: eq(schema.payments.reference, reference),
       });
 
-      // Idempotency check: If not found or already success, stop.
       if (!payment || payment.status === 'success') return;
 
-      // 2. Update Payment Status
       await tx
         .update(schema.payments)
         .set({ status: 'success', metadata: metadata })
         .where(eq(schema.payments.reference, reference));
 
-      // 3. Update Order Status & Manage Inventory
       if (payment.orderId) {
-        // A. Mark order as paid
         await tx
           .update(schema.orders)
           .set({ status: 'paid' })
           .where(eq(schema.orders.id, payment.orderId));
 
-        // B. Fetch Order Items to determine what to deduct
         const items = await tx.query.orderItems.findMany({
           where: eq(schema.orderItems.orderId, payment.orderId),
         });
 
-        // C. Decrement Stock Atomically
         for (const item of items) {
           if (item.variantId) {
-            // If it's a variant, reduce variant stock
             await tx
               .update(schema.variants)
               .set({
@@ -198,7 +219,6 @@ export class PaymentService {
               })
               .where(eq(schema.variants.id, item.variantId));
           } else {
-            // If no variant, reduce main product stock
             await tx
               .update(schema.products)
               .set({

@@ -12,7 +12,6 @@ import {
   gte,
   lte,
   sql,
-  arrayContains,
 } from 'drizzle-orm';
 import { GetProductsDto } from './dto/get-products.dto';
 
@@ -23,9 +22,7 @@ export class ProductsService {
     private readonly db: NodePgDatabase<typeof schema>,
   ) { }
 
-
   async getCategories() {
-    // Fetches all categories sorted alphabetically
     return await this.db.query.categories.findMany({
       orderBy: (categories, { asc }) => [asc(categories.name)],
     });
@@ -91,16 +88,22 @@ export class ProductsService {
         orderBy = desc(schema.products.createdAt);
     }
 
-    const data = await this.db.query.products.findMany({
+    const dbData = await this.db.query.products.findMany({
       where: and(...filters),
       limit: limit,
       offset: offset,
       orderBy: orderBy,
       with: {
         category: true,
-        // variants: true, // Optional: Include variants in list view? usually heavy.
       },
     });
+
+    // Transform Data: Add 'isSoldOut' flag
+    const data = dbData.map((product) => ({
+      ...product,
+      // FIX 1: Handle null stockQuantity safely
+      isSoldOut: (product.stockQuantity ?? 0) <= 0,
+    }));
 
     const countResult = await this.db
       .select({ count: sql<number>`count(*)` })
@@ -138,6 +141,22 @@ export class ProductsService {
     if (!product)
       throw new NotFoundException(`Product with ID ${id} not found`);
 
-    return product;
+    // FIX: Smarter Sold Out Logic
+    const hasVariants = product.variants.length > 0;
+
+    let isSoldOut = false;
+
+    if (hasVariants) {
+      // If it has variants, it is sold out ONLY if ALL variants are <= 0
+      isSoldOut = product.variants.every((v) => (v.stockQuantity ?? 0) <= 0);
+    } else {
+      // If no variants, check the main product stock
+      isSoldOut = (product.stockQuantity ?? 0) <= 0;
+    }
+
+    return {
+      ...product,
+      isSoldOut,
+    };
   }
 }

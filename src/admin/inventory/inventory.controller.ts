@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Patch, Param, Get, UseGuards, Query } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Get, UseGuards, Query, Delete } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { SupabaseAuthGuard } from '../../auth/guard/auth.guard';
 import { RolesGuard } from '../../auth/guard/roles.guard';
@@ -55,5 +55,13 @@ export class InventoryController {
     @ApiParam({ name: 'id', example: 'VINPROD-123' })
     async update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
         return this.inventoryService.update(id, dto);
+    }
+
+    @Delete('inventory/:id')
+    @Roles('admin')
+    @ApiOperation({ summary: 'Delete a product and its variants' })
+    @ApiParam({ name: 'id', example: 'VINPROD-123' })
+    async delete(@Param('id') id: string) {
+        return this.inventoryService.delete(id);
     }
 }

@@ -39,11 +39,8 @@ export class OrdersService {
       with: {
         items: {
           with: {
-            variant: {
-              with: {
-                product: true,
-              },
-            },
+            product: true,
+            variant: true,
           },
         },
       },
@@ -54,46 +51,70 @@ export class OrdersService {
 
   async createOrder(userId: string, dto: CreateOrderDto) {
     return await this.db.transaction(async (tx) => {
-      const variantIds = dto.items.map((i) => i.variantId);
+      // 👇 FIX: Strictly type the array as string[] by filtering out undefined/null
+      const variantIds = dto.items
+        .map((i) => i.variantId)
+        .filter((id): id is string => !!id);
 
-      const dbVariants = await tx.query.variants.findMany({
-        where: inArray(schema.variants.id, variantIds),
-        with: { product: true },
-      });
+      // Only fetch variants if there are any to fetch
+      const dbVariants = variantIds.length > 0
+        ? await tx.query.variants.findMany({
+          where: inArray(schema.variants.id, variantIds),
+          with: { product: true },
+        })
+        : [];
 
-      if (dbVariants.length !== variantIds.length) {
-        throw new NotFoundException('One or more products not found');
+      // Check validation only for items that HAVE a variantId
+      if (variantIds.length > 0 && dbVariants.length !== variantIds.length) {
+        throw new NotFoundException('One or more product variants not found');
       }
 
       let totalNgn = 0;
       let totalUsd = 0;
 
       const orderItemsData: {
-        variantId: string;
+        variantId: string | null;
         productId: string;
         quantity: number;
         priceAtPurchaseNgn: string;
         priceAtPurchaseUsd: string;
       }[] = [];
 
+      // Fetch all products involved to get prices for non-variant items
+      const productIds = dto.items.map(i => i.productId);
+      const dbProducts = await tx.query.products.findMany({
+        where: inArray(schema.products.id, productIds)
+      });
+
       for (const item of dto.items) {
-        const variant = dbVariants.find((v) => v.id === item.variantId);
-        if (!variant) throw new NotFoundException('Variant not found');
+        let priceNgn = 0;
+        let priceUsd = 0;
 
-        const priceNgn = variant.priceOverrideNgn
-          ? Number(variant.priceOverrideNgn)
-          : Number(variant.product.priceNgn);
+        if (item.variantId) {
+          const variant = dbVariants.find((v) => v.id === item.variantId);
+          if (!variant) throw new NotFoundException('Variant not found');
 
-        const priceUsd = variant.priceOverrideUsd
-          ? Number(variant.priceOverrideUsd)
-          : Number(variant.product.priceUsd);
+          priceNgn = variant.priceOverrideNgn
+            ? Number(variant.priceOverrideNgn)
+            : Number(variant.product.priceNgn);
+
+          priceUsd = variant.priceOverrideUsd
+            ? Number(variant.priceOverrideUsd)
+            : Number(variant.product.priceUsd);
+        } else {
+          const product = dbProducts.find(p => p.id === item.productId);
+          if (!product) throw new NotFoundException('Product not found');
+
+          priceNgn = Number(product.priceNgn);
+          priceUsd = Number(product.priceUsd);
+        }
 
         totalNgn += priceNgn * item.quantity;
         totalUsd += priceUsd * item.quantity;
 
         orderItemsData.push({
-          variantId: item.variantId,
-          productId: variant.productId,
+          variantId: item.variantId || null,
+          productId: item.productId,
           quantity: item.quantity,
           priceAtPurchaseNgn: priceNgn.toString(),
           priceAtPurchaseUsd: priceUsd.toFixed(2),

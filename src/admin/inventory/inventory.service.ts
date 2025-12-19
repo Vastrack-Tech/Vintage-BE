@@ -6,7 +6,7 @@ import { generateId } from '../../database/schema/utils';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetInventoryDto } from './dto/get-inventory.dto';
-import { eq, desc, and, ilike, sql, SQL, gt, lte } from 'drizzle-orm'; // Added SQL type import
+import { eq, desc, and, ilike, sql, SQL, gt, lte } from 'drizzle-orm';
 
 @Injectable()
 export class InventoryService {
@@ -113,42 +113,63 @@ export class InventoryService {
     }
 
     async update(id: string, dto: UpdateProductDto) {
-        const product = await this.db.query.products.findFirst({
-            where: eq(schema.products.id, id),
+        return await this.db.transaction(async (tx) => {
+            const product = await tx.query.products.findFirst({
+                where: eq(schema.products.id, id),
+            });
+
+            if (!product) throw new NotFoundException('Product not found');
+
+            // 1. Sanitize & Update Product
+            const {
+                // @ts-ignore
+                createdAt,
+                // @ts-ignore
+                updatedAt,
+                // @ts-ignore
+                id: _,
+                variants, // 👈 Extract variants to handle separately
+                ...cleanDto
+            } = dto as any;
+
+            const [updatedProduct] = await tx
+                .update(schema.products)
+                .set({
+                    ...cleanDto,
+                    priceNgn: dto.priceNgn?.toString(),
+                    priceUsd: dto.priceUsd?.toString(),
+                    stockQuantity: dto.stockQuantity,
+                    compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
+                    compareAtPriceUsd: dto.compareAtPriceUsd?.toString(),
+                    updatedAt: new Date(),
+                })
+                .where(eq(schema.products.id, id))
+                .returning();
+
+            // 2. Handle Variants Update (Delete All -> Re-insert)
+            if (variants) {
+                // A. Delete existing variants
+                await tx.delete(schema.variants).where(eq(schema.variants.productId, id));
+
+                // B. Insert new variants
+                if (variants.length > 0) {
+                    await tx.insert(schema.variants).values(
+                        variants.map((v: any) => ({
+                            id: generateId('VINVAR'),
+                            productId: id,
+                            name: v.name,
+                            stockQuantity: v.stockQuantity,
+                            attributes: v.attributes || {},
+                            priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
+                            priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
+                            sku: `SKU-${generateId('VAR').split('-')[1]}`,
+                        }))
+                    );
+                }
+            }
+
+            return updatedProduct;
         });
-
-        if (!product) throw new NotFoundException('Product not found');
-
-        // 1. Sanitize: Remove system fields that shouldn't be updated manually
-        // We explicitly extract them to prevent Drizzle from crashing on string timestamps
-        const {
-            // @ts-ignore - these might not exist on the type but might exist in the runtime object
-            createdAt,
-            // @ts-ignore
-            updatedAt,
-            // @ts-ignore
-            id: _, // exclude ID
-            ...cleanDto
-        } = dto as any;
-
-        const [updatedProduct] = await this.db
-            .update(schema.products)
-            .set({
-                ...cleanDto,
-                // Ensure decimal fields are strings
-                priceNgn: dto.priceNgn?.toString(),
-                priceUsd: dto.priceUsd?.toString(),
-                stockQuantity: dto.stockQuantity,
-                compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
-                compareAtPriceUsd: dto.compareAtPriceUsd?.toString(),
-
-                // Manually set updatedAt to a valid Date object
-                updatedAt: new Date(),
-            })
-            .where(eq(schema.products.id, id))
-            .returning();
-
-        return updatedProduct;
     }
 
     async findAll(query: GetInventoryDto) {
@@ -222,5 +243,24 @@ export class InventoryService {
         });
         if (!product) throw new NotFoundException('Product not found');
         return product;
+    }
+
+    async delete(id: string) {
+        return await this.db.transaction(async (tx) => {
+            const product = await tx.query.products.findFirst({
+                where: eq(schema.products.id, id),
+            });
+
+            if (!product) {
+                throw new NotFoundException('Product not found');
+            }
+
+
+            await tx.delete(schema.variants).where(eq(schema.variants.productId, id));
+
+            await tx.delete(schema.products).where(eq(schema.products.id, id));
+
+            return { success: true, message: `Product ${id} and its variants deleted successfully` };
+        });
     }
 }
