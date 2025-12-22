@@ -11,6 +11,7 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { SupportModule } from './support/support.module';
 import { AdminModule } from './admin/admin.module';
+import { RequestsModule } from './requests/request.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { AdminModule } from './admin/admin.module';
     OrdersModule,
     WishlistModule,
     SupportModule,
-    AdminModule
+    AdminModule,
+    RequestsModule
   ],
   controllers: [AppController, AuthController],
   providers: [],
