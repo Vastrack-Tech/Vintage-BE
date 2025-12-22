@@ -14,15 +14,12 @@ export class InventoryService {
         @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<typeof schema>,
     ) { }
 
-    // Mock Rate for auto-conversion if USD is missing
     private readonly EXCHANGE_RATE = 1500;
 
     async getStats() {
-        // 1. Total Products
         const totalProductsQuery = await this.db.select({ count: sql<number>`count(*)` }).from(schema.products);
         const totalProducts = Number(totalProductsQuery[0]?.count || 0);
 
-        // 2. New Products (Last 7 Days)
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -31,46 +28,38 @@ export class InventoryService {
             .where(gt(schema.products.createdAt, sevenDaysAgo));
         const newProducts = Number(newProductsQuery[0]?.count || 0);
 
-        // 3. Empty Products (Out of Stock)
         const emptyProductsQuery = await this.db.select({ count: sql<number>`count(*)` })
             .from(schema.products)
             .where(lte(schema.products.stockQuantity, 0));
         const emptyProducts = Number(emptyProductsQuery[0]?.count || 0);
 
-        // 4. Products Sold (Requires Orders Module - Mock for now)
-        // TODO: Join with 'order_items' table when Orders module is ready
         const productsSold = 0;
 
         return {
-            totalProducts: { value: totalProducts, trend: 12, trendDirection: 'up' }, // Trends can be calculated by comparing vs previous week
+            totalProducts: { value: totalProducts, trend: 12, trendDirection: 'up' },
             newProducts: { value: newProducts, trend: 5, trendDirection: 'up' },
             productsSold: { value: productsSold, trend: 0, trendDirection: 'down' },
             emptyProducts: { value: emptyProducts, trend: 2, trendDirection: 'down' },
         };
     }
 
-    // --- CATEGORIES ---
     async getCategories() {
         return await this.db.query.categories.findMany({
             orderBy: (categories, { asc }) => [asc(categories.name)],
         });
     }
 
-    // --- PRODUCTS ---
     async create(dto: CreateProductDto) {
         return await this.db.transaction(async (tx) => {
-            // 0. Verify Category Exists
             const category = await tx.query.categories.findFirst({
                 where: eq(schema.categories.id, dto.categoryId)
             });
             if (!category) throw new BadRequestException("Invalid Category ID");
 
-            // 1. Calculate USD if not provided
             const priceUsd = dto.priceUsd ?? Number((dto.priceNgn / this.EXCHANGE_RATE).toFixed(2));
             const compareUsd = dto.compareAtPriceUsd
                 ?? (dto.compareAtPriceNgn ? Number((dto.compareAtPriceNgn / this.EXCHANGE_RATE).toFixed(2)) : null);
 
-            // 2. Insert Product
             const [newProduct] = await tx
                 .insert(schema.products)
                 .values({
@@ -92,7 +81,6 @@ export class InventoryService {
                 })
                 .returning();
 
-            // 3. Insert Variants
             if (dto.variants && dto.variants.length > 0) {
                 await tx.insert(schema.variants).values(
                     dto.variants.map((v) => ({
@@ -121,6 +109,8 @@ export class InventoryService {
             if (!product) throw new NotFoundException('Product not found');
 
             // 1. Sanitize & Update Product
+            // 🛑 FIX: We must remove 'category', 'reviews', 'variants' from the DTO
+            // because they are relations, not columns. Drizzle will crash if we try to set them.
             const {
                 // @ts-ignore
                 createdAt,
@@ -128,7 +118,11 @@ export class InventoryService {
                 updatedAt,
                 // @ts-ignore
                 id: _,
-                variants, // 👈 Extract variants to handle separately
+                variants,
+                // @ts-ignore
+                category, // 👈 REMOVE THIS
+                // @ts-ignore
+                reviews,  // 👈 REMOVE THIS
                 ...cleanDto
             } = dto as any;
 
@@ -176,11 +170,9 @@ export class InventoryService {
         const { page = 1, limit = 10, search, categoryId, minPrice, maxPrice } = query;
         const offset = (page - 1) * limit;
 
-        // 1. Build Dynamic Filters (Explicitly Typed)
         const filters: SQL[] = [];
 
         if (search) {
-            // Case-insensitive search on title
             filters.push(ilike(schema.products.title, `%${search}%`));
         }
 
@@ -189,7 +181,6 @@ export class InventoryService {
         }
 
         if (minPrice) {
-            // Cast decimal column to numeric for comparison
             filters.push(sql`cast(${schema.products.priceNgn} as numeric) >= ${minPrice}`);
         }
 
@@ -197,11 +188,9 @@ export class InventoryService {
             filters.push(sql`cast(${schema.products.priceNgn} as numeric) <= ${maxPrice}`);
         }
 
-        // 2. Execute Query
         const whereClause = filters.length > 0 ? and(...filters) : undefined;
 
         const [data, totalCount] = await Promise.all([
-            // A. Get Data
             this.db.query.products.findMany({
                 where: whereClause,
                 limit: limit,
@@ -212,8 +201,6 @@ export class InventoryService {
                     variants: true,
                 },
             }),
-
-            // B. Get Total Count (optimized)
             this.db
                 .select({ count: sql<number>`count(*)` })
                 .from(schema.products)
@@ -221,7 +208,6 @@ export class InventoryService {
                 .then((res) => Number(res[0]?.count || 0)),
         ]);
 
-        // 3. Return Pagination Metadata
         return {
             data,
             meta: {
@@ -255,9 +241,7 @@ export class InventoryService {
                 throw new NotFoundException('Product not found');
             }
 
-
             await tx.delete(schema.variants).where(eq(schema.variants.productId, id));
-
             await tx.delete(schema.products).where(eq(schema.products.id, id));
 
             return { success: true, message: `Product ${id} and its variants deleted successfully` };

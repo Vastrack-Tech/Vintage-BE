@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Patch, Get } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Patch, Get, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { SupabaseAuthGuard } from '../auth/guard/auth.guard';
 import { CurrentUser } from '../auth/decorator/user.decorator';
@@ -8,6 +8,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateAddressDto } from './dto/address.dto';
 import { ChangePasswordDto, UpdateNotificationDto } from './dto/settings.dto';
 import type { AuthUser } from '../auth/types/auth-user.type';
+import { UpdateAddressDto } from './dto/update-address.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -59,6 +60,17 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   async getAddresses(@CurrentUser() user: AuthUser) {
     return this.usersService.getAddresses(user.userId);
+  }
+
+  @Patch('address/:id')
+  @UseGuards(SupabaseAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  async updateAddress(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+    @Body() body: UpdateAddressDto,
+  ) {
+    return this.usersService.updateAddress(user.userId, id, body);
   }
 
   // --- NEW SETTINGS ROUTES ---

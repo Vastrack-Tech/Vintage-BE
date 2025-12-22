@@ -10,8 +10,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateAddressDto } from './dto/address.dto';
 import { ChangePasswordDto, UpdateNotificationDto } from './dto/settings.dto';
 import { generateId } from '../database/schema';
-import { generate } from 'rxjs';
-
+import { UpdateAddressDto } from './dto/update-address.dto';
 @Injectable()
 export class UsersService {
   private supabaseAdmin;
@@ -175,6 +174,35 @@ export class UsersService {
     return await this.db.query.addresses.findMany({
       where: eq(schema.addresses.userId, userId),
       orderBy: (addresses, { desc }) => [desc(addresses.isDefault), desc(addresses.createdAt)],
+    });
+  }
+
+  async updateAddress(userId: string, addressId: string, dto: UpdateAddressDto) {
+    return await this.db.transaction(async (tx) => {
+      // 1. Verify ownership
+      const existing = await tx.query.addresses.findFirst({
+        where: and(eq(schema.addresses.id, addressId), eq(schema.addresses.userId, userId)),
+      });
+
+      if (!existing) throw new NotFoundException('Address not found');
+
+      // 2. Handle Default Logic
+      if (dto.isDefault) {
+        await tx.update(schema.addresses)
+          .set({ isDefault: false })
+          .where(eq(schema.addresses.userId, userId));
+      }
+
+      // 3. Update Address
+      const [updatedAddress] = await tx.update(schema.addresses)
+        .set({
+          ...dto,
+          updatedAt: new Date(),
+        })
+        .where(eq(schema.addresses.id, addressId))
+        .returning();
+
+      return updatedAddress;
     });
   }
 
