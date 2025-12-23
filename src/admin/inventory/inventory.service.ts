@@ -69,11 +69,12 @@ export class InventoryService {
                     description: dto.description,
                     stockQuantity: dto.stockQuantity || 0,
                     priceNgn: dto.priceNgn.toString(),
-                    priceUsd: priceUsd.toString(),
+                    priceUsd: dto.priceUsd.toString(),
                     compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
-                    compareAtPriceUsd: compareUsd?.toString(),
+                    compareAtPriceUsd: dto.compareAtPriceUsd?.toString(),
                     gallery: dto.gallery || [],
                     tags: dto.tags || [],
+                    options: dto.options || [], // 👈 Save options
                     isHot: dto.isHot || false,
                     isActive: dto.isActive ?? true,
                     features: dto.features,
@@ -81,6 +82,7 @@ export class InventoryService {
                 })
                 .returning();
 
+            // 2. Insert Variants
             if (dto.variants && dto.variants.length > 0) {
                 await tx.insert(schema.variants).values(
                     dto.variants.map((v) => ({
@@ -91,6 +93,7 @@ export class InventoryService {
                         attributes: v.attributes || {},
                         priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
                         priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
+                        image: v.image || null, // 👈 Save variant image
                         sku: `SKU-${generateId('VAR').split('-')[1]}`,
                     }))
                 );
@@ -99,7 +102,6 @@ export class InventoryService {
             return newProduct;
         });
     }
-
     async update(id: string, dto: UpdateProductDto) {
         return await this.db.transaction(async (tx) => {
             const product = await tx.query.products.findFirst({
@@ -113,28 +115,20 @@ export class InventoryService {
             // because they are relations, not columns. Drizzle will crash if we try to set them.
             const {
                 // @ts-ignore
-                createdAt,
-                // @ts-ignore
-                updatedAt,
-                // @ts-ignore
-                id: _,
-                variants,
-                // @ts-ignore
-                category, // 👈 REMOVE THIS
-                // @ts-ignore
-                reviews,  // 👈 REMOVE THIS
+                createdAt, updatedAt, id: _, variants, category, reviews,
                 ...cleanDto
             } = dto as any;
 
+            // 1. Update Product
             const [updatedProduct] = await tx
                 .update(schema.products)
                 .set({
                     ...cleanDto,
                     priceNgn: dto.priceNgn?.toString(),
                     priceUsd: dto.priceUsd?.toString(),
-                    stockQuantity: dto.stockQuantity,
                     compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
                     compareAtPriceUsd: dto.compareAtPriceUsd?.toString(),
+                    options: dto.options, // 👈 Update options
                     updatedAt: new Date(),
                 })
                 .where(eq(schema.products.id, id))
@@ -142,10 +136,8 @@ export class InventoryService {
 
             // 2. Handle Variants Update (Delete All -> Re-insert)
             if (variants) {
-                // A. Delete existing variants
                 await tx.delete(schema.variants).where(eq(schema.variants.productId, id));
 
-                // B. Insert new variants
                 if (variants.length > 0) {
                     await tx.insert(schema.variants).values(
                         variants.map((v: any) => ({
@@ -156,6 +148,7 @@ export class InventoryService {
                             attributes: v.attributes || {},
                             priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
                             priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
+                            image: v.image || null, // 👈 Update variant image
                             sku: `SKU-${generateId('VAR').split('-')[1]}`,
                         }))
                     );
