@@ -235,15 +235,22 @@ export class PaymentService {
 
         for (const item of items) {
           if (item.variantId) {
-            // Subtract from Variant Stock
+            // 1. Subtract from Variant
             await tx
               .update(schema.variants)
               .set({
                 stockQuantity: sql`${schema.variants.stockQuantity} - ${item.quantity}`,
               })
               .where(eq(schema.variants.id, item.variantId));
+
+            // 2. ALSO Subtract from Main Product (to keep total accurate)
+            await tx
+              .update(schema.products)
+              .set({
+                stockQuantity: sql`${schema.products.stockQuantity} - ${item.quantity}`,
+              })
+              .where(eq(schema.products.id, item.productId));
           } else {
-            // Subtract from Main Product Stock (if no variant)
             await tx
               .update(schema.products)
               .set({

@@ -16,6 +16,7 @@ export class InventoryService {
 
     private readonly EXCHANGE_RATE = 1500;
 
+    // ... (getStats and getCategories remain unchanged) ...
     async getStats() {
         const totalProductsQuery = await this.db.select({ count: sql<number>`count(*)` }).from(schema.products);
         const totalProducts = Number(totalProductsQuery[0]?.count || 0);
@@ -56,9 +57,11 @@ export class InventoryService {
             });
             if (!category) throw new BadRequestException("Invalid Category ID");
 
-            const priceUsd = dto.priceUsd ?? Number((dto.priceNgn / this.EXCHANGE_RATE).toFixed(2));
-            const compareUsd = dto.compareAtPriceUsd
-                ?? (dto.compareAtPriceNgn ? Number((dto.compareAtPriceNgn / this.EXCHANGE_RATE).toFixed(2)) : null);
+            // 👇 FIX: Calculate Total Stock from Variants
+            let totalStock = dto.stockQuantity || 0;
+            if (dto.variants && dto.variants.length > 0) {
+                totalStock = dto.variants.reduce((sum, v) => sum + Number(v.stockQuantity || 0), 0);
+            }
 
             const [newProduct] = await tx
                 .insert(schema.products)
@@ -67,14 +70,14 @@ export class InventoryService {
                     categoryId: dto.categoryId,
                     title: dto.title,
                     description: dto.description,
-                    stockQuantity: dto.stockQuantity || 0,
+                    stockQuantity: totalStock, // 👈 Use calculated sum
                     priceNgn: dto.priceNgn.toString(),
                     priceUsd: dto.priceUsd.toString(),
                     compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
                     compareAtPriceUsd: dto.compareAtPriceUsd?.toString(),
                     gallery: dto.gallery || [],
                     tags: dto.tags || [],
-                    options: dto.options || [], // 👈 Save options
+                    options: dto.options || [],
                     isHot: dto.isHot || false,
                     isActive: dto.isActive ?? true,
                     features: dto.features,
@@ -82,7 +85,6 @@ export class InventoryService {
                 })
                 .returning();
 
-            // 2. Insert Variants
             if (dto.variants && dto.variants.length > 0) {
                 await tx.insert(schema.variants).values(
                     dto.variants.map((v) => ({
@@ -93,7 +95,7 @@ export class InventoryService {
                         attributes: v.attributes || {},
                         priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
                         priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
-                        image: v.image || null, // 👈 Save variant image
+                        image: v.image || null,
                         sku: `SKU-${generateId('VAR').split('-')[1]}`,
                     }))
                 );
@@ -102,6 +104,7 @@ export class InventoryService {
             return newProduct;
         });
     }
+
     async update(id: string, dto: UpdateProductDto) {
         return await this.db.transaction(async (tx) => {
             const product = await tx.query.products.findFirst({
@@ -110,48 +113,70 @@ export class InventoryService {
 
             if (!product) throw new NotFoundException('Product not found');
 
-            // 1. Sanitize & Update Product
-            // 🛑 FIX: We must remove 'category', 'reviews', 'variants' from the DTO
-            // because they are relations, not columns. Drizzle will crash if we try to set them.
             const {
                 // @ts-ignore
                 createdAt, updatedAt, id: _, variants, category, reviews,
                 ...cleanDto
             } = dto as any;
 
-            // 1. Update Product
+            // Calculate Total Stock
+            let totalStock = dto.stockQuantity || product.stockQuantity;
+            if (variants && variants.length > 0) {
+                totalStock = variants.reduce((sum: number, v: any) => sum + Number(v.stockQuantity || 0), 0);
+            }
+
+            // 1. Update Product Details
             const [updatedProduct] = await tx
                 .update(schema.products)
                 .set({
                     ...cleanDto,
+                    stockQuantity: totalStock,
                     priceNgn: dto.priceNgn?.toString(),
                     priceUsd: dto.priceUsd?.toString(),
                     compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
                     compareAtPriceUsd: dto.compareAtPriceUsd?.toString(),
-                    options: dto.options, // 👈 Update options
+                    options: dto.options,
                     updatedAt: new Date(),
                 })
                 .where(eq(schema.products.id, id))
                 .returning();
 
-            // 2. Handle Variants Update (Delete All -> Re-insert)
-            if (variants) {
-                await tx.delete(schema.variants).where(eq(schema.variants.productId, id));
+            // 2. SMART VARIANTS UPDATE (Fixes the crash)
+            if (variants && variants.length > 0) {
+                // Get all currently existing variants for this product
+                const existingVariants = await tx.query.variants.findMany({
+                    where: eq(schema.variants.productId, id)
+                });
 
-                if (variants.length > 0) {
-                    await tx.insert(schema.variants).values(
-                        variants.map((v: any) => ({
+                for (const v of variants) {
+                    // Match by Name (e.g., "Red / 18 inch")
+                    const existing = existingVariants.find(ev => ev.name === v.name);
+
+                    if (existing) {
+                        // UPDATE existing variant
+                        await tx.update(schema.variants)
+                            .set({
+                                stockQuantity: Number(v.stockQuantity),
+                                priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
+                                priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
+                                image: v.image || null,
+                                attributes: v.attributes || existing.attributes,
+                            })
+                            .where(eq(schema.variants.id, existing.id));
+                    } else {
+                        // INSERT new variant
+                        await tx.insert(schema.variants).values({
                             id: generateId('VINVAR'),
                             productId: id,
                             name: v.name,
-                            stockQuantity: v.stockQuantity,
+                            stockQuantity: Number(v.stockQuantity),
                             attributes: v.attributes || {},
                             priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
                             priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
-                            image: v.image || null, // 👈 Update variant image
+                            image: v.image || null,
                             sku: `SKU-${generateId('VAR').split('-')[1]}`,
-                        }))
-                    );
+                        });
+                    }
                 }
             }
 
@@ -159,6 +184,7 @@ export class InventoryService {
         });
     }
 
+    // ... (findAll, findOne, delete remain unchanged) ...
     async findAll(query: GetInventoryDto) {
         const { page = 1, limit = 10, search, categoryId, minPrice, maxPrice } = query;
         const offset = (page - 1) * limit;
