@@ -19,7 +19,7 @@ export class PaymentController {
       {
         amountNgn: body.amount,
         amountUsd: body.amountUsd || 0,
-        currency: body.currency, // 👈 Added this line to fix the error
+        currency: body.currency,
         items: body.items || []
       }
     );

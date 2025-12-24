@@ -10,9 +10,9 @@ import { relations } from 'drizzle-orm';
 import { orderStatusEnum } from './enums';
 import { generateId } from './utils';
 import { users } from './users.schema';
-import { variants, products } from './products.schema'; // 👈 Import products
+import { variants, products } from './products.schema';
 
-// --- ORDERS ---
+// --- ORDERS (Unchanged) ---
 export const orders = pgTable('orders', {
   id: varchar('id', { length: 20 })
     .primaryKey()
@@ -41,6 +41,7 @@ export const orderItems = pgTable('order_items', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINITM')),
+
   orderId: varchar('order_id', { length: 20 })
     .references(() => orders.id)
     .notNull(),
@@ -51,6 +52,9 @@ export const orderItems = pgTable('order_items', {
 
   variantId: varchar('variant_id', { length: 20 })
     .references(() => variants.id),
+
+  // 👇 NEW: Persist the specific variant name at time of purchase
+  variantName: text('variant_name'),
 
   quantity: integer('quantity').default(1),
   priceAtPurchaseNgn: decimal('price_at_purchase_ngn', { precision: 10, scale: 2 }).notNull(),

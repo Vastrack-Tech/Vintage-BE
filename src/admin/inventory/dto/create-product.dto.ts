@@ -2,10 +2,21 @@ import { IsString, IsNumber, IsArray, ValidateNested, IsBoolean, IsOptional } fr
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateVariantDto {
-    @ApiProperty()
+export class ProductOptionDto {
+    @ApiProperty({ example: 'Length' })
     @IsString()
-    name: string; // e.g. "18 inch - Natural"
+    name: string;
+
+    @ApiProperty({ example: ['12', '14', '16'] })
+    @IsArray()
+    @IsString({ each: true })
+    values: string[];
+}
+
+export class CreateVariantDto {
+    @ApiProperty({ example: '12 inch / Natural' })
+    @IsString()
+    name: string;
 
     @ApiProperty()
     @IsNumber()
@@ -21,9 +32,14 @@ export class CreateVariantDto {
     @IsNumber()
     priceOverrideUsd?: number;
 
-    @ApiProperty()
+    @ApiProperty({ example: { Length: '12', Color: 'Natural' } })
     @IsOptional()
-    attributes: Record<string, any>; // { length: "18", color: "Natural" }
+    attributes: Record<string, any>;
+
+    @ApiPropertyOptional({ example: 'https://res.cloudinary.com/...' })
+    @IsOptional()
+    @IsString()
+    image?: string; // 👈 NEW
 }
 
 export class CreateProductDto {
@@ -43,15 +59,15 @@ export class CreateProductDto {
     @IsNumber()
     stockQuantity: number;
 
-    @ApiProperty({ description: 'Selling Price (Naira)' })
+    @ApiProperty()
     @IsNumber()
     priceNgn: number;
 
-    @ApiProperty({ description: 'Selling Price (USD)' })
+    @ApiProperty()
     @IsNumber()
     priceUsd: number;
 
-    @ApiPropertyOptional({ description: 'Original/Discount Price' })
+    @ApiPropertyOptional()
     @IsOptional()
     @IsNumber()
     compareAtPriceNgn?: number;
@@ -65,13 +81,21 @@ export class CreateProductDto {
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
-    gallery?: string[]; // Array of image URLs
+    gallery?: string[];
 
     @ApiPropertyOptional()
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
     tags?: string[];
+
+    // 👇 NEW: Define options
+    @ApiPropertyOptional({ type: [ProductOptionDto] })
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ProductOptionDto)
+    options?: ProductOptionDto[];
 
     @ApiPropertyOptional()
     @IsOptional()
