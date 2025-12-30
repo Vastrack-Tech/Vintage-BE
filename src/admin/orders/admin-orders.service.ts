@@ -117,4 +117,22 @@ export class AdminOrdersService {
             completedOrders: Number(stats[0]?.completed || 0),
         };
     }
+
+    async findOne(id: string) {
+        const order = await this.db.query.orders.findFirst({
+            where: eq(schema.orders.id, id),
+            with: {
+                user: true,
+                items: {
+                    with: {
+                        product: true,
+                        variant: true,
+                    }
+                }
+            }
+        });
+
+        if (!order) throw new NotFoundException('Order not found');
+        return order;
+    }
 }

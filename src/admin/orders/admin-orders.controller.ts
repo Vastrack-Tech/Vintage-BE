@@ -26,6 +26,13 @@ export class AdminOrdersController {
         return this.ordersService.findAll(query);
     }
 
+    @Get(':id')
+    @Roles('admin')
+    @ApiOperation({ summary: 'Get order details' })
+    findOne(@Param('id') id: string) {
+        return this.ordersService.findOne(id);
+    }
+
     @Patch(':id/status')
     @Roles('admin')
     @ApiOperation({ summary: 'Update order status' })
