@@ -5,10 +5,23 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+      'https://vintagefrontend-i6mpc.ondigitalocean.app',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Vintage E-Commerce API')
     .setDescription('The official API documentation for the Vintage backend.')
     .setVersion('1.0')
+    .addServer('https://vintagebackend-5plrf.ondigitalocean.app/')
+    .addServer('http://localhost:3333')
     .addBearerAuth(
       {
         type: 'http',
@@ -18,19 +31,20 @@ async function bootstrap() {
         description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth', // This name here is important for matching @ApiBearerAuth()
+      'JWT-auth',
     )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // Route setup (e.g., localhost:3000/api/docs)
   SwaggerModule.setup('api/docs', app, document, {
     swaggerOptions: {
-      persistAuthorization: true, // Keeps you logged in if you refresh the page
+      persistAuthorization: true,
     },
   });
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3333;
+  await app.listen(port);
+  console.log(`Application is running on port ${port}`);
 }
 bootstrap();

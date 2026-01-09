@@ -1,0 +1,125 @@
+import { IsString, IsNumber, IsArray, ValidateNested, IsBoolean, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+export class ProductOptionDto {
+    @ApiProperty({ example: 'Length' })
+    @IsString()
+    name: string;
+
+    @ApiProperty({ example: ['12', '14', '16'] })
+    @IsArray()
+    @IsString({ each: true })
+    values: string[];
+}
+
+export class CreateVariantDto {
+    @ApiProperty({ example: '12 inch / Natural' })
+    @IsString()
+    name: string;
+
+    @ApiProperty()
+    @IsNumber()
+    stockQuantity: number;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsNumber()
+    priceOverrideNgn?: number;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsNumber()
+    priceOverrideUsd?: number;
+
+    @ApiProperty({ example: { Length: '12', Color: 'Natural' } })
+    @IsOptional()
+    attributes: Record<string, any>;
+
+    @ApiPropertyOptional({ example: 'https://res.cloudinary.com/...' })
+    @IsOptional()
+    @IsString()
+    image?: string; // 👈 NEW
+}
+
+export class CreateProductDto {
+    @ApiProperty()
+    @IsString()
+    title: string;
+
+    @ApiProperty()
+    @IsString()
+    description: string;
+
+    @ApiProperty()
+    @IsString()
+    categoryId: string;
+
+    @ApiProperty()
+    @IsNumber()
+    stockQuantity: number;
+
+    @ApiProperty()
+    @IsNumber()
+    priceNgn: number;
+
+    @ApiProperty()
+    @IsNumber()
+    priceUsd: number;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsNumber()
+    compareAtPriceNgn?: number;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsNumber()
+    compareAtPriceUsd?: number;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    gallery?: string[];
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    tags?: string[];
+
+    // 👇 NEW: Define options
+    @ApiPropertyOptional({ type: [ProductOptionDto] })
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ProductOptionDto)
+    options?: ProductOptionDto[];
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsBoolean()
+    isHot?: boolean;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsBoolean()
+    isActive?: boolean;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    features?: string;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    shippingPolicy?: string;
+
+    @ApiProperty({ type: [CreateVariantDto] })
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => CreateVariantDto)
+    variants: CreateVariantDto[];
+}

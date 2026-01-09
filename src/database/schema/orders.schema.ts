@@ -10,18 +10,20 @@ import { relations } from 'drizzle-orm';
 import { orderStatusEnum } from './enums';
 import { generateId } from './utils';
 import { users } from './users.schema';
-import { variants } from './products.schema';
+import { variants, products } from './products.schema';
 
-// --- ORDERS ---
+// --- ORDERS (Unchanged) ---
 export const orders = pgTable('orders', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINORD')),
-  userId: varchar('user_id', { length: 20 })
+  userId: text('user_id')
     .references(() => users.id)
     .notNull(),
-  totalAmount: decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
+  totalAmountNgn: decimal('total_amount_ngn', { precision: 12, scale: 2 }).notNull(),
+  totalAmountUsd: decimal('total_amount_usd', { precision: 12, scale: 2 }).notNull(),
   status: orderStatusEnum('status').default('pending'),
+  currencyPaid: text('currency_paid').default('NGN'),
   paymentReference: text('payment_reference'),
   createdAt: timestamp('created_at').defaultNow(),
 });
@@ -39,23 +41,34 @@ export const orderItems = pgTable('order_items', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINITM')),
+
   orderId: varchar('order_id', { length: 20 })
     .references(() => orders.id)
     .notNull(),
-  variantId: varchar('variant_id', { length: 20 })
-    .references(() => variants.id)
+
+  productId: varchar('product_id', { length: 20 })
+    .references(() => products.id)
     .notNull(),
+
+  variantId: varchar('variant_id', { length: 20 })
+    .references(() => variants.id),
+
+  // 👇 NEW: Persist the specific variant name at time of purchase
+  variantName: text('variant_name'),
+
   quantity: integer('quantity').default(1),
-  priceAtPurchase: decimal('price_at_purchase', {
-    precision: 10,
-    scale: 2,
-  }).notNull(),
+  priceAtPurchaseNgn: decimal('price_at_purchase_ngn', { precision: 10, scale: 2 }).notNull(),
+  priceAtPurchaseUsd: decimal('price_at_purchase_usd', { precision: 10, scale: 2 }).notNull(),
 });
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   order: one(orders, {
     fields: [orderItems.orderId],
     references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
   }),
   variant: one(variants, {
     fields: [orderItems.variantId],

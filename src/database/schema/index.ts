@@ -6,3 +6,8 @@ export * from './orders.schema';
 export * from './reviews.schema';
 export * from './payment.schema';
 export * from './banners-collection';
+export * from './addresses.schema';
+export * from './wishlist.schema';
+export * from './support.schema';
+export * from './requests.schema';
+// export * from './referrals.schema';

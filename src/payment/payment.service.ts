@@ -1,121 +1,266 @@
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { lastValueFrom } from 'rxjs';
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 import * as crypto from 'crypto';
+import axios from 'axios';
+
+interface CheckoutPayload {
+  amountNgn: number;
+  amountUsd: number;
+  currency: 'NGN' | 'USD';
+  items: {
+    productId: string;
+    variantId?: string; // Optional now
+    quantity: number;
+    // Price passed from frontend is for verification, 
+    // but backend should source truth from DB usually.
+    // For simplicity here, we re-fetch prices.
+  }[];
+}
 
 @Injectable()
 export class PaymentService {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
-    private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
-  // 1. INITIALIZE PAYMENT
-  async initializePayment(user: any, amount: number, orderId?: string) {
+  async initializePayment(user: { email: string; userId: string }, payload: CheckoutPayload) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
-    const params = {
-      email: user.email,
-      amount: amount * 100, // Convert to Kobo
-      metadata: {
-        userId: user.userId,
-        orderId: orderId,
-      },
-      callback_url: 'http://localhost:3000/payment/callback',
-    };
+    const callbackUrl = `${this.configService.get('FRONTEND_URL')}/payment/callback`;
 
+    // 1. CREATE PENDING ORDER
+    const order = await this.db.transaction(async (tx) => {
+      // Gather IDs
+      const productIds = payload.items.map((i) => i.productId);
+      const variantIds = payload.items
+        .filter((i) => i.variantId)
+        .map((i) => i.variantId as string);
+
+      // Fetch Products
+      const dbProducts = await tx.query.products.findMany({
+        where: inArray(schema.products.id, productIds),
+      });
+
+      // Fetch Variants
+      const dbVariants = variantIds.length > 0
+        ? await tx.query.variants.findMany({
+          where: inArray(schema.variants.id, variantIds),
+          with: { product: true },
+        })
+        : [];
+
+      // Validate & Calculate Totals
+      let calculatedTotalNgn = 0;
+      let calculatedTotalUsd = 0;
+      const orderItemsToInsert: any[] = [];
+
+      for (const item of payload.items) {
+        let priceNgn = 0;
+        let priceUsd = 0;
+        let variantName: string | null = null;
+        let currentStock = 0;
+
+        if (item.variantId) {
+          const variant = dbVariants.find((v) => v.id === item.variantId);
+          if (!variant) throw new BadRequestException(`Variant not found for product ${item.productId}`);
+
+          // Price: Override > Product Base
+          priceNgn = Number(variant.priceOverrideNgn || variant.product.priceNgn);
+          priceUsd = Number(variant.priceOverrideUsd || variant.product.priceUsd);
+          variantName = variant.name;
+          currentStock = variant.stockQuantity || 0;
+
+          if (currentStock < item.quantity) {
+            throw new BadRequestException(`Insufficient stock for ${variant.product.title} (${variant.name})`);
+          }
+        } else {
+          const product = dbProducts.find((p) => p.id === item.productId);
+          if (!product) throw new BadRequestException('Product not found');
+
+          priceNgn = Number(product.priceNgn);
+          priceUsd = Number(product.priceUsd);
+          currentStock = product.stockQuantity || 0;
+
+          if (currentStock < item.quantity) {
+            throw new BadRequestException(`Insufficient stock for ${product.title}`);
+          }
+        }
+
+        calculatedTotalNgn += priceNgn * item.quantity;
+        calculatedTotalUsd += priceUsd * item.quantity;
+
+        orderItemsToInsert.push({
+          productId: item.productId,
+          variantId: item.variantId || null,
+          variantName: variantName, // 👇 SAVE VARIANT NAME
+          quantity: item.quantity,
+          priceAtPurchaseNgn: priceNgn.toString(),
+          priceAtPurchaseUsd: priceUsd.toFixed(2),
+        });
+      }
+
+      // Determine charge amount based on currency
+      const chargeAmount = payload.currency === 'USD' ? calculatedTotalUsd : calculatedTotalNgn;
+
+      // Insert Order
+      const [newOrder] = await tx
+        .insert(schema.orders)
+        .values({
+          userId: user.userId,
+          totalAmountNgn: calculatedTotalNgn.toString(),
+          totalAmountUsd: calculatedTotalUsd.toFixed(2),
+          status: 'pending',
+          currencyPaid: payload.currency,
+        })
+        .returning();
+
+      // Insert Items
+      if (orderItemsToInsert.length > 0) {
+        await tx.insert(schema.orderItems).values(
+          orderItemsToInsert.map((item) => ({
+            orderId: newOrder.id,
+            ...item,
+          }))
+        );
+      }
+
+      return { id: newOrder.id, chargeAmount };
+    });
+
+    // 2. INITIALIZE PAYSTACK
     try {
-      const response = await lastValueFrom(
-        this.httpService.post(
-          'https://api.paystack.co/transaction/initialize',
-          params,
-          {
-            headers: { Authorization: `Bearer ${secretKey}` },
+      const response = await axios.post(
+        'https://api.paystack.co/transaction/initialize',
+        {
+          email: user.email,
+          amount: Math.round(order.chargeAmount * 100), // Kobo/Cents
+          currency: payload.currency === 'USD' ? 'USD' : 'NGN',
+          metadata: {
+            userId: user.userId,
+            orderId: order.id,
           },
-        ),
+          callback_url: callbackUrl,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${secretKey}`,
+            'Content-Type': 'application/json',
+          },
+        },
       );
 
-      // Save 'pending' transaction to DB
+      const data = response.data.data;
+
+      // Log Payment Attempt
       await this.db.insert(schema.payments).values({
         userId: user.userId,
-        orderId: orderId,
-        reference: response.data.data.reference,
-        amount: amount.toString(),
+        orderId: order.id,
+        reference: data.reference,
+        amount: order.chargeAmount.toString(),
+        currency: payload.currency,
         status: 'pending',
       });
 
-      return response.data.data; // Returns authorization_url to redirect user
-    } catch (error) {
+      return data;
+    } catch (error: any) {
+      console.error('Paystack Init Error:', error.response?.data || error.message);
       throw new BadRequestException('Payment initialization failed');
     }
   }
 
-  // 2. VERIFY PAYMENT (Call this when user returns to site)
   async verifyPayment(reference: string) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 
     try {
-      const response = await lastValueFrom(
-        this.httpService.get(
-          `https://api.paystack.co/transaction/verify/${reference}`,
-          {
-            headers: { Authorization: `Bearer ${secretKey}` },
-          },
-        ),
+      const response = await axios.get(
+        `https://api.paystack.co/transaction/verify/${reference}`,
+        { headers: { Authorization: `Bearer ${secretKey}` } },
       );
 
       const data = response.data.data;
 
       if (data.status === 'success') {
-        await this.db
-          .update(schema.payments)
-          .set({ status: 'success', metadata: data })
-          .where(eq(schema.payments.reference, reference));
-
-        // OPTIONAL: Update Order Status to 'paid'
-        // await this.db.update(schema.orders).set({ status: 'paid' })...
+        await this.fulfillOrder(reference, data);
       }
 
       return data;
-    } catch (error) {
+    } catch (error: any) {
       throw new BadRequestException('Payment verification failed');
     }
   }
 
   async handleWebhook(signature: string, payload: any) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
+    const hash = crypto.createHmac('sha512', secretKey).update(JSON.stringify(payload)).digest('hex');
 
-    // Verify Signature
-    const hash = crypto
-      .createHmac('sha512', secretKey)
-      .update(JSON.stringify(payload))
-      .digest('hex');
     if (hash !== signature) throw new BadRequestException('Invalid signature');
 
-    const event = payload.event;
-    const data = payload.data;
+    if (payload.event === 'charge.success') {
+      await this.fulfillOrder(payload.data.reference, payload.data);
+    }
+    return { status: 'ok' };
+  }
 
-    if (event === 'charge.success') {
-      const existingPayment = await this.db.query.payments.findFirst({
-        where: eq(schema.payments.reference, data.reference),
+  // 👇 3. STOCK SUBTRACTION LOGIC
+  private async fulfillOrder(reference: string, metadata: any) {
+    await this.db.transaction(async (tx) => {
+      // Find pending payment
+      const payment = await tx.query.payments.findFirst({
+        where: eq(schema.payments.reference, reference),
       });
 
-      if (existingPayment && existingPayment.status !== 'success') {
-        await this.db
-          .update(schema.payments)
-          .set({ status: 'success', metadata: data })
-          .where(eq(schema.payments.reference, data.reference));
+      if (!payment || payment.status === 'success') return;
 
-        console.log(`Payment successful for ref: ${data.reference}`);
+      // Update Payment & Order Status
+      await tx
+        .update(schema.payments)
+        .set({ status: 'success', metadata: metadata })
+        .where(eq(schema.payments.reference, reference));
+
+      if (payment.orderId) {
+        await tx
+          .update(schema.orders)
+          .set({ status: 'paid' })
+          .where(eq(schema.orders.id, payment.orderId));
+
+        // Fetch items to subtract stock
+        const items = await tx.query.orderItems.findMany({
+          where: eq(schema.orderItems.orderId, payment.orderId),
+        });
+
+        for (const item of items) {
+          if (item.variantId) {
+            // 1. Subtract from Variant
+            await tx
+              .update(schema.variants)
+              .set({
+                stockQuantity: sql`${schema.variants.stockQuantity} - ${item.quantity}`,
+              })
+              .where(eq(schema.variants.id, item.variantId));
+
+            // 2. ALSO Subtract from Main Product (to keep total accurate)
+            await tx
+              .update(schema.products)
+              .set({
+                stockQuantity: sql`${schema.products.stockQuantity} - ${item.quantity}`,
+              })
+              .where(eq(schema.products.id, item.productId));
+          } else {
+            await tx
+              .update(schema.products)
+              .set({
+                stockQuantity: sql`${schema.products.stockQuantity} - ${item.quantity}`,
+              })
+              .where(eq(schema.products.id, item.productId));
+          }
+        }
+        console.log(`✅ Order ${payment.orderId} paid & stock updated.`);
       }
-    }
-
-    return { status: 'ok' };
+    });
   }
 }
