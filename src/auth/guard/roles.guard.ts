@@ -7,25 +7,22 @@ export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) { }
 
     canActivate(context: ExecutionContext): boolean {
-        // 1. Read the required roles from the @Roles decorator
-        // getAllAndOverride checks the method first, then the class
         const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
             context.getHandler(),
             context.getClass(),
         ]);
 
-        // 2. If no @Roles() decorator is present, do we block or allow?
-        // Usually, if there's no role restriction, we assume it's open (or handled by AuthGuard)
         if (!requiredRoles) {
             return true;
         }
 
-        // 3. Get the User (attached by SupabaseAuthGuard)
-        const { user } = context.switchToHttp().getRequest();
+        const request = context.switchToHttp().getRequest();
+        const user = request.user;
 
-        // 4. Check if user exists and has the matching role
-        // We use .some() if a user can have multiple roles, or .includes() if simple string
+        console.log('Current User in RolesGuard:', user);
+
         if (!user || !requiredRoles.includes(user.role)) {
+            console.log(`Access Denied. User Role: ${user?.role}, Required: ${requiredRoles}`);
             throw new ForbiddenException('Access denied. Insufficient permissions.');
         }
 
