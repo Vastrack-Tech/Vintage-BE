@@ -122,7 +122,11 @@ export class AdminOrdersService {
         const order = await this.db.query.orders.findFirst({
             where: eq(schema.orders.id, id),
             with: {
-                user: true,
+                user: {
+                    with: {
+                        addresses: true,
+                    }
+                },
                 items: {
                     with: {
                         product: true,

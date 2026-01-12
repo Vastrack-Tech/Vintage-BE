@@ -4,6 +4,7 @@ import { roleEnum } from './enums';
 import { orders } from './orders.schema';
 import { reviews } from './reviews.schema';
 import { referrals } from './referrals.schema';
+import { addresses } from './addresses.schema';
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -28,4 +29,5 @@ export const usersRelations = relations(users, ({ many }) => ({
   orders: many(orders),
   reviews: many(reviews),
   referrals: many(referrals, { relationName: 'referrer_referrals' }),
+  addresses: many(addresses),
 }));

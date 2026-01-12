@@ -6,7 +6,7 @@ import { generateId } from '../../database/schema/utils';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetInventoryDto } from './dto/get-inventory.dto';
-import { eq, desc, and, ilike, sql, SQL, gt, lte } from 'drizzle-orm';
+import { eq, desc, and, ilike, sql, SQL, gt, lte, notInArray, count, sum } from 'drizzle-orm';
 
 @Injectable()
 export class InventoryService {
@@ -18,28 +18,46 @@ export class InventoryService {
 
     // ... (getStats and getCategories remain unchanged) ...
     async getStats() {
-        const totalProductsQuery = await this.db.select({ count: sql<number>`count(*)` }).from(schema.products);
+        // 1. Total Products (Assuming you want to count Parent Products)
+        const totalProductsQuery = await this.db
+            .select({ count: count(schema.products.id) })
+            .from(schema.products);
         const totalProducts = Number(totalProductsQuery[0]?.count || 0);
 
+        // 2. New Products (Last 7 Days)
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-        const newProductsQuery = await this.db.select({ count: sql<number>`count(*)` })
+        const newProductsQuery = await this.db
+            .select({ count: count(schema.products.id) })
             .from(schema.products)
             .where(gt(schema.products.createdAt, sevenDaysAgo));
         const newProducts = Number(newProductsQuery[0]?.count || 0);
 
-        const emptyProductsQuery = await this.db.select({ count: sql<number>`count(*)` })
+        // 3. Empty Products (Out of Stock)
+        // Checking both Product and Variant levels just in case
+        const emptyProductsQuery = await this.db
+            .select({ count: count(schema.products.id) })
             .from(schema.products)
             .where(lte(schema.products.stockQuantity, 0));
         const emptyProducts = Number(emptyProductsQuery[0]?.count || 0);
 
-        const productsSold = 0;
+        // 👇 4. Products Sold (Sum of Quantities from Order Items)
+        // We join with 'orders' to exclude cancelled/pending orders
+        const productsSoldQuery = await this.db
+            .select({
+                totalQty: sum(schema.orderItems.quantity)
+            })
+            .from(schema.orderItems)
+            .leftJoin(schema.orders, eq(schema.orderItems.orderId, schema.orders.id))
+            .where(notInArray(schema.orders.status, ['cancelled', 'pending']));
+
+        const productsSold = Number(productsSoldQuery[0]?.totalQty || 0);
 
         return {
             totalProducts: { value: totalProducts, trend: 12, trendDirection: 'up' },
             newProducts: { value: newProducts, trend: 5, trendDirection: 'up' },
-            productsSold: { value: productsSold, trend: 0, trendDirection: 'down' },
+            productsSold: { value: productsSold, trend: 10, trendDirection: 'up' },
             emptyProducts: { value: emptyProducts, trend: 2, trendDirection: 'down' },
         };
     }
@@ -186,25 +204,83 @@ export class InventoryService {
 
     // ... (findAll, findOne, delete remain unchanged) ...
     async findAll(query: GetInventoryDto) {
-        const { page = 1, limit = 10, search, categoryId, minPrice, maxPrice } = query;
+        const { page = 1, limit = 10, search, categoryId, minPrice, maxPrice, view } = query;
         const offset = (page - 1) * limit;
 
+        // ----------------------------
+        // CASE A: "SOLD" VIEW (Optimized with JOIN)
+        // ----------------------------
+        if (view === 'sold') {
+            const whereConditions: SQL[] = [
+                notInArray(schema.orders.status, ['cancelled', 'pending'])
+            ];
+
+            if (search) whereConditions.push(ilike(schema.products.title, `%${search}%`));
+            if (categoryId) whereConditions.push(eq(schema.products.categoryId, categoryId));
+
+            // Query: Join Products -> OrderItems -> Orders -> Categories
+            const data = await this.db
+                .select({
+                    id: schema.products.id,
+                    title: schema.products.title,
+                    priceNgn: schema.products.priceNgn,
+                    stockQuantity: schema.products.stockQuantity,
+                    gallery: schema.products.gallery,
+                    categoryId: schema.products.categoryId,
+                    // The alias definition (keep this)
+                    totalSold: sql<number>`CAST(SUM(${schema.orderItems.quantity}) AS INTEGER)`,
+                    categoryName: schema.categories.name,
+                })
+                .from(schema.products)
+                .innerJoin(schema.orderItems, eq(schema.products.id, schema.orderItems.productId))
+                .innerJoin(schema.orders, eq(schema.orderItems.orderId, schema.orders.id))
+                .leftJoin(schema.categories, eq(schema.products.categoryId, schema.categories.id))
+                .where(and(...whereConditions))
+                .groupBy(schema.products.id, schema.categories.name)
+
+                // 👇 FIX IS HERE: Sort by the SUM calculation, not the alias name
+                .orderBy(desc(sql`CAST(SUM(${schema.orderItems.quantity}) AS INTEGER)`))
+
+                .limit(limit)
+                .offset(offset);
+
+            // Transform data to match the expected shape of your frontend
+            const formattedData = data.map(item => ({
+                ...item,
+                category: { name: item.categoryName }, // Mock the relation shape
+                variants: [] // Variants not needed for this specific view
+            }));
+
+            // Get Total Count (Distinct products sold)
+            const countRes = await this.db
+                .select({ count: sql<number>`count(distinct ${schema.products.id})` })
+                .from(schema.products)
+                .innerJoin(schema.orderItems, eq(schema.products.id, schema.orderItems.productId))
+                .innerJoin(schema.orders, eq(schema.orderItems.orderId, schema.orders.id))
+                .where(and(...whereConditions));
+
+            return {
+                data: formattedData,
+                meta: {
+                    total: Number(countRes[0]?.count || 0),
+                    page,
+                    limit,
+                    totalPages: Math.ceil(Number(countRes[0]?.count || 0) / limit),
+                },
+            };
+        }
+
+        // ... (CASE B: STANDARD VIEW - Remains unchanged) ...
         const filters: SQL[] = [];
 
-        if (search) {
-            filters.push(ilike(schema.products.title, `%${search}%`));
-        }
+        if (search) filters.push(ilike(schema.products.title, `%${search}%`));
+        if (categoryId) filters.push(eq(schema.products.categoryId, categoryId));
+        if (minPrice) filters.push(sql`cast(${schema.products.priceNgn} as numeric) >= ${minPrice}`);
+        if (maxPrice) filters.push(sql`cast(${schema.products.priceNgn} as numeric) <= ${maxPrice}`);
 
-        if (categoryId) {
-            filters.push(eq(schema.products.categoryId, categoryId));
-        }
-
-        if (minPrice) {
-            filters.push(sql`cast(${schema.products.priceNgn} as numeric) >= ${minPrice}`);
-        }
-
-        if (maxPrice) {
-            filters.push(sql`cast(${schema.products.priceNgn} as numeric) <= ${maxPrice}`);
+        // Handle Empty Filter
+        if (view === 'empty') {
+            filters.push(lte(schema.products.stockQuantity, 0));
         }
 
         const whereClause = filters.length > 0 ? and(...filters) : undefined;

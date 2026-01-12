@@ -11,47 +11,53 @@ export class DashboardService {
     ) { }
 
     async getDashboardSummary() {
-        // 1. PRODUCTS & INVENTORY
-        // We join products with variants to calculate total potential revenue held in stock
-        // Logic: If variant has override price, use it. Else use product base price.
-        const inventoryStats = await this.db
-            .select({
-                totalProducts: count(schema.products.id),
-                inventoryValue: sum(
-                    sql`COALESCE(${schema.variants.priceOverrideNgn}, ${schema.products.priceNgn}) * ${schema.variants.stockQuantity}`
-                ),
-            })
-            .from(schema.products)
-            .leftJoin(schema.variants, eq(schema.products.id, schema.variants.productId));
+        // Run all independent aggregation queries in parallel for performance
+        const [productCountRes, inventoryRes, orderStatsRes] = await Promise.all([
 
-        // 2. ORDERS & SALES
-        // We only count 'valid' sales (e.g., paid, shipped, delivered)
-        const orderStats = await this.db
-            .select({
-                totalOrders: count(schema.orders.id),
-                totalSales: sum(schema.orders.totalAmountNgn),
-            })
-            .from(schema.orders)
-            .where(notInArray(schema.orders.status, ['cancelled', 'pending']));
+            // 1. TOTAL PRODUCTS (Distinct count of products)
+            this.db
+                .select({ count: count(schema.products.id) })
+                .from(schema.products),
 
-        // 3. Extract Values (Handle nulls if DB is empty)
-        const totalProducts = Number(inventoryStats[0]?.totalProducts || 0);
-        const inventoryValue = Number(inventoryStats[0]?.inventoryValue || 0);
-        const totalOrders = Number(orderStats[0]?.totalOrders || 0);
-        const totalSales = Number(orderStats[0]?.totalSales || 0);
+            // 2. INVENTORY VALUE (Sum of Variant Stock * Price)
+            // We join variants to products to access the fallback base price
+            this.db
+                .select({
+                    value: sum(
+                        sql`COALESCE(${schema.variants.priceOverrideNgn}, ${schema.products.priceNgn}) * ${schema.variants.stockQuantity}`
+                    ),
+                })
+                .from(schema.variants)
+                .innerJoin(schema.products, eq(schema.variants.productId, schema.products.id)),
+
+            // 3. TOTAL ORDERS & SALES (Valid orders only)
+            this.db
+                .select({
+                    totalOrders: count(schema.orders.id),
+                    totalSales: sum(schema.orders.totalAmountNgn),
+                })
+                .from(schema.orders)
+                .where(notInArray(schema.orders.status, ['cancelled', 'pending'])),
+        ]);
+
+        // 4. Format Data (Handle nulls resulting from empty tables)
+        const totalProducts = Number(productCountRes[0]?.count || 0);
+        const inventoryValue = Number(inventoryRes[0]?.value || 0);
+        const totalOrders = Number(orderStatsRes[0]?.totalOrders || 0);
+        const totalSales = Number(orderStatsRes[0]?.totalSales || 0);
 
         return {
             totalProducts,
             inventoryValue,
             totalOrders,
             totalSales,
-            // Mock trends for UI (In a real app, you'd calculate vs last month)
+            // Mock trends (Calculate these dynamically in V2 using date ranges)
             trends: {
                 products: 12,
                 inventory: 5,
                 orders: 25,
-                sales: 18
-            }
+                sales: 18,
+            },
         };
     }
 }

@@ -38,5 +38,10 @@ export class GetInventoryDto {
     @IsNumber()
     maxPrice?: number;
 
+    @ApiPropertyOptional({ enum: ['all', 'sold', 'empty'] })
+    @IsOptional()
+    @IsString() 
+    view?: 'all' | 'sold' | 'empty';
+
     // You can add 'status' here if you decide to bring it back later
 }
