@@ -4,6 +4,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../../database/schema';
 import { eq, desc, and, ilike, sql, or, gte, lte, SQL } from 'drizzle-orm';
 import { GetCustomersDto } from './dto/get-customers.dto';
+import { Parser } from 'json2csv';
 
 @Injectable()
 export class CustomersService {
@@ -109,5 +110,38 @@ export class CustomersService {
             data,
             meta: { total: totalCount, page, limit, totalPages: Math.ceil(totalCount / limit) },
         };
+    }
+
+    async exportCustomers() {
+        // 1. Fetch ALL customers
+        const customers = await this.db.query.users.findMany({
+            where: eq(schema.users.role, 'customer'), // Only export customers, not admins
+            orderBy: (users, { desc }) => [desc(users.createdAt)],
+            with: {
+                orders: true, // Join orders to calculate Total Spend
+            },
+        });
+
+        // 2. Flatten Data
+        const flatData = customers.map((user) => {
+            // Calculate Total Spend & Order Count
+            const totalSpendNgn = user.orders.reduce((sum, ord) => sum + Number(ord.totalAmountNgn), 0);
+            const totalOrders = user.orders.length;
+
+            return {
+                "Customer ID": user.id,
+                "Full Name": `${user.firstName} ${user.lastName}`,
+                "Email": user.email,
+                "Phone": user.phone || 'N/A',
+                "Total Orders": totalOrders,
+                "Total Spend (NGN)": totalSpendNgn,
+                "Joined Date": user.createdAt?.toISOString().split('T')[0],
+                "Address": user.address || 'N/A',
+            };
+        });
+
+        // 3. Convert to CSV
+        const parser = new Parser();
+        return parser.parse(flatData);
     }
 }
