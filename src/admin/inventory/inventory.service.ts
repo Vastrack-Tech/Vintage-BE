@@ -2,6 +2,8 @@ import { Inject, Injectable, NotFoundException, BadRequestException } from '@nes
 import { DATABASE_CONNECTION } from '../../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../../database/schema';
+import { Parser } from 'json2csv';
+import { Readable } from 'stream';
 import { generateId } from '../../database/schema/utils';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -16,7 +18,44 @@ export class InventoryService {
 
     private readonly EXCHANGE_RATE = 1500;
 
-    // ... (getStats and getCategories remain unchanged) ...
+
+    async exportProducts() {
+        // 1. Fetch ALL products (No limit/offset)
+        const products = await this.db.query.products.findMany({
+            orderBy: (products, { desc }) => [desc(products.createdAt)],
+            with: {
+                category: true,
+                variants: true,
+            },
+        });
+
+        // 2. Flatten the data for CSV
+        // (Excel handles simple objects better than nested JSON)
+        const flatData = products.map((p) => {
+            // Calculate total stock from variants if they exist
+            const totalStock = p.variants.length > 0
+                ? p.variants.reduce((sum, v) => sum + (v.stockQuantity || 0), 0)
+                : p.stockQuantity;
+
+            return {
+                "Product ID": p.id,
+                "Name": p.title,
+                "Category": p.category?.name || "Uncategorized",
+                "Price (NGN)": p.priceNgn,
+                "Price (USD)": p.priceUsd,
+                "Stock Quantity": totalStock,
+                "Status": (p.stockQuantity || 0) > 0 ? "In Stock" : "Out of Stock",
+                 "Date Created": p.createdAt?.toISOString().split('T')[0],
+            };
+        });
+
+        // 3. Convert to CSV
+        const parser = new Parser();
+        const csv = parser.parse(flatData);
+
+        return csv;
+    }
+
     async getStats() {
         // 1. Total Products (Assuming you want to count Parent Products)
         const totalProductsQuery = await this.db

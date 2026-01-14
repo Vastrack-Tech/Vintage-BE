@@ -5,12 +5,50 @@ import * as schema from '../../database/schema';
 import { eq, desc, and, ilike, sql, or, SQL, gte, lte } from 'drizzle-orm';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { Parser } from 'json2csv';
 
 @Injectable()
 export class AdminOrdersService {
     constructor(
         @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<typeof schema>,
     ) { }
+
+    async exportOrders() {
+        const allOrders = await this.db.query.orders.findMany({
+            orderBy: (orders, { desc }) => [desc(orders.createdAt)],
+            with: {
+                user: true, // To get Customer Name
+                items: {
+                    with: {
+                        product: true // To get Product Names
+                    }
+                }
+            },
+        });
+
+        // 2. Flatten Data for CSV
+        const flatData = allOrders.map((order) => {
+            // Create a summary string of items e.g., "Wig A (x1), Wig B (x2)"
+            const itemsSummary = order.items
+                .map(item => `${item.product?.title || 'Unknown'} (${item.variantName || 'Default'}) x${item.quantity}`)
+                .join(', ');
+
+            return {
+                "Order ID": order.id,
+                "Customer Name": `${order.user?.firstName} ${order.user?.lastName}`,
+                "Customer Email": order.user?.email,
+                "Total Amount (NGN)": order.totalAmountNgn,
+                "Total Amount (USD)": order.totalAmountUsd,
+                "Status": order.status,
+                "Items Purchased": itemsSummary,
+                "Payment Ref": order.paymentReference || 'N/A',
+                "Date Placed": order.createdAt?.toISOString().split('T')[0],
+            };
+        });
+
+        const parser = new Parser();
+        return parser.parse(flatData);
+    }
 
     async findAll(query: GetOrdersDto) {
         const { page = 1, limit = 10, search, status, minPrice, maxPrice, startDate, endDate } = query;

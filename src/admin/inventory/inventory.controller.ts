@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Patch, Param, Get, UseGuards, Query, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Res, Param, Get, UseGuards, Query, Delete } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { SupabaseAuthGuard } from '../../auth/guard/auth.guard';
 import { RolesGuard } from '../../auth/guard/roles.guard';
+import type { Response } from 'express';
 import { Roles } from '../../auth/decorator/roles.decorator';
 import { InventoryService } from './inventory.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -43,6 +44,19 @@ export class InventoryController {
         return this.inventoryService.findAll(query);
     }
 
+    @Get('inventory/export')
+    @Roles('admin')
+    @ApiOperation({ summary: 'Export full inventory as CSV' })
+    @ApiParam({ name: 'export', example: 'inventory_full_export.csv' })
+    async exportData(@Res() res: Response) {
+        const csv = await this.inventoryService.exportProducts();
+
+        res.header('Content-Type', 'text/csv');
+        res.attachment('inventory_full_export.csv');
+
+        return res.send(csv);
+    }
+
     @Get('inventory/:id')
     @Roles('admin')
     async findOne(@Param('id') id: string) {
@@ -64,4 +78,6 @@ export class InventoryController {
     async delete(@Param('id') id: string) {
         return this.inventoryService.delete(id);
     }
+
+
 }
