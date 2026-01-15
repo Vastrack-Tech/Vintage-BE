@@ -49,14 +49,46 @@ export class OrdersService {
     return { data, meta: { page, limit } };
   }
 
-  async createOrder(userId: string, dto: CreateOrderDto) {
+  // 👇 UPDATED: userId is now OPTIONAL to support Public Tracking
+  async getOrderById(orderId: string, userId?: string) {
+
+    // 1. Build Query Filters
+    const filters = [eq(schema.orders.id, orderId)];
+
+    // 2. If userId is provided (Logged In User), enforce ownership
+    if (userId) {
+      filters.push(eq(schema.orders.userId, userId));
+    }
+
+    const order = await this.db.query.orders.findFirst({
+      where: and(...filters),
+      with: {
+        items: {
+          with: {
+            product: true,
+            variant: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      // Security: If a user tries to access another user's order, 
+      // we throw 'Not Found' instead of 'Forbidden' to avoid leaking existence.
+      throw new NotFoundException('Order not found');
+    }
+
+    return order;
+  }
+
+  // 👇 UPDATED: To support Schema changes (Address/Contact Snapshots)
+  async createOrder(userId: string | null, dto: CreateOrderDto) {
     return await this.db.transaction(async (tx) => {
-      // 👇 FIX: Strictly type the array as string[] by filtering out undefined/null
+      // 1. Filter Variants
       const variantIds = dto.items
         .map((i) => i.variantId)
         .filter((id): id is string => !!id);
 
-      // Only fetch variants if there are any to fetch
       const dbVariants = variantIds.length > 0
         ? await tx.query.variants.findMany({
           where: inArray(schema.variants.id, variantIds),
@@ -64,7 +96,6 @@ export class OrdersService {
         })
         : [];
 
-      // Check validation only for items that HAVE a variantId
       if (variantIds.length > 0 && dbVariants.length !== variantIds.length) {
         throw new NotFoundException('One or more product variants not found');
       }
@@ -72,15 +103,9 @@ export class OrdersService {
       let totalNgn = 0;
       let totalUsd = 0;
 
-      const orderItemsData: {
-        variantId: string | null;
-        productId: string;
-        quantity: number;
-        priceAtPurchaseNgn: string;
-        priceAtPurchaseUsd: string;
-      }[] = [];
+      const orderItemsData: any[] = [];
 
-      // Fetch all products involved to get prices for non-variant items
+      // Fetch Products
       const productIds = dto.items.map(i => i.productId);
       const dbProducts = await tx.query.products.findMany({
         where: inArray(schema.products.id, productIds)
@@ -89,18 +114,15 @@ export class OrdersService {
       for (const item of dto.items) {
         let priceNgn = 0;
         let priceUsd = 0;
+        let variantName: string | null = null;
 
         if (item.variantId) {
           const variant = dbVariants.find((v) => v.id === item.variantId);
           if (!variant) throw new NotFoundException('Variant not found');
 
-          priceNgn = variant.priceOverrideNgn
-            ? Number(variant.priceOverrideNgn)
-            : Number(variant.product.priceNgn);
-
-          priceUsd = variant.priceOverrideUsd
-            ? Number(variant.priceOverrideUsd)
-            : Number(variant.product.priceUsd);
+          priceNgn = variant.priceOverrideNgn ? Number(variant.priceOverrideNgn) : Number(variant.product.priceNgn);
+          priceUsd = variant.priceOverrideUsd ? Number(variant.priceOverrideUsd) : Number(variant.product.priceUsd);
+          variantName = variant.name;
         } else {
           const product = dbProducts.find(p => p.id === item.productId);
           if (!product) throw new NotFoundException('Product not found');
@@ -114,6 +136,7 @@ export class OrdersService {
 
         orderItemsData.push({
           variantId: item.variantId || null,
+          variantName, // Save snapshot name
           productId: item.productId,
           quantity: item.quantity,
           priceAtPurchaseNgn: priceNgn.toString(),
@@ -121,10 +144,17 @@ export class OrdersService {
         });
       }
 
+      // 2. Insert Order (With Snapshots)
+      // Note: If creating manually via this service, ensure DTO has these fields 
+      // or pass defaults/nulls if strictly internal.
       const [newOrder] = await tx
         .insert(schema.orders)
         .values({
-          userId,
+          userId, // Can be null
+          email: dto.guestEmail || 'system@internal.com', // Fallback for manual creation
+          firstName: dto.guestName || 'System',
+          shippingAddress: dto.shippingAddress || {}, // Ensure DTO has this
+
           totalAmountNgn: totalNgn.toString(),
           totalAmountUsd: totalUsd.toFixed(2),
           currencyPaid: 'NGN',
@@ -152,7 +182,8 @@ export class OrdersService {
 
     if (!order) throw new NotFoundException('Order not found');
 
-    if (order.userId !== userId) {
+    // Only allow user who owns it to cancel (if it has an owner)
+    if (order.userId && order.userId !== userId) {
       throw new ForbiddenException('You can only cancel your own orders');
     }
 

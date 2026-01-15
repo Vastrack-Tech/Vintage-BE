@@ -11,6 +11,13 @@ interface CheckoutPayload {
   amountNgn: number;
   amountUsd: number;
   currency: 'NGN' | 'USD';
+  guestInfo?: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+  };
+  shippingAddress: ShippingAddress;
   items: {
     productId: string;
     variantId?: string; // Optional now
@@ -21,6 +28,17 @@ interface CheckoutPayload {
   }[];
 }
 
+interface ShippingAddress {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  addressLine: string;
+  city: string;
+  state: string;
+  postalCode?: string;
+  country: string;
+}
+
 @Injectable()
 export class PaymentService {
   constructor(
@@ -29,9 +47,18 @@ export class PaymentService {
     private readonly configService: ConfigService,
   ) { }
 
-  async initializePayment(user: { email: string; userId: string }, payload: CheckoutPayload) {
+  async initializePayment(user: { email: string; userId: string } | null, payload: CheckoutPayload) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
     const callbackUrl = `${this.configService.get('FRONTEND_URL')}/payment/callback`;
+
+    const customerEmail = user?.email || payload.guestInfo?.email;
+    const customerFirstName = payload.guestInfo?.firstName || (user ? 'User' : 'Guest');
+    const customerLastName = payload.guestInfo?.lastName || '';
+    const customerPhone = payload.guestInfo?.phone || payload.shippingAddress.phone;
+
+    if (!customerEmail) {
+      throw new BadRequestException('Email is required for checkout');
+    }
 
     // 1. CREATE PENDING ORDER
     const order = await this.db.transaction(async (tx) => {
@@ -111,7 +138,12 @@ export class PaymentService {
       const [newOrder] = await tx
         .insert(schema.orders)
         .values({
-          userId: user.userId,
+          userId: user?.userId || null, // Nullable for guests
+          email: customerEmail,
+          firstName: customerFirstName,
+          lastName: customerLastName,
+          phone: customerPhone,
+          shippingAddress: payload.shippingAddress,
           totalAmountNgn: calculatedTotalNgn.toString(),
           totalAmountUsd: calculatedTotalUsd.toFixed(2),
           status: 'pending',
@@ -137,12 +169,19 @@ export class PaymentService {
       const response = await axios.post(
         'https://api.paystack.co/transaction/initialize',
         {
-          email: user.email,
+          email: customerEmail,
           amount: Math.round(order.chargeAmount * 100), // Kobo/Cents
           currency: payload.currency === 'USD' ? 'USD' : 'NGN',
           metadata: {
-            userId: user.userId,
+            userId: user?.userId || 'guest',
             orderId: order.id,
+            custom_fields: [
+              {
+                display_name: "Shipping Address",
+                variable_name: "shipping_address",
+                value: `${payload.shippingAddress.addressLine}, ${payload.shippingAddress.city}`
+              }
+            ]
           },
           callback_url: callbackUrl,
         },
@@ -158,7 +197,8 @@ export class PaymentService {
 
       // Log Payment Attempt
       await this.db.insert(schema.payments).values({
-        userId: user.userId,
+        userId: user?.userId || null,
+        userEmail: customerEmail,
         orderId: order.id,
         reference: data.reference,
         amount: order.chargeAmount.toString(),
