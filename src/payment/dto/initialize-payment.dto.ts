@@ -1,33 +1,146 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+  IsEnum,
+  IsEmail
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+class ShippingAddressDto {
+  @ApiProperty({ example: 'John' })
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
+
+  @ApiProperty({ example: 'Doe' })
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
+  @ApiProperty({ example: '+2348012345678' })
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
+
+  @ApiProperty({ example: '123 Lagos Way' })
+  @IsString()
+  @IsNotEmpty()
+  addressLine: string;
+
+  @ApiProperty({ example: 'Lekki' })
+  @IsString()
+  @IsNotEmpty()
+  city: string;
+
+  @ApiProperty({ example: 'Lagos' })
+  @IsString()
+  @IsNotEmpty()
+  state: string;
+
+  @ApiPropertyOptional({ example: '100001' })
+  @IsString()
+  @IsOptional()
+  postalCode?: string;
+
+  @ApiProperty({ example: 'Nigeria' })
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+}
+
+class GuestInfoDto {
+  @ApiProperty({ example: 'guest@example.com' })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({ example: 'John' })
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
+
+  @ApiProperty({ example: 'Doe' })
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
+  @ApiProperty({ example: '+2348012345678' })
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
+}
+
+class PaymentItemDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  productId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  variantId: string;
+
+  @ApiProperty()
+  @IsNumber()
+  quantity: number;
+
+  @ApiProperty()
+  @IsNumber()
+  priceNgn: number;
+
+  @ApiProperty()
+  @IsNumber()
+  priceUsd: number;
+}
 
 export class InitializePaymentDto {
   @ApiProperty()
+  @IsNumber()
   amount: number;
 
   @ApiProperty({ required: false })
+  @IsNumber()
+  @IsOptional()
   amountUsd?: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: "Required if not using guestInfo" })
+  @IsEmail()
+  @IsOptional()
   email: string;
 
-  @ApiProperty()
-  userId: string;
+  @ApiProperty({ required: false, description: "Optional for Guest Checkout" })
+  @IsString()
+  @IsOptional()
+  userId?: string;
 
   @ApiProperty({
     example: 'NGN',
     description: 'Currency to charge (NGN or USD)',
     enum: ['NGN', 'USD']
   })
+  @IsEnum(['NGN', 'USD'])
   currency: 'NGN' | 'USD';
 
-  @ApiProperty({
-    example: [{ productId: '1', variantId: '2', quantity: 1, priceNgn: 5000, priceUsd: 5 }]
-  })
-  items: {
-    productId: string;
-    variantId: string;
-    quantity: number;
-    priceNgn: number;
-    priceUsd: number;
-  }[];
+  @ApiProperty({ type: [PaymentItemDto] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PaymentItemDto)
+  items: PaymentItemDto[];
+
+  @ApiProperty({ type: ShippingAddressDto })
+  @ValidateNested()
+  @Type(() => ShippingAddressDto)
+  shippingAddress: ShippingAddressDto;
+
+  @ApiPropertyOptional({ type: GuestInfoDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => GuestInfoDto)
+  guestInfo?: GuestInfoDto;
 }
