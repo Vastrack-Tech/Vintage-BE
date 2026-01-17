@@ -11,6 +11,7 @@ interface CheckoutPayload {
   amountNgn: number;
   amountUsd: number;
   currency: 'NGN' | 'USD';
+  email?: string;
   guestInfo?: {
     email: string;
     firstName: string;
@@ -51,7 +52,7 @@ export class PaymentService {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
     const callbackUrl = `${this.configService.get('FRONTEND_URL')}/payment/callback`;
 
-    const customerEmail = user?.email || payload.guestInfo?.email;
+    const customerEmail = user?.email || payload.email || payload.guestInfo?.email;
     const customerFirstName = payload.guestInfo?.firstName || (user ? 'User' : 'Guest');
     const customerLastName = payload.guestInfo?.lastName || '';
     const customerPhone = payload.guestInfo?.phone || payload.shippingAddress.phone;
