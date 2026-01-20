@@ -6,11 +6,13 @@ import { eq, desc, and, ilike, sql, or, SQL, gte, lte } from 'drizzle-orm';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { Parser } from 'json2csv';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class AdminOrdersService {
     constructor(
         @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<typeof schema>,
+        private readonly mailService: MailService,
     ) { }
 
     async exportOrders() {
@@ -28,7 +30,6 @@ export class AdminOrdersService {
 
         // 2. Flatten Data for CSV
         const flatData = allOrders.map((order) => {
-            // Create a summary string of items e.g., "Wig A (x1), Wig B (x2)"
             const itemsSummary = order.items
                 .map(item => `${item.product?.title || 'Unknown'} (${item.variantName || 'Default'}) x${item.quantity}`)
                 .join(', ');
@@ -128,12 +129,21 @@ export class AdminOrdersService {
     async updateStatus(id: string, dto: UpdateOrderStatusDto) {
         const [updated] = await this.db
             .update(schema.orders)
-            // FIX 3: Cast 'dto.status' to 'any' to fix the Enum vs String literal mismatch
             .set({ status: dto.status as any })
             .where(eq(schema.orders.id, id))
             .returning();
 
         if (!updated) throw new NotFoundException('Order not found');
+
+        if (updated.email) {
+            this.mailService.sendOrderStatusUpdate(
+                updated.email,
+                updated.id,
+                updated.status || 'updated',
+                updated.firstName || 'Customer'
+            );
+        }
+
         return updated;
     }
 

@@ -11,6 +11,7 @@ import { CreateAddressDto } from './dto/address.dto';
 import { ChangePasswordDto, UpdateNotificationDto } from './dto/settings.dto';
 import { generateId } from '../database/schema';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { MailService } from '../mail/mail.service';
 @Injectable()
 export class UsersService {
   private supabaseAdmin;
@@ -19,6 +20,7 @@ export class UsersService {
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
     private config: ConfigService,
+    private readonly mailService: MailService,
   ) {
     // Initialize Supabase Admin for privileged actions (Password Updates)
     this.supabaseAdmin = createClient(
@@ -116,6 +118,7 @@ export class UsersService {
           });
         }
       }
+      this.mailService.sendWelcome(newUser.email, newUser.firstName);
 
       return newUser;
     });

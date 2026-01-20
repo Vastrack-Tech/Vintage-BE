@@ -13,6 +13,7 @@ import { SupportModule } from './support/support.module';
 import { AdminModule } from './admin/admin.module';
 import { RequestsModule } from './requests/request.module';
 import { ReviewsModule } from './reviews/review.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ReviewsModule } from './reviews/review.module';
     AdminModule,
     RequestsModule,
     ReviewsModule,
+    MailModule,
   ],
   controllers: [AppController, AuthController],
   providers: [],
