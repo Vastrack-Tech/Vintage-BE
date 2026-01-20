@@ -11,23 +11,23 @@ export class PaymentController {
   constructor(private readonly paymentService: PaymentService) { }
 
   @Post('initialize')
-  // ❌ Removed Global Guard here to allow Guest Checkout
-  @ApiOperation({ summary: 'Initialize a Paystack transaction (User or Guest)' })
+  @ApiOperation({ summary: 'Initialize a Paystack transaction' })
   @ApiBody({ type: InitializePaymentDto })
   async initialize(
     @Body() body: InitializePaymentDto,
     @Req() req: Request
   ) {
-    // 1. Manually check for authenticated user from request (if middleware attached it)
-    // The Supabase guard usually attaches 'user' to req if valid token is present.
-    // We assume an optional Auth middleware or we handle the 'user' extraction manually here if needed.
-    const user = (req as any).user
+    // 1. Try to get user from Auth Token (if middleware ran)
+    let user = (req as any).user
       ? { email: (req as any).user.email, userId: (req as any).user.userId }
       : null;
 
-    // 2. Pass to service
+    if (!user && body.userId) {
+      user = { email: body.email, userId: body.userId };
+    }
+
     return this.paymentService.initializePayment(
-      user, // Can be null now
+      user,
       {
         amountNgn: body.amount,
         amountUsd: body.amountUsd || 0,
@@ -35,6 +35,7 @@ export class PaymentController {
         items: body.items || [],
         shippingAddress: body.shippingAddress,
         guestInfo: body.guestInfo,
+        email: body.email,
       }
     );
   }

@@ -14,7 +14,7 @@ export const reviews = pgTable('reviews', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINREV')),
-  userId: varchar('user_id', { length: 20 }).references(() => users.id),
+  userId: text('user_id').references(() => users.id),
   productId: varchar('product_id', { length: 20 }).references(
     () => products.id,
   ),
