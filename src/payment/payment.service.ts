@@ -6,6 +6,7 @@ import * as schema from '../database/schema';
 import { eq, sql, inArray } from 'drizzle-orm';
 import * as crypto from 'crypto';
 import axios from 'axios';
+import { MailService } from '../mail/mail.service';
 
 interface CheckoutPayload {
   amountNgn: number;
@@ -46,6 +47,7 @@ export class PaymentService {
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
     private readonly configService: ConfigService,
+    private readonly mailService: MailService,
   ) { }
 
   async initializePayment(user: { email: string; userId: string } | null, payload: CheckoutPayload) {
@@ -301,6 +303,20 @@ export class PaymentService {
           }
         }
         console.log(`✅ Order ${payment.orderId} paid & stock updated.`);
+
+        const order = await tx.query.orders.findFirst({
+          where: eq(schema.orders.id, payment.orderId),
+          with: { items: { with: { product: true } } }
+        });
+
+        if (order) {
+          this.mailService.sendOrderReceipt(
+            order.email,
+            order.id,
+            `${order.currencyPaid} ${order.totalAmountNgn}`,
+            order.items
+          );
+        }
       }
     });
   }
