@@ -10,7 +10,8 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',
-      'https://vintagefrontend-i6mpc.ondigitalocean.app',
+      'https://vintage-admin.netlify.app',
+      'https://vintage-user.netlify.app',
       'https://vintage-adm.vercel.app'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -21,7 +22,7 @@ async function bootstrap() {
     .setTitle('Vintage E-Commerce API')
     .setDescription('The official API documentation for the Vintage backend.')
     .setVersion('1.0')
-    .addServer('https://vintagebackend-5plrf.ondigitalocean.app/')
+    .addServer('https://vintage-be-4hvi.onrender.com')
     .addServer('http://localhost:3333')
     .addBearerAuth(
       {
