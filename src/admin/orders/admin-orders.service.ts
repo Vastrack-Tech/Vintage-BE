@@ -5,12 +5,51 @@ import * as schema from '../../database/schema';
 import { eq, desc, and, ilike, sql, or, SQL, gte, lte } from 'drizzle-orm';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { Parser } from 'json2csv';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class AdminOrdersService {
     constructor(
         @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<typeof schema>,
+        private readonly mailService: MailService,
     ) { }
+
+    async exportOrders() {
+        const allOrders = await this.db.query.orders.findMany({
+            orderBy: (orders, { desc }) => [desc(orders.createdAt)],
+            with: {
+                user: true, // To get Customer Name
+                items: {
+                    with: {
+                        product: true // To get Product Names
+                    }
+                }
+            },
+        });
+
+        // 2. Flatten Data for CSV
+        const flatData = allOrders.map((order) => {
+            const itemsSummary = order.items
+                .map(item => `${item.product?.title || 'Unknown'} (${item.variantName || 'Default'}) x${item.quantity}`)
+                .join(', ');
+
+            return {
+                "Order ID": order.id,
+                "Customer Name": `${order.user?.firstName} ${order.user?.lastName}`,
+                "Customer Email": order.user?.email,
+                "Total Amount (NGN)": order.totalAmountNgn,
+                "Total Amount (USD)": order.totalAmountUsd,
+                "Status": order.status,
+                "Items Purchased": itemsSummary,
+                "Payment Ref": order.paymentReference || 'N/A',
+                "Date Placed": order.createdAt?.toISOString().split('T')[0],
+            };
+        });
+
+        const parser = new Parser();
+        return parser.parse(flatData);
+    }
 
     async findAll(query: GetOrdersDto) {
         const { page = 1, limit = 10, search, status, minPrice, maxPrice, startDate, endDate } = query;
@@ -90,12 +129,21 @@ export class AdminOrdersService {
     async updateStatus(id: string, dto: UpdateOrderStatusDto) {
         const [updated] = await this.db
             .update(schema.orders)
-            // FIX 3: Cast 'dto.status' to 'any' to fix the Enum vs String literal mismatch
             .set({ status: dto.status as any })
             .where(eq(schema.orders.id, id))
             .returning();
 
         if (!updated) throw new NotFoundException('Order not found');
+
+        if (updated.email) {
+            this.mailService.sendOrderStatusUpdate(
+                updated.email,
+                updated.id,
+                updated.status || 'updated',
+                updated.firstName || 'Customer'
+            );
+        }
+
         return updated;
     }
 

@@ -5,6 +5,7 @@ import {
   integer,
   text,
   timestamp,
+  jsonb,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { orderStatusEnum } from './enums';
@@ -17,9 +18,12 @@ export const orders = pgTable('orders', {
   id: varchar('id', { length: 20 })
     .primaryKey()
     .$defaultFn(() => generateId('VINORD')),
-  userId: text('user_id')
-    .references(() => users.id)
-    .notNull(),
+  userId: text('user_id').references(() => users.id),
+  email: text('email').notNull(), // Required for everyone (guest or user)
+  firstName: text('first_name'),
+  lastName: text('last_name'),
+  phone: text('phone'),
+  shippingAddress: jsonb('shipping_address').notNull(),
   totalAmountNgn: decimal('total_amount_ngn', { precision: 12, scale: 2 }).notNull(),
   totalAmountUsd: decimal('total_amount_usd', { precision: 12, scale: 2 }).notNull(),
   status: orderStatusEnum('status').default('pending'),
