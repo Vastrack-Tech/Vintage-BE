@@ -60,6 +60,7 @@ export class CustomersService {
                 phone: schema.users.phone,
                 birthday: schema.users.birthday,
                 createdAt: schema.users.createdAt,
+                isGuest: sql<boolean>`${schema.users.password} IS NULL`,
 
                 // ---------------------------------------------------------
                 // SMART ADDRESS PARSING
