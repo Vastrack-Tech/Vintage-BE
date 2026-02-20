@@ -12,7 +12,7 @@ async function bootstrap() {
       'http://localhost:3002',
       'https://vintage-admin.netlify.app',
       'https://vintage-user.netlify.app',
-      'https://hairbyvintage.com/',
+      'https://hairbyvintage.com',
       'https://vintage-adm.vercel.app'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
