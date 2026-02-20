@@ -137,11 +137,37 @@ export class PaymentService {
       // Determine charge amount based on currency
       const chargeAmount = payload.currency === 'USD' ? calculatedTotalUsd : calculatedTotalNgn;
 
+      let finalUserId = user?.userId;
+
+      if (!finalUserId && customerEmail) {
+        // Check if user already exists
+        const existingUser = await tx.query.users.findFirst({
+          where: eq(schema.users.email, customerEmail),
+        });
+
+        if (existingUser) {
+          finalUserId = existingUser.id;
+        } else {
+          // Create a new guest user profile
+          const [newUser] = await tx.insert(schema.users).values({
+            id: crypto.randomUUID(),
+            email: customerEmail,
+            firstName: customerFirstName,
+            lastName: customerLastName || 'Guest',
+            phone: customerPhone,
+            address: payload.shippingAddress.addressLine,
+            role: 'customer',
+          }).returning();
+
+          finalUserId = newUser.id;
+        }
+      }
+
       // Insert Order
       const [newOrder] = await tx
         .insert(schema.orders)
         .values({
-          userId: user?.userId || null, // Nullable for guests
+          userId: finalUserId|| null, // Nullable for guests
           email: customerEmail,
           firstName: customerFirstName,
           lastName: customerLastName,
@@ -302,7 +328,7 @@ export class PaymentService {
               .where(eq(schema.products.id, item.productId));
           }
         }
-        console.log(`✅ Order ${payment.orderId} paid & stock updated.`);
+        // console.log(`Order ${payment.orderId} paid & stock updated.`);
 
         const order = await tx.query.orders.findFirst({
           where: eq(schema.orders.id, payment.orderId),
