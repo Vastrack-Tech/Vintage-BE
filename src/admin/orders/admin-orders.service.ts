@@ -96,6 +96,9 @@ export class AdminOrdersService {
                 totalAmountNgn: schema.orders.totalAmountNgn,
                 status: schema.orders.status,
                 createdAt: schema.orders.createdAt,
+                orderFirstName: schema.orders.firstName,
+                orderLastName: schema.orders.lastName,
+                orderEmail: schema.orders.email,
                 user: {
                     firstName: schema.users.firstName,
                     lastName: schema.users.lastName,
