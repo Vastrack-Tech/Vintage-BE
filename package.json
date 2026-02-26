@@ -23,7 +23,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",
-    "db:seed": "ts-node src/database/seed.ts",
+    "db:seed": "ts-node src/database/seed-from-csv.ts",
     "db:seed:orders": "ts-node src/database/seed-orders.ts"
   },
   "dependencies": {
@@ -41,6 +41,8 @@
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "cloudinary": "^2.9.0",
+    "csv-parser": "^3.2.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.7",
     "form-data": "^4.0.5",
