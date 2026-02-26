@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Headers, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Headers, UseGuards, Req, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiHeader, ApiBearerAuth } from '@nestjs/swagger';
 import { InitializePaymentDto } from './dto/initialize-payment.dto';
 import { PaymentService } from './payment.service';
@@ -26,11 +26,11 @@ export class PaymentController {
       user = { email: body.email, userId: body.userId };
     }
 
+    // note: CheckoutPayload expects only currency, items, shippingAddress, guestInfo and email
+    // the service calculates totals itself, so we shouldn't pass amountNgn/amountUsd here
     return this.paymentService.initializePayment(
       user,
       {
-        amountNgn: body.amount,
-        amountUsd: body.amountUsd || 0,
         currency: body.currency,
         items: body.items || [],
         shippingAddress: body.shippingAddress,
@@ -38,6 +38,18 @@ export class PaymentController {
         email: body.email,
       }
     );
+  }
+
+  @Get('shipping-quote')
+  @ApiOperation({ summary: 'Get live shipping cost based on location' })
+  async getShippingQuote(
+    @Query('country') country: string,
+    @Query('state') state: string,
+  ) {
+    if (!country || !state) {
+      throw new BadRequestException('Country and state codes are required');
+    }
+    return this.paymentService.getShippingQuote(country, state);
   }
 
   @Get('verify')

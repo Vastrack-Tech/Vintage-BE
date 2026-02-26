@@ -1,4 +1,4 @@
-import { Inject, Injectable, BadRequestException } from '@nestjs/common';
+import { Inject, Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DATABASE_CONNECTION } from '../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -9,8 +9,6 @@ import axios from 'axios';
 import { MailService } from '../mail/mail.service';
 
 interface CheckoutPayload {
-  amountNgn: number;
-  amountUsd: number;
   currency: 'NGN' | 'USD';
   email?: string;
   guestInfo?: {
@@ -22,11 +20,8 @@ interface CheckoutPayload {
   shippingAddress: ShippingAddress;
   items: {
     productId: string;
-    variantId?: string; // Optional now
+    variantId?: string;
     quantity: number;
-    // Price passed from frontend is for verification, 
-    // but backend should source truth from DB usually.
-    // For simplicity here, we re-fetch prices.
   }[];
 }
 
@@ -41,8 +36,21 @@ interface ShippingAddress {
   country: string;
 }
 
+// Complete list of African ISO-2 Country Codes
+const AFRICA_COUNTRIES = new Set([
+  'DZ', 'AO', 'BJ', 'BW', 'BF', 'BI', 'CV', 'CM', 'CF', 'TD', 'KM', 'CG', 'CD',
+  'DJ', 'EG', 'GQ', 'ER', 'SZ', 'ET', 'GA', 'GM', 'GH', 'GN', 'GW', 'CI', 'KE',
+  'LS', 'LR', 'LY', 'MG', 'MW', 'ML', 'MR', 'MU', 'MA', 'MZ', 'NA', 'NE', 'NG',
+  'RW', 'ST', 'SN', 'SC', 'SL', 'SO', 'ZA', 'SS', 'SD', 'TG', 'UG', 'TZ', 'ZM', 'ZW'
+]);
+
 @Injectable()
 export class PaymentService {
+  private readonly logger = new Logger(PaymentService.name);
+
+  private cachedNgnRate: number = 1500;
+  private lastRateFetchTime: number = 0;
+
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
@@ -50,6 +58,60 @@ export class PaymentService {
     private readonly mailService: MailService,
   ) { }
 
+  // 1. FREE LIVE FX RATE FETCHER (With 1-hour caching)
+  async getExchangeRate(): Promise<number> {
+    const ONE_HOUR = 60 * 60 * 1000;
+
+    if (Date.now() - this.lastRateFetchTime < ONE_HOUR) {
+      return this.cachedNgnRate;
+    }
+
+    try {
+      // Free API, no keys required, fast response
+      const response = await axios.get('https://open.er-api.com/v6/latest/USD');
+      if (response.data?.rates?.NGN) {
+        this.cachedNgnRate = response.data.rates.NGN;
+        this.lastRateFetchTime = Date.now();
+        this.logger.log(`Updated Live FX Rate: 1 USD = ${this.cachedNgnRate} NGN`);
+      }
+    } catch (error) {
+      this.logger.error('Failed to fetch live FX rates, using cached/default rate', error);
+    }
+
+    return this.cachedNgnRate;
+  }
+
+  // 2. THE SHIPPING PRICING MATRIX
+  calculateShippingUsd(countryCode: string, stateCode: string): number {
+    const code = countryCode.toUpperCase();
+
+    if (code === 'NG') {
+      // ISO-2 code for Lagos state is 'LA'
+      if (stateCode.toUpperCase() === 'LA') return 7;
+      return 8; // Rest of Nigeria
+    }
+
+    if (AFRICA_COUNTRIES.has(code)) {
+      return 65; // Rest of Africa
+    }
+
+    return 75; // Rest of the World
+  }
+
+  // 3. EXPOSED FOR FRONTEND TO FETCH QUOTE BEFORE PAYMENT
+  async getShippingQuote(country: string, state: string) {
+    const shippingUsd = this.calculateShippingUsd(country, state);
+    const rate = await this.getExchangeRate();
+    const shippingNgn = shippingUsd * rate;
+
+    return {
+      shippingUsd,
+      shippingNgn,
+      rateUsed: rate
+    };
+  }
+
+  // 4. MODIFIED PAYMENT INITIALIZATION
   async initializePayment(user: { email: string; userId: string } | null, payload: CheckoutPayload) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
     const callbackUrl = `${this.configService.get('FRONTEND_URL')}/payment/callback`;
@@ -59,34 +121,25 @@ export class PaymentService {
     const customerLastName = payload.guestInfo?.lastName || '';
     const customerPhone = payload.guestInfo?.phone || payload.shippingAddress.phone;
 
-    if (!customerEmail) {
-      throw new BadRequestException('Email is required for checkout');
-    }
+    if (!customerEmail) throw new BadRequestException('Email is required for checkout');
 
-    // 1. CREATE PENDING ORDER
+    // 👇 Calculate Real Shipping Cost Server-Side
+    const shippingUsd = this.calculateShippingUsd(payload.shippingAddress.country, payload.shippingAddress.state);
+    const rate = await this.getExchangeRate();
+    const shippingNgn = shippingUsd * rate;
+
     const order = await this.db.transaction(async (tx) => {
-      // Gather IDs
       const productIds = payload.items.map((i) => i.productId);
-      const variantIds = payload.items
-        .filter((i) => i.variantId)
-        .map((i) => i.variantId as string);
+      const variantIds = payload.items.filter((i) => i.variantId).map((i) => i.variantId as string);
 
-      // Fetch Products
-      const dbProducts = await tx.query.products.findMany({
-        where: inArray(schema.products.id, productIds),
-      });
-
-      // Fetch Variants
+      const dbProducts = await tx.query.products.findMany({ where: inArray(schema.products.id, productIds) });
       const dbVariants = variantIds.length > 0
-        ? await tx.query.variants.findMany({
-          where: inArray(schema.variants.id, variantIds),
-          with: { product: true },
-        })
+        ? await tx.query.variants.findMany({ where: inArray(schema.variants.id, variantIds), with: { product: true } })
         : [];
 
-      // Validate & Calculate Totals
-      let calculatedTotalNgn = 0;
-      let calculatedTotalUsd = 0;
+      // Base Item Totals (Starting at 0)
+      let itemsTotalNgn = 0;
+      let itemsTotalUsd = 0;
       const orderItemsToInsert: any[] = [];
 
       for (const item of payload.items) {
@@ -97,17 +150,13 @@ export class PaymentService {
 
         if (item.variantId) {
           const variant = dbVariants.find((v) => v.id === item.variantId);
-          if (!variant) throw new BadRequestException(`Variant not found for product ${item.productId}`);
+          if (!variant) throw new BadRequestException(`Variant not found`);
 
-          // Price: Override > Product Base
           priceNgn = Number(variant.priceOverrideNgn || variant.product.priceNgn);
           priceUsd = Number(variant.priceOverrideUsd || variant.product.priceUsd);
           variantName = variant.name;
           currentStock = variant.stockQuantity || 0;
-
-          if (currentStock < item.quantity) {
-            throw new BadRequestException(`Insufficient stock for ${variant.product.title} (${variant.name})`);
-          }
+          if (currentStock < item.quantity) throw new BadRequestException(`Insufficient stock for ${variant.name}`);
         } else {
           const product = dbProducts.find((p) => p.id === item.productId);
           if (!product) throw new BadRequestException('Product not found');
@@ -115,40 +164,36 @@ export class PaymentService {
           priceNgn = Number(product.priceNgn);
           priceUsd = Number(product.priceUsd);
           currentStock = product.stockQuantity || 0;
-
-          if (currentStock < item.quantity) {
-            throw new BadRequestException(`Insufficient stock for ${product.title}`);
-          }
+          if (currentStock < item.quantity) throw new BadRequestException(`Insufficient stock for ${product.title}`);
         }
 
-        calculatedTotalNgn += priceNgn * item.quantity;
-        calculatedTotalUsd += priceUsd * item.quantity;
+        itemsTotalNgn += priceNgn * item.quantity;
+        itemsTotalUsd += priceUsd * item.quantity;
 
         orderItemsToInsert.push({
           productId: item.productId,
           variantId: item.variantId || null,
-          variantName: variantName, // 👇 SAVE VARIANT NAME
+          variantName: variantName,
           quantity: item.quantity,
           priceAtPurchaseNgn: priceNgn.toString(),
           priceAtPurchaseUsd: priceUsd.toFixed(2),
         });
       }
 
-      // Determine charge amount based on currency
-      const chargeAmount = payload.currency === 'USD' ? calculatedTotalUsd : calculatedTotalNgn;
+      // 👇 ADD SECURE SHIPPING TO GRAND TOTALS
+      const finalTotalNgn = itemsTotalNgn + shippingNgn;
+      const finalTotalUsd = itemsTotalUsd + shippingUsd;
+
+      // Determine what to charge Paystack based on user currency selection
+      const chargeAmount = payload.currency === 'USD' ? finalTotalUsd : finalTotalNgn;
 
       let finalUserId = user?.userId;
 
       if (!finalUserId && customerEmail) {
-        // Check if user already exists
-        const existingUser = await tx.query.users.findFirst({
-          where: eq(schema.users.email, customerEmail),
-        });
-
+        const existingUser = await tx.query.users.findFirst({ where: eq(schema.users.email, customerEmail) });
         if (existingUser) {
           finalUserId = existingUser.id;
         } else {
-          // Create a new guest user profile
           const [newUser] = await tx.insert(schema.users).values({
             id: crypto.randomUUID(),
             email: customerEmail,
@@ -158,73 +203,59 @@ export class PaymentService {
             address: payload.shippingAddress.addressLine,
             role: 'customer',
           }).returning();
-
           finalUserId = newUser.id;
         }
       }
 
-      // Insert Order
-      const [newOrder] = await tx
-        .insert(schema.orders)
-        .values({
-          userId: finalUserId|| null, // Nullable for guests
-          email: customerEmail,
-          firstName: customerFirstName,
-          lastName: customerLastName,
-          phone: customerPhone,
-          shippingAddress: payload.shippingAddress,
-          totalAmountNgn: calculatedTotalNgn.toString(),
-          totalAmountUsd: calculatedTotalUsd.toFixed(2),
-          status: 'pending',
-          currencyPaid: payload.currency,
-        })
-        .returning();
+      // Insert Order with Shipping details
+      const [newOrder] = await tx.insert(schema.orders).values({
+        userId: finalUserId || null,
+        email: customerEmail,
+        firstName: customerFirstName,
+        lastName: customerLastName,
+        phone: customerPhone,
+        shippingAddress: payload.shippingAddress,
 
-      // Insert Items
+        // Save the shipping breakdowns we calculated
+        shippingAmountNgn: shippingNgn.toString(),
+        shippingAmountUsd: shippingUsd.toFixed(2),
+
+        totalAmountNgn: finalTotalNgn.toString(),
+        totalAmountUsd: finalTotalUsd.toFixed(2),
+        status: 'pending',
+        currencyPaid: payload.currency,
+      }).returning();
+
       if (orderItemsToInsert.length > 0) {
         await tx.insert(schema.orderItems).values(
-          orderItemsToInsert.map((item) => ({
-            orderId: newOrder.id,
-            ...item,
-          }))
+          orderItemsToInsert.map((item) => ({ orderId: newOrder.id, ...item }))
         );
       }
 
       return { id: newOrder.id, chargeAmount };
     });
 
-    // 2. INITIALIZE PAYSTACK
+    // PAYSTACK INIT (Unchanged)
     try {
       const response = await axios.post(
         'https://api.paystack.co/transaction/initialize',
         {
           email: customerEmail,
-          amount: Math.round(order.chargeAmount * 100), // Kobo/Cents
+          amount: Math.round(order.chargeAmount * 100),
           currency: payload.currency === 'USD' ? 'USD' : 'NGN',
           metadata: {
             userId: user?.userId || 'guest',
             orderId: order.id,
             custom_fields: [
-              {
-                display_name: "Shipping Address",
-                variable_name: "shipping_address",
-                value: `${payload.shippingAddress.addressLine}, ${payload.shippingAddress.city}`
-              }
+              { display_name: "Shipping Address", variable_name: "shipping_address", value: `${payload.shippingAddress.addressLine}, ${payload.shippingAddress.city}` }
             ]
           },
           callback_url: callbackUrl,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${secretKey}`,
-            'Content-Type': 'application/json',
-          },
-        },
+        { headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json' } },
       );
 
       const data = response.data.data;
-
-      // Log Payment Attempt
       await this.db.insert(schema.payments).values({
         userId: user?.userId || null,
         userEmail: customerEmail,
@@ -242,6 +273,7 @@ export class PaymentService {
     }
   }
 
+  // ... (keep verifyPayment, handleWebhook, fulfillOrder exactly the same below) ...
   async verifyPayment(reference: string) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 

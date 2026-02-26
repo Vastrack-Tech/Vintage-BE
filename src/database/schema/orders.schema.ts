@@ -19,11 +19,13 @@ export const orders = pgTable('orders', {
     .primaryKey()
     .$defaultFn(() => generateId('VINORD')),
   userId: text('user_id').references(() => users.id),
-  email: text('email').notNull(), // Required for everyone (guest or user)
+  email: text('email').notNull(),
   firstName: text('first_name'),
   lastName: text('last_name'),
   phone: text('phone'),
   shippingAddress: jsonb('shipping_address').notNull(),
+  shippingAmountNgn: decimal('shipping_amount_ngn', { precision: 10, scale: 2 }).default('0'),
+  shippingAmountUsd: decimal('shipping_amount_usd', { precision: 10, scale: 2 }).default('0'),
   totalAmountNgn: decimal('total_amount_ngn', { precision: 12, scale: 2 }).notNull(),
   totalAmountUsd: decimal('total_amount_usd', { precision: 12, scale: 2 }).notNull(),
   status: orderStatusEnum('status').default('pending'),

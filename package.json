@@ -24,7 +24,8 @@
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",
     "db:seed": "ts-node src/database/seed-from-csv.ts",
-    "db:seed:orders": "ts-node src/database/seed-orders.ts"
+    "db:seed:orders": "ts-node src/database/seed-orders.ts",
+    "db:update-descriptions": "ts-node src/database/update-descriptions.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",

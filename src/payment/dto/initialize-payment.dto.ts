@@ -15,104 +15,97 @@ class ShippingAddressDto {
   @ApiProperty({ example: 'John' })
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  firstName!: string; // 👈 Added !
 
   @ApiProperty({ example: 'Doe' })
   @IsString()
   @IsNotEmpty()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: '+2348012345678' })
   @IsString()
   @IsNotEmpty()
-  phone: string;
+  phone!: string;
 
   @ApiProperty({ example: '123 Lagos Way' })
   @IsString()
   @IsNotEmpty()
-  addressLine: string;
+  addressLine!: string;
 
   @ApiProperty({ example: 'Lekki' })
   @IsString()
   @IsNotEmpty()
-  city: string;
+  city!: string;
 
   @ApiProperty({ example: 'Lagos' })
   @IsString()
   @IsNotEmpty()
-  state: string;
+  state!: string;
 
   @ApiPropertyOptional({ example: '100001' })
   @IsString()
   @IsOptional()
-  postalCode?: string;
+  postalCode?: string; // 👈 Doesn't need ! because it has ?
 
   @ApiProperty({ example: 'Nigeria' })
   @IsString()
   @IsNotEmpty()
-  country: string;
+  country!: string;
 }
 
 class GuestInfoDto {
   @ApiProperty({ example: 'guest@example.com' })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: 'John' })
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ example: 'Doe' })
   @IsString()
   @IsNotEmpty()
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: '+2348012345678' })
   @IsString()
   @IsNotEmpty()
-  phone: string;
+  phone!: string;
 }
 
 class PaymentItemDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  productId: string;
+  productId!: string;
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  variantId: string;
+  variantId?: string;
 
   @ApiProperty()
   @IsNumber()
-  quantity: number;
+  quantity!: number;
 
   @ApiProperty()
   @IsNumber()
-  priceNgn: number;
+  priceNgn!: number;
 
   @ApiProperty()
   @IsNumber()
-  priceUsd: number;
+  priceUsd!: number;
 }
 
 export class InitializePaymentDto {
-  @ApiProperty()
-  @IsNumber()
-  amount: number;
-
-  @ApiProperty({ required: false })
-  @IsNumber()
-  @IsOptional()
-  amountUsd?: number;
+  // 👇 Removed 'amount' and 'amountUsd' as the backend calculates it now!
 
   @ApiProperty({ description: "Required if not using guestInfo" })
   @IsEmail()
   @IsOptional()
-  email: string;
+  email?: string;
 
   @ApiProperty({ required: false, description: "Optional for Guest Checkout" })
   @IsString()
@@ -125,18 +118,18 @@ export class InitializePaymentDto {
     enum: ['NGN', 'USD']
   })
   @IsEnum(['NGN', 'USD'])
-  currency: 'NGN' | 'USD';
+  currency!: 'NGN' | 'USD';
 
   @ApiProperty({ type: [PaymentItemDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PaymentItemDto)
-  items: PaymentItemDto[];
+  items!: PaymentItemDto[];
 
   @ApiProperty({ type: ShippingAddressDto })
   @ValidateNested()
   @Type(() => ShippingAddressDto)
-  shippingAddress: ShippingAddressDto;
+  shippingAddress!: ShippingAddressDto;
 
   @ApiPropertyOptional({ type: GuestInfoDto })
   @IsOptional()
