@@ -7,6 +7,8 @@ import { customAlphabet } from 'nanoid';
 // Load environment variables
 dotenv.config();
 
+
+
 const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const nanoid = customAlphabet(alphabet, 6);
 const generateId = (prefix: string) => `${prefix}-${nanoid()}`;

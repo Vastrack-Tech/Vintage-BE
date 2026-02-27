@@ -1,0 +1,555 @@
+ID,Type,SKU,Name,Published,Visibility in catalog,Description,In stock?,Allow customer reviews?,Regular price,Categories,Images,Parent,Attribute 1 name,Attribute 1 value(s),Attribute 2 name,Attribute 2 value(s),Attribute 1 default,Attribute 2 default,Attribute 3 name,Attribute 3 value(s)
+56,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS,1,visible,"AVAILABLE ON PREORDER. TURNAROUND TIME IS 3 WEEKS.
+Elevate your style with our Brazilian Kinky Human Hair Twisted Wigs. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Wigs are handmade with our premium quality 100% Brazilian kinky human hair twist, designed for long-lasting use and reusability through proper care.
+Wigs are available in different colours and lengths from 12 inches to 26 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!",1,1,,Others,https://hairbyvintage.com/wp-content/uploads/2023/10/1B-27-scaled.jpg,,Colour,"Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/30 Mix, Colour 1B/33 Mix, Colour 27 Blonde, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 33, Colour 35 Burgundy",Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",,,,
+57,variable,,PREORDER CUSTOM HANDMADE SISTERLOCS HUMAN HAIR EXTENSION (Colour 27 Blonde),1,visible,"AVAILABLE ON PRE-ORDER. TURNAROUND TIME IS 3 WEEKS. MINIMUM ORDER QUANTITY IS 200
+Introducing Our Exquisite Sisterlocs Human Hair Extensions!
+Handcrafted Luxury : Each strand of our Sisterlocs extensions is meticulously handmade with 100% premium human hair . Impeccable craftsmanship of HairByVintage ensures that every lock exudes natural beauty and authenticity. Sisterlocs hairstyle is super easy to style.
+Customizable Elegance : Elevate your style with our versatile extensions, available in a range of sizes from 10 inches to 16 inches . Plus, choose from an array of stunning colours to match your unique vibe.
+Exclusive Pre-Order Sale : Be among the first to own these coveted extensions! Secure your order now. Limited quantities available, so act swiftly.
+Patience Rewarded : Crafting perfection takes time. Your Sisterlocs extension will be made to order , tailored to your specifications. Allow 3 weeks for our skilled HairByVintage hairstylists to weave magic into every strand.
+Why Settle for Ordinary? Unleash your inner goddess with Sisterlocs Human Hair Extensions. Order now and embrace the allure of natural beauty!
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Sisterlocs,"https://hairbyvintage.com/wp-content/uploads/2023/10/Sisterloc.png, https://hairbyvintage.com/wp-content/uploads/2023/10/Sisterlocs-1-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2023/10/Sisterlocs-0-scaled.jpg",,Colour,"Colour 1B, Colour 1B/27 Ombre, Colour 2, Colour 27 Blonde, Colour 30, Colour 33, Colour 35 Burgundy",Length,"10 inches, 12 inches, 14 inches, 16 inches, 6 inches, 8 inches",Colour 27 Blonde,,,
+58,simple,,PREORDER BRAZILIAN KINKY HUMAN HAIR BRAIDED WIG (Colour 1B/27),1,visible,"AVAILABLE ON PREORDER. TURNAROUND TIME IS 3 WEEKS.
+This gorgeous Brazilian kinky curl human hair braid wig was created with 4 bundles of 24 inches ombré (1B/27).
+Elevate your style with our Brazilian Afro Kinky Curls Human Hair Extensions Braided Wigs. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Wigs are handmade with our premium quality 100% human hair extensions, designed for long-lasting use and reusability through proper care.
+Wigs are available in different colours and lengths from 12 inches to 26 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Upgrade your style to the vintage experience.",1,1,865.0,Others,https://hairbyvintage.com/wp-content/uploads/2023/10/image12-scaled.jpeg,,Length,24 inches,Colour,,,,,
+69,pw-gift-card,,E Gift Card,1,search,,1,1,,Others,https://hairbyvintage.com/wp-content/uploads/2023/10/Gift-card.jpeg,,Gift Card Amount,"$20, $50, $75, $100",,,,,,
+71,"variation, virtual",,E Gift Card - $20,1,search,,1,0,20.0,,,id:69,Gift Card Amount,$20,,,,,,
+72,"variation, virtual",,E Gift Card - $50,1,search,,1,0,50.0,,,id:69,Gift Card Amount,$50,,,,,,
+73,"variation, virtual",,E Gift Card - $75,1,search,,1,0,75.0,,,id:69,Gift Card Amount,$75,,,,,,
+74,"variation, virtual",,E Gift Card - $100,1,search,,1,0,100.0,,,id:69,Gift Card Amount,$100,,,,,,
+162,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B),1,visible,"Elevate your style with our Brazilian Afro Kinky Curls Human Hair Extensions. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% human hair extensions, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 24 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian afro kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/01/Product-image-5.jpg, https://hairbyvintage.com/wp-content/uploads/2024/01/Product-image-6.jpg",,Colour,Colour 1B,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B,12 inches,,
+164,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 14 inches,1,visible,,1,0,160.0,,,id:162,Colour,,Length,14 inches,,,,
+165,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 16 inches,1,visible,,1,0,170.0,,,id:162,Colour,,Length,16 inches,,,,
+167,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 20 inches,1,visible,,1,0,210.0,,,id:162,Colour,,Length,20 inches,,,,
+168,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 22 inches,1,visible,,1,0,220.0,,,id:162,Colour,,Length,22 inches,,,,
+169,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 24 inches,1,visible,,0,0,245.0,,,id:162,Colour,,Length,24 inches,,,,
+186,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 24 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/01/Product-image-3.jpg, https://hairbyvintage.com/wp-content/uploads/2024/01/Product-image-2.jpg",,Colour,Colour 1B/33 Mix,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B/33 Mix,,,
+188,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 14 inches,1,visible,,1,0,180.0,,,id:186,Colour,,Length,14 inches,,,,
+189,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 16 inches,1,visible,,1,0,190.0,,,id:186,Colour,,Length,16 inches,,,,
+191,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 20 inches,1,visible,,1,0,225.0,,,id:186,Colour,,Length,20 inches,,,,
+192,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 22 inches,1,visible,,1,0,245.0,,,id:186,Colour,,Length,22 inches,,,,
+193,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 24 inches,1,visible,,1,0,270.0,,,id:186,Colour,,Length,24 inches,,,,
+194,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 24 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/01/Product-image-1.jpg, https://hairbyvintage.com/wp-content/uploads/2024/01/unnamed.jpg",,Colour,Colour 33,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 33,,,
+196,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 14 inches,1,visible,,1,0,180.0,,,id:194,Colour,,Length,14 inches,,,,
+197,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 16 inches,1,visible,,1,0,190.0,,,id:194,Colour,,Length,16 inches,,,,
+199,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 20 inches,1,visible,,1,0,225.0,,,id:194,Colour,,Length,20 inches,,,,
+200,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 22 inches,1,visible,,1,0,245.0,,,id:194,Colour,,Length,22 inches,,,,
+201,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 24 inches,1,visible,,1,0,270.0,,,id:194,Colour,,Length,24 inches,,,,
+205,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 26 inches,1,visible,,0,0,280.0,,,id:194,Colour,,Length,26 inches,,,,
+208,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 26 inches,1,visible,,0,0,280.0,,,id:186,Colour,,Length,26 inches,,,,
+212,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 26 inches,1,visible,,0,0,255.0,,,id:162,Colour,,Length,26 inches,,,,
+213,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST,1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 24 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,https://hairbyvintage.com/wp-content/uploads/2024/02/1B-10-scaled.jpg,,Colour,"Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/30 Mix, Colour 1B/33 Mix, Colour 27 Blonde, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 30/35 Mix, Colour 33, Colour 35 Burgundy",Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",,,,
+215,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 14 inches,1,visible,,1,0,180.0,,,id:213,Colour,,Length,14 inches,,,,
+216,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 16 inches,1,visible,,1,0,190.0,,,id:213,Colour,,Length,16 inches,,,,
+218,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 20 inches,1,visible,,1,0,225.0,,,id:213,Colour,,Length,20 inches,,,,
+219,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 22 inches,1,visible,,1,0,245.0,,,id:213,Colour,,Length,22 inches,,,,
+220,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 24 inches,1,visible,,1,0,270.0,,,id:213,Colour,,Length,24 inches,,,,
+221,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 26 inches,1,visible,,0,0,280.0,,,id:213,Colour,,Length,26 inches,,,,
+239,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 12 inches,1,visible,,1,0,685.0,,,id:56,Colour,,Length,12 inches,,,,
+240,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 14 inches,1,visible,,1,0,725.0,,,id:56,Colour,,Length,14 inches,,,,
+241,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 16 inches,1,visible,,1,0,765.0,,,id:56,Colour,,Length,16 inches,,,,
+242,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 18 inches,1,visible,,1,0,820.0,,,id:56,Colour,,Length,18 inches,,,,
+243,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 20 inches,1,visible,,1,0,900.0,,,id:56,Colour,,Length,20 inches,,,,
+244,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 22 inches,1,visible,,1,0,980.0,,,id:56,Colour,,Length,22 inches,,,,
+245,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 24 inches,1,visible,,1,0,1080.0,,,id:56,Colour,,Length,24 inches,,,,
+246,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST BRAIDED WIGS - 26 inches,1,visible,,1,0,1120.0,,,id:56,Colour,,Length,26 inches,,,,
+294,variation,,PREORDER CUSTOM HANDMADE SISTERLOCS HUMAN HAIR EXTENSION (Colour 27 Blonde) - 16 inches,1,visible,,1,0,3.6,,,id:57,Colour,,Length,16 inches,,,,
+295,variation,,PREORDER CUSTOM HANDMADE SISTERLOCS HUMAN HAIR EXTENSION (Colour 27 Blonde) - 14 inches,1,visible,,1,0,3.3,,,id:57,Colour,,Length,14 inches,,,,
+296,variation,,PREORDER CUSTOM HANDMADE SISTERLOCS HUMAN HAIR EXTENSION (Colour 27 Blonde) - 12 inches,1,visible,,1,0,3.2,,,id:57,Colour,,Length,12 inches,,,,
+297,variation,,PREORDER CUSTOM HANDMADE SISTERLOCS HUMAN HAIR EXTENSION (Colour 27 Blonde) - 10 inches,1,visible,,1,0,2.9,,,id:57,Colour,,Length,10 inches,,,,
+389,variable,,HANDMADE SISTERLOCS HUMAN HAIR TWIST (Colour 1B/33 Ombre),1,visible,"MINIMUM ORDER QUANTITY IS 200
+Introducing Our Exquisite Sisterlocs Human Hair Extensions!
+Handcrafted Luxury : Each strand of our Sisterlocs extensions is meticulously handmade with 100% premium human hair . Impeccable craftsmanship of HairByVintage ensures that every lock exudes natural beauty and authenticity. Sisterlocs hairstyle is super easy to style.
+Customizable Elegance : Refresh your style with our versatile extensions, available in a range of sizes from 10 inches to 16 inches . Plus, choose from an array of stunning colours to match your unique vibe.
+Be among the first to own these coveted extensions! Secure your order now. Limited quantities available, so act swiftly.
+Patience Rewarded : Crafting perfection takes time. Your Sisterlocs extension will be made to order , tailored to your specifications. )ur skilled HairByVintage hairstylists weave magic into every strand.
+Why Settle for Ordinary? Unleash your inner goddess with Sisterlocs Human Hair Extensions. Order now and embrace the allure of natural beauty!
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Sisterlocs,"https://hairbyvintage.com/wp-content/uploads/2024/03/colour-1b-33-350-12-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2024/03/colour-1b-33-350-12-scaled.jpg",,Length,"10 inches, 12 inches, 14 inches, 16 inches, 6 inches, 8 inches",Colour,Colour 1B/33 Ombre,6 inches,Colour 1B/33 Ombre,,
+390,variation,,HANDMADE SISTERLOCS HUMAN HAIR TWIST (Colour 1B/33 Ombre) - 10 inches,1,visible,,1,0,2.1,,,id:389,Length,10 inches,Colour,,,,,
+391,variation,,HANDMADE SISTERLOCS HUMAN HAIR TWIST (Colour 1B/33 Ombre) - 12 inches,1,visible,,1,0,2.2,,,id:389,Length,12 inches,Colour,,,,,
+392,variation,,HANDMADE SISTERLOCS HUMAN HAIR TWIST (Colour 1B/33 Ombre) - 14 inches,1,visible,,1,0,2.3,,,id:389,Length,14 inches,Colour,,,,,
+393,variation,,HANDMADE SISTERLOCS HUMAN HAIR TWIST (Colour 1B/33 Ombre) - 16 inches,1,visible,,1,0,2.6,,,id:389,Length,16 inches,Colour,,,,,
+402,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 24 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/03/colour-30-4c-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2024/03/colour-30-4c-scaled.jpg",,Colour,Colour 30,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 30,,,
+404,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 14 inches,1,visible,,1,0,180.0,,,id:402,Colour,,Length,14 inches,,,,
+405,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 16 inches,1,visible,,1,0,190.0,,,id:402,Colour,,Length,16 inches,,,,
+407,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 20 inches,1,visible,,1,0,225.0,,,id:402,Colour,,Length,20 inches,,,,
+408,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 22 inches,1,visible,,1,0,245.0,,,id:402,Colour,,Length,22 inches,,,,
+409,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 24 inches,1,visible,,1,0,270.0,,,id:402,Colour,,Length,24 inches,,,,
+410,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 26 inches,1,visible,,0,0,280.0,,,id:402,Colour,,Length,26 inches,,,,
+412,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 24 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/03/18-4a-colour-1b-35-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2024/03/18-4a-colour-1b-35-scaled.jpg",,Colour,Colour 1B/35 Mix,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B/35 Mix,,,
+414,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 14 inches,1,visible,,1,0,180.0,,,id:412,Colour,,Length,14 inches,,,,
+415,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 16 inches,1,visible,,1,0,190.0,,,id:412,Colour,,Length,16 inches,,,,
+417,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 20 inches,1,visible,,1,0,225.0,,,id:412,Colour,,Length,20 inches,,,,
+418,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 22 inches,1,visible,,1,0,245.0,,,id:412,Colour,,Length,22 inches,,,,
+419,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 24 inches,1,visible,,1,0,270.0,,,id:412,Colour,,Length,24 inches,,,,
+420,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 26 inches,1,visible,,0,0,280.0,,,id:412,Colour,,Length,26 inches,,,,
+426,variable,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 1B),1,visible,"Elevate your style with our Brazilian Kinky Donor Hair Weave. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% human hair extensions, designed for long-lasting use and reusability through proper care.
+Available in different colours and lengths from 12 inches to 18 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky donor hair weave comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+Minimum of 2-3 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Weave,"https://hairbyvintage.com/wp-content/uploads/2024/03/ccfd2802-1e31-4667-b49b-fe21a996feaa.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/03/ccfd2802-1e31-4667-b49b-fe21a996feaa.jpeg",,Colour,Colour 1B,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches",Colour 1B,,,
+427,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 1B) - 12 inches,1,visible,,1,0,144.0,,,id:426,Colour,,Length,12 inches,,,,
+428,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 1B) - 14 inches,1,visible,,1,0,163.0,,,id:426,Colour,,Length,14 inches,,,,
+429,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 1B) - 16 inches,1,visible,,1,0,175.0,,,id:426,Colour,,Length,16 inches,,,,
+437,variable,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 33),1,visible,"Elevate your style with our Brazilian Kinky Donor Hair Weave. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% human hair extensions, designed for long-lasting use and reusability through proper care.
+Available in different colours and lengths from 12 inches to 18 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky donor hair weave comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+Minimum of 2-3 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Weave,"https://hairbyvintage.com/wp-content/uploads/2024/03/IMG_9775-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/03/IMG_9775-scaled.jpeg",,Colour,Colour 27/33 Mix,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches",Colour 27/33 Mix,,,
+438,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 33) - 12 inches,1,visible,,1,0,150.0,,,id:437,Colour,,Length,12 inches,,,,
+439,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 33) - 14 inches,1,visible,,1,0,168.0,,,id:437,Colour,,Length,14 inches,,,,
+462,variable,,BLENDED KINKY STRAIGHT EXTENSION FOR CROCHET AND BRAIDING,1,visible,"Blended Kinky Straight Extension For Crochet And Braiding
+Indulge in luxury with our meticulously blended hair extensions. Crafted with precision and care, each strand is designed to seamlessly blend with your own hair, delivering a flawless finish that exudes confidence and sophistication.
+Our blended hair is perfect for crotchet and braids hairstyles.
+It's available exclusively in classic black colour and luxurious 22 inches.
+QUANTITY 1 = 1 BUNDLE
+For a crochet hairstyle, you need 2 bundles, while braids require 3-4 bundles.",0,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/04/IMG_6868-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/04/IMG_9894-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/04/IMG_0016-scaled.jpeg",,Colour,"Colour 1B, Colour 27 Blonde",Length,"18 inches, 22 inches, 30 Inches, 32 Inches, 42 Inches",Colour 1B,18 inches,,
+487,simple,,WET AND WAVY HUMAN HAIR EXTENSION (Colour 6),1,visible,"Step into the spotlight with our Wet & Wavy hair collections. Immerse yourself in the versatility of curls that come alive with moisture, offering a relaxed elegance. Transform your look with ease, as these textures are primed for both sleek straightening and dynamic curling with your favourite hot tools. It’s your style, your way.
+Our wet and wavy human hair extension is available only in 20 inches and 5 colours (colour 1B, colour 6, colour 30, colour 340 and colour 350)
+2-3 bundles are used to achieve a full head.
+QUANTITY 1 = 1 BUNDLE",1,1,350.0,Wet & Wavy,"https://hairbyvintage.com/wp-content/uploads/2024/04/Colour-4-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2024/04/Lugo-colours.jpg, https://hairbyvintage.com/wp-content/uploads/2024/04/Colour-4-scaled.jpg",,Colour,Colour 33,Length,20 inches,,,,
+488,simple,,WET AND WAVY HUMAN HAIR EXTENSION (Colour 30),1,visible,"Step into the spotlight with our Wet & Wavy hair collections. Immerse yourself in the versatility of curls that come alive with moisture, offering a relaxed elegance. Transform your look with ease, as these textures are primed for both sleek straightening and dynamic curling with your favourite hot tools. It’s your style, your way.
+Our wet and wavy human hair extension is available only in 20 inches and 4 colours (colour 1B, 27, colour 30 and colour 33)
+2-3 bundles are used to achieve a full head.
+QUANTITY 1 = 1 BUNDLE",1,1,375.0,Wet & Wavy,"https://hairbyvintage.com/wp-content/uploads/2024/04/Colour-6-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2024/04/Lugo-colours.jpg, https://hairbyvintage.com/wp-content/uploads/2024/04/Colour-6-scaled.jpg",,Colour,Colour 30,Length,20 inches,,,,
+567,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30),1,visible,"Brazilian Kinky Human Hair Twist – Luxury That Lasts
+Elevate your look with premium 100% Brazilian Kinky Human Hair Twists —crafted for women of refined taste and trusted worldwide. Whether you're rocking microlocs, microtwists, braids, or sistalocs , our reusable bundles deliver style, comfort, and long-lasting confidence.
+Why Choose Our Kinky Hair Extensions?
+Premium Quality: Ethically sourced 100% Brazilian human hair
+Tangle-Free & Durable: Designed to last for years with proper care
+Reusable Bundles: Sustainable and cost-effective styling
+Versatile Styling: Ideal for microlocs, microtwists, braids & more
+Multiple Options: Lengths from 12 to 26 inches , available in stunning colour variations
+Bundle Information
+QUANTITY 1 = 1 BUNDLE
+Full Head Needs: Just 3–4 bundles for complete coverage
+Limited-Time Availability
+This best-selling style is moving fast. Don't miss your chance to embrace the ultimate blend of luxury, quality, and versatility .
+Order Today & Enjoy Seamless Checkout
+Pay securely via PayStack or request for a payment link.
+What Our Customers Say
+""I’ve reused the same bundles for over a year—they still look flawless!""
+""The microlocs are light, natural-looking, and seriously tangle-free. Worth every naira!""",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/05/IMG_1906-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/05/IMG_1906-scaled.jpeg",,Colour,"Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/30 Mix, Colour 1B/33 Mix, Colour 1B/33 Ombre, Colour 1B/35 Mix, Colour 27 Blonde, Colour 27/30 Mix, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 30/35 Mix, Colour 33, Colour 35 Burgundy",Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 27/30 Mix,,,
+569,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 14 inches,1,visible,,1,0,180.0,,,id:567,Colour,,Length,14 inches,,,,
+570,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 16 inches,1,visible,,1,0,190.0,,,id:567,Colour,,Length,16 inches,,,,
+572,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 20 inches,1,visible,,1,0,225.0,,,id:567,Colour,,Length,20 inches,,,,
+573,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 22 inches,1,visible,,0,0,245.0,,,id:567,Colour,,Length,22 inches,,,,
+574,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 24 inches,1,visible,,0,0,270.0,,,id:567,Colour,,Length,24 inches,,,,
+575,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 26 inches,1,visible,,0,0,280.0,,,id:567,Colour,,Length,26 inches,,,,
+621,variation,,PREORDER CUSTOM HANDMADE SISTERLOCS HUMAN HAIR EXTENSION (Colour 27 Blonde) - 8 inches,1,visible,,1,0,2.8,,,id:57,Colour,,Length,8 inches,,,,
+622,variation,,PREORDER CUSTOM HANDMADE SISTERLOCS HUMAN HAIR EXTENSION (Colour 27 Blonde) - 6 inches,1,visible,,1,0,2.6,,,id:57,Colour,,Length,6 inches,,,,
+643,variation,,HANDMADE SISTERLOCS HUMAN HAIR TWIST (Colour 1B/33 Ombre) - 6 inches,1,visible,,1,0,1.8,,,id:389,Length,6 inches,Colour,,,,,
+644,variation,,HANDMADE SISTERLOCS HUMAN HAIR TWIST (Colour 1B/33 Ombre) - 8 inches,1,visible,,1,0,2.0,,,id:389,Length,8 inches,Colour,,,,,
+657,variable,,BRAZILIAN KINKY HUMAN HAIR CLOSURE (Colour 1B),1,visible,"Elevate your style with our Brazilian Afro Kinky Curls Human Hair Closure. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% human hair extensions, designed for long-lasting use and reusability through proper care.
+Available in different colours and lengths from 14 inches to 18 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!",0,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/05/IMG_2965-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/05/IMG_2998.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/05/IMG_2965-scaled.jpeg",,Colour,Colour 1B,Length,"10 inches, 12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches, 6 inches, 8 inches",Colour 1B,,Texture,4C
+658,variation,,BRAZILIAN KINKY HUMAN HAIR CLOSURE (Colour 1B),1,visible,,0,0,115.0,,,id:657,Colour,,Length,14 inches,,,Texture,
+659,variation,,BRAZILIAN KINKY HUMAN HAIR CLOSURE (Colour 1B),1,visible,,0,0,120.0,,,id:657,Colour,,Length,16 inches,,,Texture,
+666,variation,,BRAZILIAN KINKY HUMAN HAIR CLOSURE (Colour 1B),1,visible,,0,0,125.0,,,id:657,Colour,,Length,18 inches,,,Texture,
+667,variable,,BRAZILIAN KINKY HUMAN HAIR CLOSURE,1,visible,"Elevate your style with our Brazilian Afro Kinky Curls Human Hair Closure. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% human hair extensions, designed for long-lasting use and reusability through proper care.
+Available in different colours and lengths from 14 inches to 18 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!",0,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/05/IMG_2998.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/05/IMG_2998.jpeg",,Colour,"Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/30 Mix, Colour 1B/33 Mix, Colour 1B/33 Ombre, Colour 1B/33/35 Ombre, Colour 1B/35 Mix, Colour 2, Colour 27 Blonde, Colour 27/30 Mix, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 30/35 Mix, Colour 33, Colour 35 Burgundy",Length,"10 inches, 12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches, 6 inches, 8 inches",,,Texture,4C
+668,variation,,BRAZILIAN KINKY HUMAN HAIR CLOSURE,1,visible,,0,0,125.0,,,id:667,Colour,,Length,14 inches,,,Texture,
+669,variation,,BRAZILIAN KINKY HUMAN HAIR CLOSURE,1,visible,,0,0,130.0,,,id:667,Colour,,Length,16 inches,,,Texture,
+670,variation,,BRAZILIAN KINKY HUMAN HAIR CLOSURE,1,visible,,0,0,135.0,,,id:667,Colour,,Length,18 inches,,,Texture,
+686,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 18 inches,1,visible,,1,0,205.0,,,id:567,Colour,,Length,18 inches,,,,
+687,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 27/30) - 12 inches,1,visible,,1,0,170.0,,,id:567,Colour,,Length,12 inches,,,,
+690,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 18 inches,1,visible,,1,0,205.0,,,id:412,Colour,,Length,18 inches,,,,
+691,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/35) - 12 inches,1,visible,,1,0,170.0,,,id:412,Colour,,Length,12 inches,,,,
+692,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 18 inches,1,visible,,1,0,205.0,,,id:402,Colour,,Length,18 inches,,,,
+693,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30) - 12 inches,1,visible,,1,0,170.0,,,id:402,Colour,,Length,12 inches,,,,
+694,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 18 inches,1,visible,,1,0,205.0,,,id:213,Colour,,Length,18 inches,,,,
+695,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST - 12 inches,1,visible,,1,0,170.0,,,id:213,Colour,,Length,12 inches,,,,
+696,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 18 inches,1,visible,,1,0,205.0,,,id:194,Colour,,Length,18 inches,,,,
+697,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 33) - 12 inches,1,visible,,1,0,170.0,,,id:194,Colour,,Length,12 inches,,,,
+698,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 18 inches,1,visible,,1,0,205.0,,,id:186,Colour,,Length,18 inches,,,,
+699,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/33) - 12 inches,1,visible,,1,0,170.0,,,id:186,Colour,,Length,12 inches,,,,
+702,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 18 inches,1,visible,,1,0,195.0,,,id:162,Colour,,Length,18 inches,,,,
+703,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 12 inches,1,visible,,1,0,150.0,,,id:162,Colour,,Length,12 inches,,,,
+707,variable,,PREORDER CUSTOM HANDMADE VINTAGE-LOCS WITH CURLS HUMAN HAIR EXTENSION (Colour 1B),1,visible,"AVAILABLE ON PRE-ORDER. TURNAROUND TIME IS 3 WEEKS. MINIMUM ORDER QUANTITY IS 100
+Introducing Our Exquisite Sisterlocs Human Hair Extensions!
+Handcrafted Luxury : Each strand of our Sisterlocs extensions is meticulously handmade with 100% premium human hair . Impeccable craftsmanship of HairByVintage ensures that every lock exudes natural beauty and authenticity. Sisterlocs hairstyle is super easy to style.
+Customizable Elegance : Elevate your style with our versatile extensions, available in a range of sizes from 10 inches to 16 inches . Plus, choose from an array of stunning colours to match your unique vibe.
+Exclusive Pre-Order Sale : Be among the first to own these coveted extensions! Secure your order now. Limited quantities available, so act swiftly.
+Patience Rewarded : Crafting perfection takes time. Your Sisterlocs extension will be made to order , tailored to your specifications. Allow 3 weeks for our skilled HairByVintage hairstylists to weave magic into every strand.
+Why Settle for Ordinary? Unleash your inner goddess with Sisterlocs Human Hair Extensions. Order now and embrace the allure of natural beauty!
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Sisterlocs,"https://hairbyvintage.com/wp-content/uploads/2024/06/IMG_3823.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/06/IMG_3450-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/06/IMG_3614-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/06/IMG_3823.jpeg",,Colour,Colour 1B,Length,"10 inches, 12 inches, 14 inches, 16 inches, 8 inches",Colour 1B,,,
+711,variation,,PREORDER CUSTOM HANDMADE VINTAGE-LOCS WITH CURLS HUMAN HAIR EXTENSION (Colour 1B) - 8 inches,1,visible,,1,0,2.6,,,id:707,Colour,,Length,8 inches,,,,
+712,variation,,PREORDER CUSTOM HANDMADE VINTAGE-LOCS WITH CURLS HUMAN HAIR EXTENSION (Colour 1B) - 10 inches,1,visible,,1,0,2.8,,,id:707,Colour,,Length,10 inches,,,,
+713,variation,,PREORDER CUSTOM HANDMADE VINTAGE-LOCS WITH CURLS HUMAN HAIR EXTENSION (Colour 1B) - 12 inches,1,visible,,1,0,3.0,,,id:707,Colour,,Length,12 inches,,,,
+714,variation,,PREORDER CUSTOM HANDMADE VINTAGE-LOCS WITH CURLS HUMAN HAIR EXTENSION (Colour 1B) - 14 inches,1,visible,,1,0,3.3,,,id:707,Colour,,Length,14 inches,,,,
+715,variation,,PREORDER CUSTOM HANDMADE VINTAGE-LOCS WITH CURLS HUMAN HAIR EXTENSION (Colour 1B) - 16 inches,1,visible,,1,0,3.5,,,id:707,Colour,,Length,16 inches,,,,
+789,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 26 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/08/IMG_4976-2.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/08/IMG_4961-scaled.jpeg",,Colour,Colour 1B/30/33 Ombre,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B/30/33 Ombre,,,
+790,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 12 inches,1,visible,,1,0,170.0,,,id:789,Colour,,Length,12 inches,,,,
+791,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 14 inches,1,visible,,1,0,180.0,,,id:789,Colour,,Length,14 inches,,,,
+792,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 16 inches,1,visible,,1,0,190.0,,,id:789,Colour,,Length,16 inches,,,,
+793,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 18 inches,1,visible,,1,0,205.0,,,id:789,Colour,,Length,18 inches,,,,
+794,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 20 inches,1,visible,,1,0,225.0,,,id:789,Colour,,Length,20 inches,,,,
+795,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 22 inches,1,visible,,1,0,245.0,,,id:789,Colour,,Length,22 inches,,,,
+796,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 24 inches,1,visible,,0,0,270.0,,,id:789,Colour,,Length,24 inches,,,,
+797,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30/33 Ombre) - 26 inches,1,visible,,0,0,280.0,,,id:789,Colour,,Length,26 inches,,,,
+806,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre),1,visible,"Brazilian Kinky Human Hair Twist – Luxury That Lasts
+Elevate your look with premium 100% Brazilian Kinky Human Hair Twists —crafted for women of refined taste and trusted worldwide. Whether you're rocking microlocs, microtwists, braids, or sistalocs , our reusable bundles deliver style, comfort, and long-lasting confidence.
+Why Choose Our Kinky Hair Extensions?
+Premium Quality: Ethically sourced 100% Brazilian human hair
+Tangle-Free & Durable: Designed to last for years with proper care
+Reusable Bundles: Sustainable and cost-effective styling
+Versatile Styling: Ideal for microlocs, microtwists, braids & more
+Multiple Options: Lengths from 12 to 26 inches , available in stunning colour variations
+Bundle Information
+QUANTITY 1 = 1 BUNDLE
+Full Head Needs: Just 3–4 bundles for complete coverage
+Limited-Time Availability
+This best-selling style is moving fast. Don't miss your chance to embrace the ultimate blend of luxury, quality, and versatility .
+Order Today & Enjoy Seamless Checkout
+Pay securely via PayStack or request for a payment link.
+What Our Customers Say
+""I’ve reused the same bundles for over a year—they still look flawless!""
+""The microlocs are light, natural-looking, and seriously tangle-free. Worth every naira!""",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/08/IMG_4829-1-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/08/IMG_4829-1-scaled.jpeg",,Colour,Colour 1B/30 Ombre,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B/30 Ombre,,,
+807,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 12 inches,1,visible,,1,0,170.0,,,id:806,Colour,,Length,12 inches,,,,
+808,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 14 inches,1,visible,,1,0,180.0,,,id:806,Colour,,Length,14 inches,,,,
+809,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 16 inches,1,visible,,1,0,190.0,,,id:806,Colour,,Length,16 inches,,,,
+810,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 18 inches,1,visible,,1,0,205.0,,,id:806,Colour,,Length,18 inches,,,,
+811,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 20 inches,1,visible,,1,0,225.0,,,id:806,Colour,,Length,20 inches,,,,
+812,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 22 inches,1,visible,,1,0,245.0,,,id:806,Colour,,Length,22 inches,,,,
+813,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 24 inches,1,visible,,0,0,270.0,,,id:806,Colour,,Length,24 inches,,,,
+814,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/30 Ombre) - 26 inches,1,visible,,0,0,280.0,,,id:806,Colour,,Length,26 inches,,,,
+852,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B),1,visible,"Brazilian Kinky Human Hair Twist – Luxury That Lasts
+Elevate your look with premium 100% Brazilian Kinky Human Hair Twists —crafted for women of refined taste and trusted worldwide. Whether you're rocking microlocs, microtwists, braids, or sistalocs , our reusable bundles deliver style, comfort, and long-lasting confidence.
+Why Choose Our Kinky Hair Extensions?
+Premium Quality: Ethically sourced 100% Brazilian human hair
+Tangle-Free & Durable: Designed to last for years with proper care
+Reusable Bundles: Sustainable and cost-effective styling
+Versatile Styling: Ideal for microlocs, microtwists, braids & more
+Multiple Options: Lengths from 12 to 26 inches , available in stunning colour variations
+Bundle Information
+QUANTITY 1 = 1 BUNDLE
+Full Head Needs: Just 3–4 bundles for complete coverage
+Limited-Time Availability
+This best-selling style is moving fast. Don't miss your chance to embrace the ultimate blend of luxury, quality, and versatility .
+Order Today & Enjoy Seamless Checkout
+Pay securely via PayStack or request for a payment link.
+What Our Customers Say
+""I’ve reused the same bundles for over a year—they still look flawless!""
+""The microlocs are light, natural-looking, and seriously tangle-free. Worth every naira!""",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/08/Brazilian-kinky-human-hair-1-bundle.jpg, https://hairbyvintage.com/wp-content/uploads/2024/08/Brazilian-kinky-human-hair-2-bundles.jpg, https://hairbyvintage.com/wp-content/uploads/2024/08/Brazilian-kinky-human-hair-1-bundle.jpg, https://hairbyvintage.com/wp-content/uploads/2024/08/Brazilian-kinky-human-hair-3-bundles.jpg",,Colour,Colour 1B,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B,12 inches,,
+853,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 12 inches,1,visible,,0,0,150.0,,,id:852,Colour,,Length,12 inches,,,,
+854,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 14 inches,1,visible,,1,0,160.0,,,id:852,Colour,,Length,14 inches,,,,
+855,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 16 inches,1,visible,,1,0,170.0,,,id:852,Colour,,Length,16 inches,,,,
+856,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 18 inches,1,visible,,1,0,195.0,,,id:852,Colour,,Length,18 inches,,,,
+857,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 20 inches,1,visible,,1,0,210.0,,,id:852,Colour,,Length,20 inches,,,,
+858,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 22 inches,1,visible,,1,0,220.0,,,id:852,Colour,,Length,22 inches,,,,
+859,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 24 inches,1,visible,,0,0,245.0,,,id:852,Colour,,Length,24 inches,,,,
+860,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B) - 26 inches,1,visible,,0,0,255.0,,,id:852,Colour,,Length,26 inches,,,,
+880,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Salt & Pepper),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 24 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look! Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE .
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",0,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/08/IMG_5054-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/08/Hairbyvintage-Salt-and-pepper-2.heic, https://hairbyvintage.com/wp-content/uploads/2024/08/Hairbyvintage-Salt-and-pepper-3.heic",,Colour,Salt & Pepper,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Salt &amp; Pepper,14 inches,,
+882,variation,11.0,"BRAZILIAN KINKY HUMAN HAIR TWIST (Salt & Pepper) - Salt &amp; Pepper, 14 inches",1,visible,,0,0,165.0,,,id:880,Colour,Salt & Pepper,Length,14 inches,,,,
+915,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is
+trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 26 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/09/IMG_6302-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/09/Hairbyvintage-colour1b27ombre.heic",,Colour,"Colour 1B, Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/30 Mix, Colour 1B/30 Ombre, Colour 1B/30/33 Ombre, Colour 1B/33 Mix, Colour 1B/33 Ombre, Colour 1B/33/35 Ombre, Colour 1B/35 Mix, Colour 27 Blonde, Colour 27/30 Mix, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 30/35 Mix, Colour 33, Colour 35 Burgundy",Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B/27 Ombre,,,
+916,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 12 inches,1,visible,,1,0,170.0,,,id:915,Colour,,Length,12 inches,,,,
+917,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 14 inches,1,visible,,1,0,180.0,,,id:915,Colour,,Length,14 inches,,,,
+918,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 16 inches,1,visible,,1,0,190.0,,,id:915,Colour,,Length,16 inches,,,,
+919,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 18 inches,1,visible,,1,0,205.0,,,id:915,Colour,,Length,18 inches,,,,
+920,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 20 inches,1,visible,,1,0,225.0,,,id:915,Colour,,Length,20 inches,,,,
+921,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 22 inches,1,visible,,1,0,245.0,,,id:915,Colour,,Length,22 inches,,,,
+922,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 24 inches,1,visible,,0,0,270.0,,,id:915,Colour,,Length,24 inches,,,,
+923,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27 Ombre) - 26 inches,1,visible,,0,0,280.0,,,id:915,Colour,,Length,26 inches,,,,
+935,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 26 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/09/IMG_3465.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/09/IMG_4962-1-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/09/IMG_3464.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/09/IMG_3465.jpeg",,Colour,"Colour 1B, Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/30 Mix, Colour 1B/30 Ombre, Colour 1B/30/33 Ombre, Colour 1B/33 Mix, Colour 1B/33 Ombre, Colour 1B/33/35 Ombre, Colour 1B/35 Mix, Colour 27 Blonde, Colour 27/30 Mix, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 30/33 Mix, Colour 30/35 Mix, Colour 33, Colour 35 Burgundy",Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 30/33 Mix,,,
+936,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 12 inches,1,visible,,0,0,170.0,,,id:935,Colour,,Length,12 inches,,,,
+937,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 14 inches,1,visible,,1,0,180.0,,,id:935,Colour,,Length,14 inches,,,,
+938,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 16 inches,1,visible,,1,0,190.0,,,id:935,Colour,,Length,16 inches,,,,
+939,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 18 inches,1,visible,,1,0,205.0,,,id:935,Colour,,Length,18 inches,,,,
+940,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 20 inches,1,visible,,1,0,225.0,,,id:935,Colour,,Length,20 inches,,,,
+941,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 22 inches,1,visible,,1,0,245.0,,,id:935,Colour,,Length,22 inches,,,,
+942,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 24 inches,1,visible,,0,0,270.0,,,id:935,Colour,,Length,24 inches,,,,
+943,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 30/33 Mix) - 26 inches,1,visible,,0,0,280.0,,,id:935,Colour,,Length,26 inches,,,,
+948,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red),1,visible,"Elevate your style with our Brazilian Kinky Human Hair Twist. Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% kinky human hair twist, designed for long-lasting use and reusability through proper care. Perfect for microlocs, microtwist, braids and other hairstyles.
+Available in different colours and lengths from 12 inches to 26 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky human hair extension comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+3-4 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/09/IMG_7147-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/09/IMG_7146-scaled.jpeg",,Length,"14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",,,,,,
+952,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red) - 18 inches,1,visible,,1,0,205.0,,,id:948,Length,18 inches,,,,,,
+953,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red) - 20 inches,1,visible,,1,0,225.0,,,id:948,Length,20 inches,,,,,,
+954,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red) - 22 inches,1,visible,,1,0,245.0,,,id:948,Length,22 inches,,,,,,
+955,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red) - 24 inches,1,visible,,0,0,270.0,,,id:948,Length,24 inches,,,,,,
+956,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red) - 26 inches,1,visible,,0,0,280.0,,,id:948,Length,26 inches,,,,,,
+961,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red) - 16 inches,1,visible,,1,0,190.0,,,id:948,Length,16 inches,,,,,,
+962,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Dark Red) - 14 inches,1,visible,,1,0,180.0,,,id:948,Length,14 inches,,,,,,
+978,variation,,"BLENDED KINKY STRAIGHT EXTENSION FOR CROCHET AND BRAIDING - Colour 1B, 18 inches",1,visible,,0,0,38.0,,,id:462,Colour,Colour 1B,Length,18 inches,,,,
+980,variation,,"BLENDED KINKY STRAIGHT EXTENSION FOR CROCHET AND BRAIDING - Colour 1B, 22 inches",1,visible,,0,0,44.0,,,id:462,Colour,Colour 1B,Length,22 inches,,,,
+981,variation,,"BLENDED KINKY STRAIGHT EXTENSION FOR CROCHET AND BRAIDING - Colour 1B, 30 Inches",1,visible,,0,0,48.0,,,id:462,Colour,Colour 1B,Length,30 Inches,,,,
+982,variation,,"BLENDED KINKY STRAIGHT EXTENSION FOR CROCHET AND BRAIDING - Colour 1B, 32 Inches",1,visible,,0,0,50.0,,,id:462,Colour,Colour 1B,Length,32 Inches,,,,
+983,variation,,"BLENDED KINKY STRAIGHT EXTENSION FOR CROCHET AND BRAIDING - Colour 1B, 42 Inches",1,visible,,0,0,56.0,,,id:462,Colour,Colour 1B,Length,42 Inches,,,,
+1031,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre),1,visible,"Brazilian Kinky Human Hair Twist – Luxury That Lasts
+Elevate your look with premium 100% Brazilian Kinky Human Hair Twists —crafted for women of refined taste and trusted worldwide. Whether you're rocking microlocs, microtwists, braids, or sistalocs , our reusable bundles deliver style, comfort, and long-lasting confidence.
+Why Choose Our Kinky Hair Extensions?
+Premium Quality: Ethically sourced 100% Brazilian human hair
+Tangle-Free & Durable: Designed to last for years with proper care
+Reusable Bundles: Sustainable and cost-effective styling
+Versatile Styling: Ideal for microlocs, microtwists, braids & more
+Multiple Options: Lengths from 12 to 26 inches , available in stunning colour variations
+Bundle Information
+QUANTITY 1 = 1 BUNDLE
+Full Head Needs: Just 3–4 bundles for complete coverage
+Limited-Time Availability
+This best-selling style is moving fast. Don't miss your chance to embrace the ultimate blend of luxury, quality, and versatility .
+Order Today & Enjoy Seamless Checkout
+Pay securely via PayStack or request for a payment link.
+What Our Customers Say
+""I’ve reused the same bundles for over a year—they still look flawless!""
+""The microlocs are light, natural-looking, and seriously tangle-free. Worth every naira!""",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/11/IMG_4924-1-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/11/IMG_4924-1-scaled.jpeg",,Colour,"Colour 1B, Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/27/30 Ombre, Colour 1B/27/33 Ombre, Colour 1B/30 Mix, Colour 1B/30 Ombre, Colour 1B/30/33 Ombre, Colour 1B/33 Mix, Colour 1B/33 Ombre, Colour 1B/33/35 Ombre, Colour 1B/35 Mix, Colour 27 Blonde, Colour 27/30 Mix, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 30/35 Mix, Colour 33, Colour 35 Burgundy",Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B/27/30 Ombre,,,
+1032,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 12 inches,1,visible,,0,0,170.0,,,id:1031,Colour,,Length,12 inches,,,,
+1033,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 14 inches,1,visible,,1,0,180.0,,,id:1031,Colour,,Length,14 inches,,,,
+1034,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 16 inches,1,visible,,1,0,190.0,,,id:1031,Colour,,Length,16 inches,,,,
+1035,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 18 inches,1,visible,,1,0,205.0,,,id:1031,Colour,,Length,18 inches,,,,
+1036,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 20 inches,1,visible,,1,0,225.0,,,id:1031,Colour,,Length,20 inches,,,,
+1037,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 22 inches,1,visible,,1,0,245.0,,,id:1031,Colour,,Length,22 inches,,,,
+1038,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 24 inches,1,visible,,0,0,270.0,,,id:1031,Colour,,Length,24 inches,,,,
+1039,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/30 Ombre) - 26 inches,1,visible,,0,0,280.0,,,id:1031,Colour,,Length,26 inches,,,,
+1040,variable,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre),1,visible,"Brazilian Kinky Human Hair Twist – Luxury That Lasts
+Elevate your look with premium 100% Brazilian Kinky Human Hair Twists —crafted for women of refined taste and trusted worldwide. Whether you're rocking microlocs, microtwists, braids, or sistalocs , our reusable bundles deliver style, comfort, and long-lasting confidence.
+Why Choose Our Kinky Hair Extensions?
+Premium Quality: Ethically sourced 100% Brazilian human hair
+Tangle-Free & Durable: Designed to last for years with proper care
+Reusable Bundles: Sustainable and cost-effective styling
+Versatile Styling: Ideal for microlocs, microtwists, braids & more
+Multiple Options: Lengths from 12 to 26 inches , available in stunning colour variations
+Bundle Information
+QUANTITY 1 = 1 BUNDLE
+Full Head Needs: Just 3–4 bundles for complete coverage
+Limited-Time Availability
+This best-selling style is moving fast. Don't miss your chance to embrace the ultimate blend of luxury, quality, and versatility .
+Order Today & Enjoy Seamless Checkout
+Pay securely via PayStack or request for a payment link.
+What Our Customers Say
+""I’ve reused the same bundles for over a year—they still look flawless!""
+""The microlocs are light, natural-looking, and seriously tangle-free. Worth every naira!""",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/11/IMG_5678-1-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2024/11/IMG_5678-1-scaled.jpeg",,Colour,"Colour 1B, Colour 1B/27 Mix, Colour 1B/27 Ombre, Colour 1B/27/30 Ombre, Colour 1B/27/33 Ombre, Colour 1B/30 Mix, Colour 1B/30 Ombre, Colour 1B/30/33 Ombre, Colour 1B/33 Mix, Colour 1B/33 Ombre, Colour 1B/33/35 Ombre, Colour 1B/35 Mix, Colour 27 Blonde, Colour 27/30 Mix, Colour 27/30/33 Mix, Colour 27/33 Mix, Colour 30, Colour 30/35 Mix, Colour 33, Colour 35 Burgundy",Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B/27/33 Ombre,,,
+1041,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 12 inches,1,visible,,0,0,170.0,,,id:1040,Colour,,Length,12 inches,,,,
+1042,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 14 inches,1,visible,,1,0,180.0,,,id:1040,Colour,,Length,14 inches,,,,
+1043,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 16 inches,1,visible,,1,0,190.0,,,id:1040,Colour,,Length,16 inches,,,,
+1044,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 18 inches,1,visible,,1,0,205.0,,,id:1040,Colour,,Length,18 inches,,,,
+1045,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 20 inches,1,visible,,1,0,225.0,,,id:1040,Colour,,Length,20 inches,,,,
+1046,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 22 inches,1,visible,,1,0,245.0,,,id:1040,Colour,,Length,22 inches,,,,
+1047,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 24 inches,1,visible,,0,0,270.0,,,id:1040,Colour,,Length,24 inches,,,,
+1048,variation,,BRAZILIAN KINKY HUMAN HAIR TWIST (Colour 1B/27/33 Ombre) - 26 inches,1,visible,,0,0,280.0,,,id:1040,Colour,,Length,26 inches,,,,
+1151,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 1B) - 18 inches,1,visible,,1,0,200.0,,,id:426,Colour,,Length,18 inches,,,,
+1152,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 1B) - 20 inches,1,visible,,1,0,217.0,,,id:426,Colour,,Length,20 inches,,,,
+1154,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 33) - 20 inches,1,visible,,1,0,222.0,,,id:437,Colour,,Length,20 inches,,,,
+1155,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 33) - 16 inches,1,visible,,1,0,180.0,,,id:437,Colour,,Length,16 inches,,,,
+1158,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE (Colour 33) - 18 inches,1,visible,,1,0,205.0,,,id:437,Colour,,Length,18 inches,,,,
+1160,variable,,WET & WAVY HUMAN HAIR JERRY CURL BOHO WIG (Colour 30/33),1,visible,"AVAILABLE ON PREORDER. TURNAROUND TIME IS 3 WEEKS.
+She’s soft, she’s bouncy, she’s THAT girl.
+Length: 22 inches of pure luxury.
+Colour: 30/33 blend, warm, rich and boujee
+Price tag: $1,300, but the look is Priceless!
+This wig speaks fluent luxury. You wear this, and the compliments don’t stop.
+Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Wigs are handmade with our premium quality 100% wet and wavy human hair, designed for long-lasting use and reusability through proper care.
+It stays tangle-free, delivering a confident, comfortable, and luxurious look!",1,1,,Wet & Wavy,"https://hairbyvintage.com/wp-content/uploads/2025/04/IMG_3919-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/04/IMG_3919-scaled.jpeg",,Colour,Colour 33,Length,30 Inches,,,,
+1164,variation,,WET & WAVY HUMAN HAIR JERRY CURL BOHO WIG (Colour 30/33),1,visible,,1,0,1450.0,,,id:1160,Colour,,Length,,,,,
+9032,variable,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free,1,visible,"Brazilian Kinky Human Hair Twist – Luxury That Lasts
+Elevate your look with premium 100% Brazilian Kinky Human Hair Twists —crafted for women of refined taste and trusted worldwide. Whether you're rocking microlocs, microtwists, braids, or sistalocs , our reusable bundles deliver style, comfort, and long-lasting confidence.
+Why Choose Our Kinky Hair Extensions?
+Premium Quality: Ethically sourced 100% Brazilian human hair
+Tangle-Free & Durable: Designed to last for years with proper care
+Reusable Bundles: Sustainable and cost-effective styling
+Versatile Styling: Ideal for microlocs, microtwists, braids & more
+Multiple Options: Lengths from 12 to 26 inches , available in stunning colour variations
+Bundle Information
+QUANTITY 1 = 1 BUNDLE
+Full Head Needs: Just 3–4 bundles for complete coverage
+Limited-Time Availability
+This best-selling style is moving fast. Don't miss your chance to embrace the ultimate blend of luxury, quality, and versatility .
+Order Today & Enjoy Seamless Checkout
+Pay securely via PayStack or request for a payment link.
+What Our Customers Say
+""I’ve reused the same bundles for over a year—they still look flawless!""
+""The microlocs are light, natural-looking, and seriously tangle-free. Worth every naira!""",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2024/01/Product-image-5.jpg, https://hairbyvintage.com/wp-content/uploads/2024/01/Product-image-6.jpg",,Colour,Colour 1B,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",Colour 1B,12 inches,,
+9033,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 12 inches,1,visible,,1,0,150.0,,,id:9032,Colour,,Length,12 inches,,,,
+9034,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 14 inches,1,visible,,1,0,160.0,,,id:9032,Colour,,Length,14 inches,,,,
+9035,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 16 inches,1,visible,,1,0,170.0,,,id:9032,Colour,,Length,16 inches,,,,
+9036,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 18 inches,1,visible,,1,0,195.0,,,id:9032,Colour,,Length,18 inches,,,,
+9037,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 20 inches,1,visible,,1,0,210.0,,,id:9032,Colour,,Length,20 inches,,,,
+9038,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 22 inches,1,visible,,1,0,220.0,,,id:9032,Colour,,Length,22 inches,,,,
+9039,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 24 inches,1,visible,,0,0,245.0,,,id:9032,Colour,,Length,24 inches,,,,
+9040,variation,,Brazilian Kinky Twist Hair Extensions – 100% Human Hair – Natural Black 1B – Reusable & Tangle-Free - 26 inches,1,visible,,0,0,255.0,,,id:9032,Colour,,Length,26 inches,,,,
+10028,variable,,HANDMADE SISTALOCS HUMAN HAIR TWIST (Colour 1B),1,visible,"PREORDER ONLY. TURNAROUND TIME IS 2-3 WEEKS.
+MINIMUM ORDER QUANTITY IS 100
+Introducing Our Exquisite Sistalocs Human Hair Extensions!
+Handcrafted Luxury : Each strand of our Sistalocs extensions is meticulously handmade with 100% premium human hair . Impeccable craftsmanship of HairByVintage ensures that every lock exudes natural beauty and authenticity. Sistalocs hairstyle is super easy to style.
+Customizable Elegance : Upgrade your style with our versatile extensions, available in a range of sizes from 6 inches to 16 inches . Plus, choose from an array of stunning colours to match your unique vibe.
+Be among the first to own these coveted extensions! Secure your order now. Limited quantities available, so act swiftly.
+Patience Rewarded : Crafting perfection takes time. Your Sistalocs extension will be made to order , tailored to your specifications. Our skilled HairByVintage hairstylists weave magic into every strand.
+Why Settle for Ordinary? Unleash your inner goddess with Sistalocs Human Hair Extensions. Order now and embrace the allure of natural beauty!
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,"Sistalocs, Sisterlocs","https://hairbyvintage.com/wp-content/uploads/2024/08/Hairbyvintage-Sisterlocs-Colour-1B.jpg, https://hairbyvintage.com/wp-content/uploads/2024/08/Hairbyvintage-Sisterlocs-Colour-1B.heic",,Colour,Colour 1B,Length,"10 inches, 12 inches, 14 inches, 16 inches, 6 inches, 8 inches",Colour 1B,6 inches,,
+10029,variation,,HANDMADE SISTALOCS HUMAN HAIR TWIST (Colour 1B) - 6 inches,1,visible,,1,0,1.8,,,id:10028,Colour,,Length,6 inches,,,,
+10030,variation,,HANDMADE SISTALOCS HUMAN HAIR TWIST (Colour 1B) - 8 inches,1,visible,,1,0,2.0,,,id:10028,Colour,,Length,8 inches,,,,
+10031,variation,,HANDMADE SISTALOCS HUMAN HAIR TWIST (Colour 1B) - 10 inches,1,visible,,1,0,2.1,,,id:10028,Colour,,Length,10 inches,,,,
+10032,variation,,HANDMADE SISTALOCS HUMAN HAIR TWIST (Colour 1B) - 12 inches,1,visible,,1,0,2.2,,,id:10028,Colour,,Length,12 inches,,,,
+10033,variation,,HANDMADE SISTALOCS HUMAN HAIR TWIST (Colour 1B) - 14 inches,1,visible,,1,0,2.3,,,id:10028,Colour,,Length,14 inches,,,,
+10034,variation,,HANDMADE SISTALOCS HUMAN HAIR TWIST (Colour 1B) - 16 inches,1,visible,,1,0,2.6,,,id:10028,Colour,,Length,16 inches,,,,
+10052,variable,,HANDMADE SISTERLOCS WITH CURLS HUMAN HAIR (Colour 1B/30 Ombre),1,visible,"PREORDER ONLY. TURNAROUND TIME IS 2-3 WEEKS.
+A pack contains 300 locs Extensions
+Introducing Our Exquisite Sisterlocs Human Hair Extensions With Burmese Curls Added To The Tips!
+Handcrafted Luxury : Each strand of our Sistalocs extensions is meticulously handmade with 100% premium human hair . Impeccable craftsmanship of HairByVintage ensures that every lock exudes natural beauty and authenticity. Sisterlocs hairstyle is super easy to style.
+The tips are adorned with our Burmese curls human hair extensions.
+Customizable Elegance : Upgrade your style with our versatile extensions, available in a range of sizes from 12 & 14 inches in stunning 1B/30 Ombre colour
+Be among the first to own these coveted extensions! Secure your order now. Limited quantities available, so act swiftly.
+Patience Rewarded : Crafting perfection takes time. Your Sistalocs extension will be made to order , tailored to your specifications. Our skilled HairByVintage hairstylists weave magic into every strand.
+Why Settle for Ordinary? Unleash your inner goddess with Sistalocs Human Hair Extensions. Order now and embrace the allure of natural beauty!
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,"Sistalocs, Sisterlocs","https://hairbyvintage.com/wp-content/uploads/2025/10/IMG_2704-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/10/IMG_2704-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/10/IMG_2706-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/10/IMG_2705-scaled.jpeg",,Colour,"Colour 1B, Colour 1B/30 Ombre, Colour 1B/33 Ombre, Colour 30, Colour 33",Length,"12 inches, 14 inches",Colour 1B/30 Ombre,12 inches,,
+10065,variable,,100 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair,1,visible,"Burmese Curls Crochet Braids – 100% Premium Human Hair | Soft, Bouncy & Natural Protective Style
+Refresh your look with our Burmese Curls Crochet Braids, crafted from 100% premium human hair for a soft, bouncy, and effortlessly natural finish. Perfect for protective styling, these curls deliver long-lasting wear, lightweight comfort, and a glamorous look that blends seamlessly with your natural hair.
+1 bundle = 100 grams
+Whether you’re going for a full, voluminous style or a subtle, natural vibe, our Burmese Curls give you the freedom to style your hair your way — reusable, tangle-free, and made to last.
+Shop now to experience luxury, versatility, and beauty in every strand.
+Nationwide & worldwide delivery available.",0,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3321-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3321-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3320-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_0456.jpeg",,Colour,Colour 1B,Length,"14 inches, 16 inches, 18 inches, 20 inches, 22 inches",Colour 1B,14 inches,,
+10071,variable,,Auburn-Brown Mix Brazilian Kinky Extension,1,visible,"Brazilian Kinky Human Hair Twist – Luxury That Lasts
+Our Most Requested And Top Selling Hair Colour, Auburn & Brown Mix is back!
+This stunning blend of Auburn and Brown gives that rich, sun-kissed glow everyone’s obsessed with.
+Elevate your look with premium 100% Brazilian Kinky Human Hair extensions. They are carefully crafted for women of refined taste and trusted worldwide. Whether you're rocking microlocs, microtwists, braids, or sistalocs , our reusable bundles deliver style, comfort, and long-lasting confidence.
+Why Choose Our Kinky Hair Extensions?
+Premium Quality: Ethically sourced 100% Brazilian human hair
+Tangle-Free & Durable: Designed to last for years with proper care
+Reusable Bundles: Sustainable and cost-effective styling
+Versatile Styling: Ideal for microlocs, microtwists, braids & more
+Multiple Options: Lengths from 12 to 26 inches , available in stunning colour variations
+Bundle Information
+QUANTITY 1 = 1 BUNDLE
+Full Head Needs: Just 3–4 bundles for complete coverage
+Limited-Time Availability
+This Auburn Brown Mix best-seller sells out fast. Don't miss your chance to embrace the ultimate blend of luxury, quality, and versatility .
+Order Today & Enjoy Seamless Checkout
+Pay securely via PayStack or request for a payment link.
+What Our Customers Say
+""I’ve reused the same bundles for over a year—they still look flawless!""
+""The microlocs are light, natural-looking, and seriously tangle-free. Worth every naira!""",1,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2025/10/IMG_1636-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/10/IMG_1636-scaled.jpeg",,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches, 22 inches, 24 inches, 26 inches",,,12 inches,,,
+10072,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 12 inches,1,visible,,0,0,170.0,,,id:10071,Length,12 inches,,,,,,
+10073,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 14 inches,1,visible,,1,0,180.0,,,id:10071,Length,14 inches,,,,,,
+10074,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 16 inches,1,visible,,1,0,190.0,,,id:10071,Length,16 inches,,,,,,
+10075,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 18 inches,1,visible,,1,0,205.0,,,id:10071,Length,18 inches,,,,,,
+10076,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 20 inches,1,visible,,1,0,225.0,,,id:10071,Length,20 inches,,,,,,
+10077,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 22 inches,1,visible,,0,0,245.0,,,id:10071,Length,22 inches,,,,,,
+10078,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 24 inches,1,visible,,0,0,270.0,,,id:10071,Length,24 inches,,,,,,
+10079,variation,,Auburn-Brown Mix Brazilian Kinky Extension - 26 inches,1,visible,,0,0,280.0,,,id:10071,Length,26 inches,,,,,,
+10113,variable,,BRAZILIAN KINKY DONOR HAIR WEAVE  (Colour 4/33),1,visible,"Elevate your style with our Brazilian Kinky Donor Human Hair Weave . Preferred by women of refined taste worldwide, this brand is trusted and loved.
+Premium quality 100% human hair extensions, designed for long-lasting use and reusability through proper care.
+Available in different colours and lengths from 12 inches to 18 inches. It stays tangle-free, delivering a confident, comfortable, and luxurious look!
+Our Brazilian kinky donor hair weave comes in bundles.
+QUANTITY 1 = 1 BUNDLE
+Minimum of 2-3 bundles is enough for a full head.
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,Weave,"https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3224.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3224.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3232.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3239-1-scaled.jpeg",,Colour,Colour 4/33 Mix,Length,"12 inches, 14 inches, 16 inches, 18 inches, 20 inches",Colour 4/33 Mix,12 inches,,
+10114,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE  (Colour 4/33) - 12 inches,1,visible,,1,0,150.0,,,id:10113,Colour,,Length,12 inches,,,,
+10115,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE  (Colour 4/33) - 14 inches,1,visible,,1,0,168.0,,,id:10113,Colour,,Length,14 inches,,,,
+10116,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE  (Colour 4/33) - 16 inches,1,visible,,1,0,180.0,,,id:10113,Colour,,Length,16 inches,,,,
+10117,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE  (Colour 4/33) - 18 inches,1,visible,,1,0,205.0,,,id:10113,Colour,,Length,18 inches,,,,
+10118,variation,,BRAZILIAN KINKY DONOR HAIR WEAVE  (Colour 4/33) - 20 inches,1,visible,,1,0,222.0,,,id:10113,Colour,,Length,20 inches,,,,
+10128,variation,,100 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 18 inches,1,visible,,0,0,180.0,,,id:10065,Colour,,Length,18 inches,,,,
+10129,variation,,100 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 20 inches,1,visible,,0,0,205.0,,,id:10065,Colour,,Length,20 inches,,,,
+10130,variation,,100 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 22 inches,1,visible,,0,0,230.0,,,id:10065,Colour,,Length,22 inches,,,,
+10131,variation,,100 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 16 inches,1,visible,,0,0,165.0,,,id:10065,Colour,,Length,16 inches,,,,
+10132,variation,,100 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 14 inches,1,visible,,0,0,155.0,,,id:10065,Colour,,Length,14 inches,,,,
+10139,variable,,50 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair,1,visible,"Burmese Curls Crochet Braids – 100% Premium Human Hair | Soft, Bouncy & Natural Protective Style
+Refresh your look with our Burmese Curls Crochet Braids, crafted from 100% premium human hair for a soft, bouncy, and effortlessly natural finish. Perfect for protective styling, these curls deliver long-lasting wear, lightweight comfort, and a glamorous look that blends seamlessly with your natural hair.
+1 bundle = 50 grams
+Whether you’re going for a full, voluminous style or a subtle, natural vibe, our Burmese Curls give you the freedom to style your hair your way — reusable, tangle-free, and made to last.
+Shop now to experience luxury, versatility, and beauty in every strand.
+Nationwide & worldwide delivery available.",0,1,,Bulk Hair,"https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3321-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_3320-scaled.jpeg, https://hairbyvintage.com/wp-content/uploads/2025/11/IMG_0456.jpeg",,Colour,Colour 1B,Length,"14 inches, 16 inches, 18 inches, 20 inches, 22 inches",Colour 1B,14 inches,,
+10140,variation,,50 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 14 inches,1,visible,,0,0,78.0,,,id:10139,Colour,,Length,14 inches,,,,
+10141,variation,,50 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 18 inches,1,visible,,0,0,90.0,,,id:10139,Colour,,Length,18 inches,,,,
+10142,variation,,50 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 16 inches,1,visible,,0,0,83.0,,,id:10139,Colour,,Length,16 inches,,,,
+10143,variation,,50 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 20 inches,1,visible,,0,0,103.0,,,id:10139,Colour,,Length,20 inches,,,,
+10144,variation,,50 Gram Burmese Curls Crochet Braids – 100% Premium Human Hair - 22 inches,1,visible,,0,0,115.0,,,id:10139,Colour,,Length,22 inches,,,,
+10150,variation,,HANDMADE SISTERLOCS WITH CURLS HUMAN HAIR (Colour 1B/30 Ombre) - 14 inches,1,visible,,1,0,2.78,,,id:10052,Colour,,Length,14 inches,,,,
+10151,variation,,HANDMADE SISTERLOCS WITH CURLS HUMAN HAIR (Colour 1B/30 Ombre) - 12 inches,1,visible,,1,0,2.65,,,id:10052,Colour,,Length,12 inches,,,,
+10165,simple,,HANDMADE SISTERLOCS EXTENSION WITH CURLS HUMAN HAIR (Colour 33/340),1,visible,"PREORDER ONLY. TURNAROUND TIME IS 2-3 WEEKS.
+The pack in this post contains 400 locs extensions.
+Introducing Our Exquisite Sisterlocs Human Hair Extensions With Burmese Curls Added To The Tips!
+Handcrafted Luxury : Each strand of our Sistalocs extensions is meticulously handmade with 100% premium human hair .
+Impeccable craftsmanship of HairByVintage ensures that every lock exudes natural beauty and authenticity. Sisterlocs hairstyle is super easy to style.
+The tips are adorned with our Burmese curls human hair extensions.
+Customizable Elegance : Upgrade your style with our versatile extensions, available in stunning 33/340 colour. The total length is 26 inches.
+Be among the first to own these coveted extensions! Secure your order now. Limited quantities available, so act swiftly.
+Patience Rewarded : Crafting perfection takes time. Your Sistalocs extension will be made to order , tailored to your specifications. Our skilled HairByVintage hairstylists weave magic into every strand.
+Why Settle for Ordinary? Unleash your inner goddess with Sistalocs Human Hair Extensions. Order now and embrace the allure of natural beauty!
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,3.0,Sisterlocs,"https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-with-curls-22-inches-colour-33-340-400-pieces-01-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-with-curls-22-inches-colour-33-340-400-pieces-02-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-with-curls-22-inches-colour-33-340-400-pieces-scaled.jpg, https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-with-curls-22-inches-colour-33-340-400-pieces-01-scaled.jpg",,Length,26 inches,,,,,,
+10175,variable,,HANDMADE SISTERLOCS WITH KINKY CURLS HUMAN HAIR (Colour 1B/33 Ombre),1,visible,"PREORDER ONLY. TURNAROUND TIME IS 2-3 WEEKS.
+The product image is pack containing 350 Eisterlocs Extensions
+Introducing Our Exquisite Sisterlocs Human Hair Extensions With our Brazilian Kinky Curls Added To The Tips!
+Handcrafted Luxury : Each strand of our Sistalocs extensions is meticulously handmade with 100% premium human hair .
+Impeccable craftsmanship of HairByVintage ensures that every lock exudes natural beauty and authenticity. Sisterlocs hairstyle is super easy to style.
+The tips are adorned with our kinky curls human hair extensions.
+Customizable Elegance : Upgrade your style with our versatile extensions, available in a range of sizes from 12 & 14 inches in stunning 1B/33 Ombre colour
+Be among the first to own these coveted extensions! Secure your order now. Limited quantities available, so act swiftly.
+Patience Rewarded : Crafting perfection takes time. Your Sistalocs extension will be made to order , tailored to your specifications. Our skilled HairByVintage hairstylists weave magic into every strand.
+Why Settle for Ordinary? Unleash your inner goddess with Sistalocs Human Hair Extensions. Order now and embrace the allure of natural beauty!
+Note: Availability is limited, so don’t miss out on this exceptional opportunity.",1,1,,"Sistalocs, Sisterlocs","https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-human-hair-extensions-with-kinky-curly-tips.jpg, https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-human-hair-extensions-with-kinky-curly-tips.jpg, https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-human-hair-extensions-with-kinky-curly-tips1.jpg, https://hairbyvintage.com/wp-content/uploads/2025/12/Sisterlocs-human-hair-extensions-with-kinky-curly-tips0.jpg",,Colour,"Colour 1B, Colour 1B/30 Ombre, Colour 1B/33 Ombre, Colour 30, Colour 33",Length,"12 inches, 14 inches",Colour 1B/33 Ombre,12 inches,,
+10176,variation,,HANDMADE SISTERLOCS WITH KINKY CURLS HUMAN HAIR (Colour 1B/33 Ombre) - 14 inches,1,visible,,1,0,2.78,,,id:10175,Colour,,Length,14 inches,,,,
+10177,variation,,HANDMADE SISTERLOCS WITH KINKY CURLS HUMAN HAIR (Colour 1B/33 Ombre) - 12 inches,1,visible,,1,0,2.65,,,id:10175,Colour,,Length,12 inches,,,,
