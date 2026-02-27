@@ -13,7 +13,7 @@ export const addresses = pgTable('addresses', {
   city: text('city').notNull(),
   state: text('state').notNull(),
   postalCode: text('postal_code'),
-
+  country: text('country').notNull().default('NG'),
   isDefault: boolean('is_default').default(false),
 
   createdAt: timestamp('created_at').defaultNow(),
