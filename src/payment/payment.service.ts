@@ -82,12 +82,26 @@ export class PaymentService {
   }
 
   // 2. THE SHIPPING PRICING MATRIX
-  calculateShippingUsd(countryCode: string, stateCode: string): number {
+  calculateShippingUsd(countryCode: string, stateCode: string, city: string = ''): number {
     const code = countryCode.toUpperCase();
 
     if (code === 'NG') {
-      // ISO-2 code for Lagos state is 'LA'
-      if (stateCode.toUpperCase() === 'LA') return 7;
+      if (stateCode.toUpperCase() === 'LA') {
+        // Normalize city input (lowercase and remove extra spaces)
+        const normalizedCity = city.toLowerCase().trim();
+
+        const islandKeywords = [
+          'lekki', 'ajah', 'victoria island', 'vi', 'v.i', 'ikoyi',
+          'chevron', 'ikate', 'osapa', 'agungi', 'sangotedo', 'epe'
+        ];
+
+        const isIsland = islandKeywords.some(keyword => normalizedCity.includes(keyword));
+
+        if (isIsland) {
+          return 3; // Island
+        }
+        return 7; // Mainland (Anywhere else in Lagos)
+      }
       return 8; // Rest of Nigeria
     }
 
@@ -99,8 +113,8 @@ export class PaymentService {
   }
 
   // 3. EXPOSED FOR FRONTEND TO FETCH QUOTE BEFORE PAYMENT
-  async getShippingQuote(country: string, state: string) {
-    const shippingUsd = this.calculateShippingUsd(country, state);
+  async getShippingQuote(country: string, state: string, city: string = '') {
+    const shippingUsd = this.calculateShippingUsd(country, state, city);
     const rate = await this.getExchangeRate();
     const shippingNgn = shippingUsd * rate;
 
@@ -124,7 +138,7 @@ export class PaymentService {
     if (!customerEmail) throw new BadRequestException('Email is required for checkout');
 
     // 👇 Calculate Real Shipping Cost Server-Side
-    const shippingUsd = this.calculateShippingUsd(payload.shippingAddress.country, payload.shippingAddress.state);
+    const shippingUsd = this.calculateShippingUsd(payload.shippingAddress.country, payload.shippingAddress.state, payload.shippingAddress.city);
     const rate = await this.getExchangeRate();
     const shippingNgn = shippingUsd * rate;
 
@@ -180,7 +194,6 @@ export class PaymentService {
         });
       }
 
-      // 👇 ADD SECURE SHIPPING TO GRAND TOTALS
       const finalTotalNgn = itemsTotalNgn + shippingNgn;
       const finalTotalUsd = itemsTotalUsd + shippingUsd;
 
@@ -273,7 +286,6 @@ export class PaymentService {
     }
   }
 
-  // ... (keep verifyPayment, handleWebhook, fulfillOrder exactly the same below) ...
   async verifyPayment(reference: string) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 
@@ -307,7 +319,6 @@ export class PaymentService {
     return { status: 'ok' };
   }
 
-  // 👇 3. STOCK SUBTRACTION LOGIC
   private async fulfillOrder(reference: string, metadata: any) {
     await this.db.transaction(async (tx) => {
       // Find pending payment
