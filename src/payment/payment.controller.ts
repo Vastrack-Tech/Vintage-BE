@@ -45,11 +45,12 @@ export class PaymentController {
   async getShippingQuote(
     @Query('country') country: string,
     @Query('state') state: string,
+    @Query('city') city: string,
   ) {
     if (!country || !state) {
       throw new BadRequestException('Country and state codes are required');
     }
-    return this.paymentService.getShippingQuote(country, state);
+    return this.paymentService.getShippingQuote(country, state, city || '');
   }
 
   @Get('verify')
