@@ -13,7 +13,9 @@ async function bootstrap() {
       'https://vintage-admin.netlify.app',
       'https://vintage-user.netlify.app',
       'https://hairbyvintage.com',
-      'https://vintage-adm.vercel.app'
+      'https://vintage-adm.vercel.app',
+      'https://vintage-fe-3ycn.onrender.com',
+      'https://vintage-admin.onrender.com'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
