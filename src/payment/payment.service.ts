@@ -286,6 +286,7 @@ export class PaymentService {
     }
   }
 
+  // ... (keep verifyPayment, handleWebhook, fulfillOrder exactly the same below) ...
   async verifyPayment(reference: string) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 
