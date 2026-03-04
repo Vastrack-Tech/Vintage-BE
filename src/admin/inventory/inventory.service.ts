@@ -45,7 +45,7 @@ export class InventoryService {
                 "Price (USD)": p.priceUsd,
                 "Stock Quantity": totalStock,
                 "Status": (p.stockQuantity || 0) > 0 ? "In Stock" : "Out of Stock",
-                 "Date Created": p.createdAt?.toISOString().split('T')[0],
+                "Date Created": p.createdAt?.toISOString().split('T')[0],
             };
         });
 
@@ -199,42 +199,54 @@ export class InventoryService {
                 .returning();
 
             // 2. SMART VARIANTS UPDATE (Fixes the crash)
+            // 2. SMART VARIANTS UPDATE (Fixed)
             if (variants && variants.length > 0) {
                 // Get all currently existing variants for this product
                 const existingVariants = await tx.query.variants.findMany({
                     where: eq(schema.variants.productId, id)
                 });
 
-                for (const v of variants) {
-                    // Match by Name (e.g., "Red / 18 inch")
-                    const existing = existingVariants.find(ev => ev.name === v.name);
+                // Track IDs coming from the frontend
+                const incomingIds = variants.map(v => v.id).filter(Boolean);
 
-                    if (existing) {
-                        // UPDATE existing variant
+                // A. Delete variants that are no longer in the payload
+                const variantsToDelete = existingVariants.filter(ev => !incomingIds.includes(ev.id));
+                for (const vDel of variantsToDelete) {
+                    await tx.delete(schema.variants).where(eq(schema.variants.id, vDel.id));
+                }
+
+                // B. Upsert (Update or Insert) Variants
+                for (const v of variants) {
+                    if (v.id) {
+                        // UPDATE existing variant by exact ID
                         await tx.update(schema.variants)
                             .set({
+                                name: v.name, // Safely update name if it changed
                                 stockQuantity: Number(v.stockQuantity),
-                                priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
-                                priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
+                                priceOverrideNgn: v.priceOverrideNgn !== null && v.priceOverrideNgn !== undefined ? v.priceOverrideNgn.toString() : null,
+                                priceOverrideUsd: v.priceOverrideUsd !== null && v.priceOverrideUsd !== undefined ? v.priceOverrideUsd.toString() : null,
                                 image: v.image || null,
-                                attributes: v.attributes || existing.attributes,
+                                attributes: v.attributes,
                             })
-                            .where(eq(schema.variants.id, existing.id));
+                            .where(eq(schema.variants.id, v.id));
                     } else {
-                        // INSERT new variant
+                        // INSERT brand new variant
                         await tx.insert(schema.variants).values({
                             id: generateId('VINVAR'),
                             productId: id,
                             name: v.name,
                             stockQuantity: Number(v.stockQuantity),
                             attributes: v.attributes || {},
-                            priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
-                            priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
+                            priceOverrideNgn: v.priceOverrideNgn !== null && v.priceOverrideNgn !== undefined ? v.priceOverrideNgn.toString() : null,
+                            priceOverrideUsd: v.priceOverrideUsd !== null && v.priceOverrideUsd !== undefined ? v.priceOverrideUsd.toString() : null,
                             image: v.image || null,
                             sku: `SKU-${generateId('VAR').split('-')[1]}`,
                         });
                     }
                 }
+            } else {
+                // C. If frontend sends empty variants array, delete all variants for this product
+                await tx.delete(schema.variants).where(eq(schema.variants.productId, id));
             }
 
             return updatedProduct;

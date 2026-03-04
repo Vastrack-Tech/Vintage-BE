@@ -5,22 +5,26 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class ProductOptionDto {
     @ApiProperty({ example: 'Length' })
     @IsString()
-    name: string;
+    name!: string;
 
     @ApiProperty({ example: ['12', '14', '16'] })
     @IsArray()
-    @IsString({ each: true })
-    values: string[];
+    values!: any[];
 }
 
 export class CreateVariantDto {
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    id?: string;
+
     @ApiProperty({ example: '12 inch / Natural' })
     @IsString()
-    name: string;
+    name!: string;
 
     @ApiProperty()
     @IsNumber()
-    stockQuantity: number;
+    stockQuantity!: number;
 
     @ApiPropertyOptional()
     @IsOptional()
@@ -34,38 +38,38 @@ export class CreateVariantDto {
 
     @ApiProperty({ example: { Length: '12', Color: 'Natural' } })
     @IsOptional()
-    attributes: Record<string, any>;
+    attributes!: Record<string, any>;
 
     @ApiPropertyOptional({ example: 'https://res.cloudinary.com/...' })
     @IsOptional()
     @IsString()
-    image?: string; // 👈 NEW
+    image?: string;
 }
 
 export class CreateProductDto {
     @ApiProperty()
     @IsString()
-    title: string;
+    title!: string;
 
     @ApiProperty()
     @IsString()
-    description: string;
+    description!: string;
 
     @ApiProperty()
     @IsString()
-    categoryId: string;
+    categoryId!: string;
 
     @ApiProperty()
     @IsNumber()
-    stockQuantity: number;
+    stockQuantity!: number;
 
     @ApiProperty()
     @IsNumber()
-    priceNgn: number;
+    priceNgn!: number;
 
     @ApiProperty()
     @IsNumber()
-    priceUsd: number;
+    priceUsd!: number;
 
     @ApiPropertyOptional()
     @IsOptional()
@@ -89,7 +93,6 @@ export class CreateProductDto {
     @IsString({ each: true })
     tags?: string[];
 
-    // 👇 NEW: Define options
     @ApiPropertyOptional({ type: [ProductOptionDto] })
     @IsOptional()
     @IsArray()
@@ -121,5 +124,5 @@ export class CreateProductDto {
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => CreateVariantDto)
-    variants: CreateVariantDto[];
+    variants!: CreateVariantDto[];
 }
