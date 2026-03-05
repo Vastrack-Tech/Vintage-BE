@@ -10,12 +10,12 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',
-      'https://vintage-admin.netlify.app',
-      'https://vintage-user.netlify.app',
       'https://hairbyvintage.com',
       'https://vintage-adm.vercel.app',
       'https://vintage-fe-3ycn.onrender.com',
-      'https://vintage-admin.onrender.com'
+      'https://vintage-admin.onrender.com',
+      'https://vintage-hair.netlify.app',
+      'https://vintage-admin-hair.netlify.app'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
