@@ -8,6 +8,7 @@ import { InventoryService } from './inventory.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetInventoryDto } from './dto/get-inventory.dto';
+import { CreateColorDto } from './dto/create-color.dto';
 
 @ApiTags('Admin Inventory')
 @Controller('admin')
@@ -77,6 +78,24 @@ export class InventoryController {
     @ApiParam({ name: 'id', example: 'VINPROD-123' })
     async delete(@Param('id') id: string) {
         return this.inventoryService.delete(id);
+    }
+
+    @Get('colors')
+    @ApiOperation({ summary: 'Get all global product colors' })
+    async getColors() {
+        return this.inventoryService.getColors();
+    }
+
+    @Post('colors')
+    @ApiOperation({ summary: 'Add a new global color' })
+    async addColor(@Body() dto: CreateColorDto) {
+        return this.inventoryService.addColor(dto);
+    }
+
+    @Delete('colors/:id')
+    @ApiOperation({ summary: 'Delete a global color' })
+    async deleteColor(@Param('id') id: string) {
+        return this.inventoryService.deleteColor(id);
     }
 
 

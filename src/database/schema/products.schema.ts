@@ -103,3 +103,15 @@ export const variantsRelations = relations(variants, ({ one }) => ({
     references: [products.id],
   }),
 }));
+
+export const productColors = pgTable('product_colors', {
+  id: varchar('id', { length: 20 })
+    .primaryKey()
+    .$defaultFn(() => generateId('VINCOL')), // E.g., VINCOL-123456
+
+  name: text('name').notNull().unique(), // e.g., "Colour 30" or "Burgundy"
+  hexCode: text('hex_code').default('#000000'),
+  imageUrl: text('image_url'),
+
+  createdAt: timestamp('created_at').defaultNow(),
+});

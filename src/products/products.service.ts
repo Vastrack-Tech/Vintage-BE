@@ -12,6 +12,7 @@ import {
   gte,
   lte,
   sql,
+  inArray
 } from 'drizzle-orm';
 import { GetProductsDto } from './dto/get-products.dto';
 
@@ -141,17 +142,34 @@ export class ProductsService {
     if (!product)
       throw new NotFoundException(`Product with ID ${id} not found`);
 
-    // FIX: Smarter Sold Out Logic
     const hasVariants = product.variants.length > 0;
-
     let isSoldOut = false;
 
     if (hasVariants) {
-      // If it has variants, it is sold out ONLY if ALL variants are <= 0
       isSoldOut = product.variants.every((v) => (v.stockQuantity ?? 0) <= 0);
     } else {
-      // If no variants, check the main product stock
       isSoldOut = (product.stockQuantity ?? 0) <= 0;
+    }
+
+    if (product.options && Array.isArray(product.options)) {
+      const colorOption = product.options.find((opt: any) => opt.name.toLowerCase() === 'color');
+
+      if (colorOption && colorOption.values.length > 0) {
+        const colorNames = colorOption.values.map((v: any) => typeof v === 'string' ? v : v.name);
+
+        const dbColors = await this.db.query.productColors.findMany({
+          where: inArray(schema.productColors.name, colorNames)
+        });
+
+        colorOption.values = colorNames.map((name: string) => {
+          const globalColor = dbColors.find(c => c.name === name);
+          return {
+            name,
+            hex: globalColor?.hexCode || null,
+            imageUrl: globalColor?.imageUrl || null
+          };
+        }) as any;
+      }
     }
 
     return {
