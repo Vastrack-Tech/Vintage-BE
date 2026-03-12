@@ -8,6 +8,7 @@ import { generateId } from '../../database/schema/utils';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetInventoryDto } from './dto/get-inventory.dto';
+import {CreateColorDto} from './dto/create-color.dto';
 import { eq, desc, and, ilike, sql, SQL, gt, lte, notInArray, count, sum } from 'drizzle-orm';
 
 @Injectable()
@@ -393,4 +394,40 @@ export class InventoryService {
             return { success: true, message: `Product ${id} and its variants deleted successfully` };
         });
     }
+
+    async getColors() {
+      // Return all colors alphabetically
+      return await this.db.query.productColors.findMany({
+          orderBy: (colors, { asc }) => [asc(colors.name)],
+      });
+  }
+
+  async addColor(dto: CreateColorDto) {
+      // Check for duplicates
+      const existing = await this.db.query.productColors.findFirst({
+          where: eq(schema.productColors.name, dto.name)
+      });
+
+      if (existing) {
+          throw new BadRequestException(`Color '${dto.name}' already exists.`);
+      }
+
+      const [newColor] = await this.db.insert(schema.productColors).values({
+          id: generateId('VINCOL'),
+          name: dto.name,
+          hexCode: dto.hexCode || '#000000',
+          imageUrl: dto.imageUrl || null,
+      }).returning();
+
+      return newColor;
+  }
+
+  async deleteColor(id: string) {
+      const [deleted] = await this.db.delete(schema.productColors)
+          .where(eq(schema.productColors.id, id))
+          .returning();
+          
+      if (!deleted) throw new NotFoundException('Color not found');
+      return { message: 'Color deleted successfully' };
+  }
 }
