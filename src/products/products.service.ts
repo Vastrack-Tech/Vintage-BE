@@ -102,8 +102,7 @@ export class ProductsService {
     // Transform Data: Add 'isSoldOut' flag
     const data = dbData.map((product) => ({
       ...product,
-      // FIX 1: Handle null stockQuantity safely
-      isSoldOut: (product.stockQuantity ?? 0) <= 0,
+      isSoldOut: product.stockQuantity === 0,
     }));
 
     const countResult = await this.db
@@ -146,9 +145,9 @@ export class ProductsService {
     let isSoldOut = false;
 
     if (hasVariants) {
-      isSoldOut = product.variants.every((v) => (v.stockQuantity ?? 0) <= 0);
+      isSoldOut = product.variants.every((v) => v.stockQuantity === 0);
     } else {
-      isSoldOut = (product.stockQuantity ?? 0) <= 0;
+      isSoldOut = product.stockQuantity === 0;
     }
 
     if (product.options && Array.isArray(product.options)) {

@@ -28,6 +28,7 @@
     "db:update-descriptions": "ts-node src/database/update-descriptions.ts"
   },
   "dependencies": {
+    "@mailchimp/mailchimp_transactional": "^1.3.3",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",

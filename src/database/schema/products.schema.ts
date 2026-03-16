@@ -48,13 +48,10 @@ export const products = pgTable('products', {
 
   gallery: jsonb('gallery').default([]),
   tags: jsonb('tags').$type<string[]>().default([]),
-
-  // 👇 NEW: Define what options this product has (e.g. [{ name: "Length", values: ["12", "14"] }])
   options: jsonb('options').$type<{ name: string; values: string[] }[]>().default([]),
-
   isHot: boolean('is_hot').default(false),
   isActive: boolean('is_active').default(true),
-  stockQuantity: integer('stock_quantity').default(0),
+  stockQuantity: integer('stock_quantity'),
   averageRating: decimal('avg_rating', { precision: 3, scale: 2 }).default('0'),
   totalReviews: integer('total_reviews').default(0),
   features: text('features'),
@@ -90,10 +87,8 @@ export const variants = pgTable('variants', {
   priceOverrideNgn: decimal('price_override_ngn', { precision: 10, scale: 2 }),
   priceOverrideUsd: decimal('price_override_usd', { precision: 10, scale: 2 }),
 
-  stockQuantity: integer('stock_quantity').default(0),
+  stockQuantity: integer('stock_quantity'),
   sku: text('sku').unique(),
-
-  // 👇 NEW: Variant specific image
   image: text('image'),
 });
 

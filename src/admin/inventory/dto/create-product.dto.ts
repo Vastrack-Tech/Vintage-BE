@@ -22,9 +22,10 @@ export class CreateVariantDto {
     @IsString()
     name!: string;
 
-    @ApiProperty()
+    @ApiPropertyOptional()
+    @IsOptional()
     @IsNumber()
-    stockQuantity!: number;
+    stockQuantity?: number | null;
 
     @ApiPropertyOptional()
     @IsOptional()
@@ -59,9 +60,10 @@ export class CreateProductDto {
     @IsString()
     categoryId!: string;
 
-    @ApiProperty()
+    @ApiPropertyOptional()
+    @IsOptional()
     @IsNumber()
-    stockQuantity!: number;
+    stockQuantity?: number | null;
 
     @ApiProperty()
     @IsNumber()

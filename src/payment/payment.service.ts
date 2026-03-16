@@ -67,7 +67,6 @@ export class PaymentService {
     }
 
     try {
-      // Free API, no keys required, fast response
       const response = await axios.get('https://open.er-api.com/v6/latest/USD');
       if (response.data?.rates?.NGN) {
         this.cachedNgnRate = response.data.rates.NGN;
@@ -87,9 +86,7 @@ export class PaymentService {
 
     if (code === 'NG') {
       if (stateCode.toUpperCase() === 'LA') {
-        // Normalize city input (lowercase and remove extra spaces)
         const normalizedCity = city.toLowerCase().trim();
-
         const islandKeywords = [
           'lekki', 'ajah', 'victoria island', 'vi', 'v.i', 'ikoyi',
           'chevron', 'ikate', 'osapa', 'agungi', 'sangotedo', 'epe'
@@ -98,18 +95,18 @@ export class PaymentService {
         const isIsland = islandKeywords.some(keyword => normalizedCity.includes(keyword));
 
         if (isIsland) {
-          return 3; // Island
+          return 3;
         }
-        return 7; // Mainland (Anywhere else in Lagos)
+        return 7;
       }
-      return 8; // Rest of Nigeria
+      return 8;
     }
 
     if (AFRICA_COUNTRIES.has(code)) {
-      return 65; // Rest of Africa
+      return 65;
     }
 
-    return 75; // Rest of the World
+    return 75;
   }
 
   // 3. EXPOSED FOR FRONTEND TO FETCH QUOTE BEFORE PAYMENT
@@ -137,7 +134,6 @@ export class PaymentService {
 
     if (!customerEmail) throw new BadRequestException('Email is required for checkout');
 
-    // 👇 Calculate Real Shipping Cost Server-Side
     const shippingUsd = this.calculateShippingUsd(payload.shippingAddress.country, payload.shippingAddress.state, payload.shippingAddress.city);
     const rate = await this.getExchangeRate();
     const shippingNgn = shippingUsd * rate;
@@ -151,7 +147,6 @@ export class PaymentService {
         ? await tx.query.variants.findMany({ where: inArray(schema.variants.id, variantIds), with: { product: true } })
         : [];
 
-      // Base Item Totals (Starting at 0)
       let itemsTotalNgn = 0;
       let itemsTotalUsd = 0;
       const orderItemsToInsert: any[] = [];
@@ -160,7 +155,7 @@ export class PaymentService {
         let priceNgn = 0;
         let priceUsd = 0;
         let variantName: string | null = null;
-        let currentStock = 0;
+        let currentStock: number | null = null;
 
         if (item.variantId) {
           const variant = dbVariants.find((v) => v.id === item.variantId);
@@ -169,16 +164,22 @@ export class PaymentService {
           priceNgn = Number(variant.priceOverrideNgn || variant.product.priceNgn);
           priceUsd = Number(variant.priceOverrideUsd || variant.product.priceUsd);
           variantName = variant.name;
-          currentStock = variant.stockQuantity || 0;
-          if (currentStock < item.quantity) throw new BadRequestException(`Insufficient stock for ${variant.name}`);
+          currentStock = variant.stockQuantity;
+
+          if (currentStock === 0) {
+            throw new BadRequestException(`${variant.name} is currently sold out`);
+          }
         } else {
           const product = dbProducts.find((p) => p.id === item.productId);
           if (!product) throw new BadRequestException('Product not found');
 
           priceNgn = Number(product.priceNgn);
           priceUsd = Number(product.priceUsd);
-          currentStock = product.stockQuantity || 0;
-          if (currentStock < item.quantity) throw new BadRequestException(`Insufficient stock for ${product.title}`);
+          currentStock = product.stockQuantity;
+
+          if (currentStock === 0) {
+            throw new BadRequestException(`${product.title} is currently sold out`);
+          }
         }
 
         itemsTotalNgn += priceNgn * item.quantity;
@@ -197,7 +198,6 @@ export class PaymentService {
       const finalTotalNgn = itemsTotalNgn + shippingNgn;
       const finalTotalUsd = itemsTotalUsd + shippingUsd;
 
-      // Determine what to charge Paystack based on user currency selection
       const chargeAmount = payload.currency === 'USD' ? finalTotalUsd : finalTotalNgn;
 
       let finalUserId = user?.userId;
@@ -220,7 +220,6 @@ export class PaymentService {
         }
       }
 
-      // Insert Order with Shipping details
       const [newOrder] = await tx.insert(schema.orders).values({
         userId: finalUserId || null,
         email: customerEmail,
@@ -228,11 +227,8 @@ export class PaymentService {
         lastName: customerLastName,
         phone: customerPhone,
         shippingAddress: payload.shippingAddress,
-
-        // Save the shipping breakdowns we calculated
         shippingAmountNgn: shippingNgn.toString(),
         shippingAmountUsd: shippingUsd.toFixed(2),
-
         totalAmountNgn: finalTotalNgn.toString(),
         totalAmountUsd: finalTotalUsd.toFixed(2),
         status: 'pending',
@@ -248,7 +244,6 @@ export class PaymentService {
       return { id: newOrder.id, chargeAmount };
     });
 
-    // PAYSTACK INIT (Unchanged)
     try {
       const response = await axios.post(
         'https://api.paystack.co/transaction/initialize',
@@ -281,12 +276,11 @@ export class PaymentService {
 
       return data;
     } catch (error: any) {
-      console.error('Paystack Init Error:', error.response?.data || error.message);
+      this.logger.error('Paystack Init Error:', error.response?.data || error.message);
       throw new BadRequestException('Payment initialization failed');
     }
   }
 
-  // ... (keep verifyPayment, handleWebhook, fulfillOrder exactly the same below) ...
   async verifyPayment(reference: string) {
     const secretKey = this.configService.getOrThrow('PAYSTACK_SECRET_KEY');
 
@@ -322,14 +316,12 @@ export class PaymentService {
 
   private async fulfillOrder(reference: string, metadata: any) {
     await this.db.transaction(async (tx) => {
-      // Find pending payment
       const payment = await tx.query.payments.findFirst({
         where: eq(schema.payments.reference, reference),
       });
 
       if (!payment || payment.status === 'success') return;
 
-      // Update Payment & Order Status
       await tx
         .update(schema.payments)
         .set({ status: 'success', metadata: metadata })
@@ -341,14 +333,12 @@ export class PaymentService {
           .set({ status: 'paid' })
           .where(eq(schema.orders.id, payment.orderId));
 
-        // Fetch items to subtract stock
         const items = await tx.query.orderItems.findMany({
           where: eq(schema.orderItems.orderId, payment.orderId),
         });
 
         for (const item of items) {
           if (item.variantId) {
-            // 1. Subtract from Variant
             await tx
               .update(schema.variants)
               .set({
@@ -356,7 +346,6 @@ export class PaymentService {
               })
               .where(eq(schema.variants.id, item.variantId));
 
-            // 2. ALSO Subtract from Main Product (to keep total accurate)
             await tx
               .update(schema.products)
               .set({
@@ -372,7 +361,6 @@ export class PaymentService {
               .where(eq(schema.products.id, item.productId));
           }
         }
-        // console.log(`Order ${payment.orderId} paid & stock updated.`);
 
         const order = await tx.query.orders.findFirst({
           where: eq(schema.orders.id, payment.orderId),
@@ -380,12 +368,16 @@ export class PaymentService {
         });
 
         if (order) {
+          const formattedAmount = order.currencyPaid === 'USD'
+            ? `$${order.totalAmountUsd}`
+            : `₦${Number(order.totalAmountNgn).toLocaleString()}`;
+
           this.mailService.sendOrderReceipt(
             order.email,
             order.id,
-            `${order.currencyPaid} ${order.totalAmountNgn}`,
+            formattedAmount,
             order.items
-          );
+          ).catch(err => this.logger.error(`Failed to send receipt for order ${order.id}`, err));
         }
       }
     });
