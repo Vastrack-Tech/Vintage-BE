@@ -8,7 +8,7 @@ import { generateId } from '../../database/schema/utils';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetInventoryDto } from './dto/get-inventory.dto';
-import {CreateColorDto} from './dto/create-color.dto';
+import { CreateColorDto } from './dto/create-color.dto';
 import { eq, desc, and, ilike, sql, SQL, gt, lte, notInArray, count, sum } from 'drizzle-orm';
 
 @Injectable()
@@ -115,12 +115,6 @@ export class InventoryService {
             });
             if (!category) throw new BadRequestException("Invalid Category ID");
 
-            // 👇 FIX: Calculate Total Stock from Variants
-            let totalStock = dto.stockQuantity || 0;
-            if (dto.variants && dto.variants.length > 0) {
-                totalStock = dto.variants.reduce((sum, v) => sum + Number(v.stockQuantity || 0), 0);
-            }
-
             const [newProduct] = await tx
                 .insert(schema.products)
                 .values({
@@ -128,7 +122,7 @@ export class InventoryService {
                     categoryId: dto.categoryId,
                     title: dto.title,
                     description: dto.description,
-                    stockQuantity: totalStock, // 👈 Use calculated sum
+                    stockQuantity: dto.stockQuantity ?? null,
                     priceNgn: dto.priceNgn.toString(),
                     priceUsd: dto.priceUsd.toString(),
                     compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
@@ -149,7 +143,7 @@ export class InventoryService {
                         id: generateId('VINVAR'),
                         productId: newProduct.id,
                         name: v.name,
-                        stockQuantity: v.stockQuantity,
+                        stockQuantity: v.stockQuantity ?? null, // 👈 Pass variant nulls straight through too
                         attributes: v.attributes || {},
                         priceOverrideNgn: v.priceOverrideNgn?.toString() ?? null,
                         priceOverrideUsd: v.priceOverrideUsd?.toString() ?? null,
@@ -177,18 +171,12 @@ export class InventoryService {
                 ...cleanDto
             } = dto as any;
 
-            // Calculate Total Stock
-            let totalStock = dto.stockQuantity || product.stockQuantity;
-            if (variants && variants.length > 0) {
-                totalStock = variants.reduce((sum: number, v: any) => sum + Number(v.stockQuantity || 0), 0);
-            }
 
-            // 1. Update Product Details
             const [updatedProduct] = await tx
                 .update(schema.products)
                 .set({
                     ...cleanDto,
-                    stockQuantity: totalStock,
+                    stockQuantity: dto.stockQuantity ?? null,
                     priceNgn: dto.priceNgn?.toString(),
                     priceUsd: dto.priceUsd?.toString(),
                     compareAtPriceNgn: dto.compareAtPriceNgn?.toString(),
@@ -199,8 +187,7 @@ export class InventoryService {
                 .where(eq(schema.products.id, id))
                 .returning();
 
-            // 2. SMART VARIANTS UPDATE (Fixes the crash)
-            // 2. SMART VARIANTS UPDATE (Fixed)
+            // 2. SMART VARIANTS UPDATE
             if (variants && variants.length > 0) {
                 // Get all currently existing variants for this product
                 const existingVariants = await tx.query.variants.findMany({
@@ -222,8 +209,8 @@ export class InventoryService {
                         // UPDATE existing variant by exact ID
                         await tx.update(schema.variants)
                             .set({
-                                name: v.name, // Safely update name if it changed
-                                stockQuantity: Number(v.stockQuantity),
+                                name: v.name,
+                                stockQuantity: v.stockQuantity ?? null,
                                 priceOverrideNgn: v.priceOverrideNgn !== null && v.priceOverrideNgn !== undefined ? v.priceOverrideNgn.toString() : null,
                                 priceOverrideUsd: v.priceOverrideUsd !== null && v.priceOverrideUsd !== undefined ? v.priceOverrideUsd.toString() : null,
                                 image: v.image || null,
@@ -236,7 +223,7 @@ export class InventoryService {
                             id: generateId('VINVAR'),
                             productId: id,
                             name: v.name,
-                            stockQuantity: Number(v.stockQuantity),
+                            stockQuantity: v.stockQuantity ?? null,
                             attributes: v.attributes || {},
                             priceOverrideNgn: v.priceOverrideNgn !== null && v.priceOverrideNgn !== undefined ? v.priceOverrideNgn.toString() : null,
                             priceOverrideUsd: v.priceOverrideUsd !== null && v.priceOverrideUsd !== undefined ? v.priceOverrideUsd.toString() : null,
@@ -246,7 +233,6 @@ export class InventoryService {
                     }
                 }
             } else {
-                // C. If frontend sends empty variants array, delete all variants for this product
                 await tx.delete(schema.variants).where(eq(schema.variants.productId, id));
             }
 
@@ -396,38 +382,38 @@ export class InventoryService {
     }
 
     async getColors() {
-      // Return all colors alphabetically
-      return await this.db.query.productColors.findMany({
-          orderBy: (colors, { asc }) => [asc(colors.name)],
-      });
-  }
+        // Return all colors alphabetically
+        return await this.db.query.productColors.findMany({
+            orderBy: (colors, { asc }) => [asc(colors.name)],
+        });
+    }
 
-  async addColor(dto: CreateColorDto) {
-      // Check for duplicates
-      const existing = await this.db.query.productColors.findFirst({
-          where: eq(schema.productColors.name, dto.name)
-      });
+    async addColor(dto: CreateColorDto) {
+        // Check for duplicates
+        const existing = await this.db.query.productColors.findFirst({
+            where: eq(schema.productColors.name, dto.name)
+        });
 
-      if (existing) {
-          throw new BadRequestException(`Color '${dto.name}' already exists.`);
-      }
+        if (existing) {
+            throw new BadRequestException(`Color '${dto.name}' already exists.`);
+        }
 
-      const [newColor] = await this.db.insert(schema.productColors).values({
-          id: generateId('VINCOL'),
-          name: dto.name,
-          hexCode: dto.hexCode || '#000000',
-          imageUrl: dto.imageUrl || null,
-      }).returning();
+        const [newColor] = await this.db.insert(schema.productColors).values({
+            id: generateId('VINCOL'),
+            name: dto.name,
+            hexCode: dto.hexCode || '#000000',
+            imageUrl: dto.imageUrl || null,
+        }).returning();
 
-      return newColor;
-  }
+        return newColor;
+    }
 
-  async deleteColor(id: string) {
-      const [deleted] = await this.db.delete(schema.productColors)
-          .where(eq(schema.productColors.id, id))
-          .returning();
-          
-      if (!deleted) throw new NotFoundException('Color not found');
-      return { message: 'Color deleted successfully' };
-  }
+    async deleteColor(id: string) {
+        const [deleted] = await this.db.delete(schema.productColors)
+            .where(eq(schema.productColors.id, id))
+            .returning();
+
+        if (!deleted) throw new NotFoundException('Color not found');
+        return { message: 'Color deleted successfully' };
+    }
 }

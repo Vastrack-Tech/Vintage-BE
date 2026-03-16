@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '../../database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../../database/schema';
@@ -10,6 +10,8 @@ import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class AdminOrdersService {
+    private readonly logger = new Logger(AdminOrdersService.name);
+
     constructor(
         @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<typeof schema>,
         private readonly mailService: MailService,
@@ -36,8 +38,8 @@ export class AdminOrdersService {
 
             return {
                 "Order ID": order.id,
-                "Customer Name": `${order.user?.firstName} ${order.user?.lastName}`,
-                "Customer Email": order.user?.email,
+                "Customer Name": order.user ? `${order.user.firstName} ${order.user.lastName}` : `${order.firstName} ${order.lastName}`, // Fallback for guests
+                "Customer Email": order.user?.email || order.email,
                 "Total Amount (NGN)": order.totalAmountNgn,
                 "Total Amount (USD)": order.totalAmountUsd,
                 "Status": order.status,
@@ -66,7 +68,8 @@ export class AdminOrdersService {
         if (search) {
             const searchFilter = or(
                 ilike(schema.orders.id, `%${search}%`),
-                ilike(schema.users.firstName, `%${search}%`)
+                ilike(schema.users.firstName, `%${search}%`),
+                ilike(schema.orders.email, `%${search}%`) // Added email search for guests
             );
             if (searchFilter) filters.push(searchFilter);
         }
@@ -89,7 +92,7 @@ export class AdminOrdersService {
 
         const whereClause = filters.length > 0 ? and(...filters) : undefined;
 
-        // Execute Query (Keep existing selection logic)
+        // Execute Query
         const [data, totalCount] = await Promise.all([
             this.db.select({
                 id: schema.orders.id,
@@ -139,12 +142,13 @@ export class AdminOrdersService {
         if (!updated) throw new NotFoundException('Order not found');
 
         if (updated.email) {
+            // 👇 FIX: Added .catch() so a Mailchimp error doesn't crash the API response
             this.mailService.sendOrderStatusUpdate(
                 updated.email,
                 updated.id,
                 updated.status || 'updated',
                 updated.firstName || 'Customer'
-            );
+            ).catch(err => this.logger.error(`Failed to send status email for order ${id}`, err));
         }
 
         return updated;
@@ -155,9 +159,8 @@ export class AdminOrdersService {
             .select({
                 count: sql<number>`count(*)`,
                 totalSales: sql<number>`sum(cast(${schema.orders.totalAmountNgn} as decimal))`,
-                // Match the database Enum strings exactly
                 pending: sql<number>`count(case when ${schema.orders.status} = 'pending' then 1 end)`,
-                completed: sql<number>`count(case when ${schema.orders.status} = 'delivered' then 1 end)`, // 👈 Changed from 'completed' to 'delivered'
+                completed: sql<number>`count(case when ${schema.orders.status} = 'delivered' then 1 end)`,
             })
             .from(schema.orders);
 
@@ -175,7 +178,7 @@ export class AdminOrdersService {
             with: {
                 user: {
                     with: {
-                        addresses: true,
+                        addresses: true, // We leave this for history, but UI uses order.shippingAddress
                     }
                 },
                 items: {
